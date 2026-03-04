@@ -69,13 +69,13 @@ export default function About() {
                                 <AnimatedGradientText speed={2} colorFrom="#3B1F6B" colorTo="#C9A84C">Our Founder</AnimatedGradientText>
                             </em>
                         </h2>
-                        <p className="font-body text-[0.93rem] text-charcoal-muted/70 leading-[1.9] mb-4">
+                        <p className="font-body text-[0.93rem] text-charcoal-muted leading-[1.9] mb-4">
                             I started Maxims from a single belief: that beautiful spaces are not a luxury for the few — they are a right for everyone who wants to live with intention.
                         </p>
-                        <p className="font-body text-[0.93rem] text-charcoal-muted/70 leading-[1.9] mb-4">
+                        <p className="font-body text-[0.93rem] text-charcoal-muted leading-[1.9] mb-4">
                             Growing up in Abuja, I was always captivated by how a room could make you feel — how light, texture, and proportion could transform mood and meaning. I studied design, returned home, and built the team that became Maxims.
                         </p>
-                        <p className="font-body text-[0.93rem] text-charcoal-muted/70 leading-[1.9] mb-8">
+                        <p className="font-body text-[0.93rem] text-charcoal-muted leading-[1.9] mb-8">
                             Today, we've completed over 200 projects across Nigeria. But what we're most proud of are the clients who write to us months later, saying their home has changed their life.
                         </p>
                         <blockquote className="border-l-2 border-gold pl-5 font-editorial text-[1rem] italic text-purple-mid leading-relaxed">
@@ -107,7 +107,7 @@ export default function About() {
                             <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-gold-deep via-gold to-gold-bright scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
                             <Icon size={22} className="text-gold mx-auto mb-4" />
                             <h3 className="font-title text-[0.72rem] tracking-[0.2em] uppercase text-purple-rich mb-3">{title}</h3>
-                            <p className="font-body text-[0.82rem] text-charcoal-muted/60 leading-relaxed">{desc}</p>
+                            <p className="font-body text-[0.82rem] text-charcoal-muted leading-relaxed">{desc}</p>
                         </motion.div>
                     ))}
                 </div>

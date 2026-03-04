@@ -43,7 +43,7 @@ export default function Gallery() {
                     {uniqueCats.map(fi => (
                         <button key={fi} onClick={() => setF(fi)}
                             className={`font-title text-[0.58rem] tracking-[0.18em] uppercase px-4 py-2 border transition-all duration-200
-                ${f === fi ? 'bg-purple-rich text-gold-light border-purple-rich' : 'border-purple-rich/12 text-charcoal-muted/50 hover:border-gold hover:text-gold'}`}>
+                ${f === fi ? 'bg-purple-rich text-gold-light border-purple-rich' : 'border-purple-rich/12 text-charcoal-muted hover:border-gold hover:text-gold'}`}>
                             {fi}
                         </button>
                     ))}
@@ -92,7 +92,7 @@ export default function Gallery() {
                         <div>
                             <p className="eyebrow mb-3">Case Study</p>
                             <h2 className="text-display-md text-purple-rich font-display mb-4">{spotlight.title}</h2>
-                            <p className="font-body text-[0.88rem] text-charcoal-muted/60 leading-relaxed mb-6">{spotlight.description || 'A comprehensive interior redesign spanning living, dining, and suite spaces. A cohesive statement of modern Nigerian luxury.'}</p>
+                            <p className="font-body text-[0.88rem] text-charcoal-muted leading-relaxed mb-6">{spotlight.description || 'A comprehensive interior redesign spanning living, dining, and suite spaces. A cohesive statement of modern Nigerian luxury.'}</p>
                             <div className="grid grid-cols-2 gap-4">
                                 {[['Location', spotlight.location || '-'], ['Size', spotlight.sqft || '-'], ['Duration', spotlight.duration || '-'], ['Year', spotlight.year || '-']].map(([l, v]) => (
                                     <div key={l}><p className="font-title text-[0.5rem] tracking-[0.25em] uppercase text-gold mb-0.5">{l}</p><p className="font-body text-[0.85rem] text-charcoal font-bold">{v}</p></div>

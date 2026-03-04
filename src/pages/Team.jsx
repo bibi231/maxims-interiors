@@ -49,7 +49,7 @@ export default function Team() {
                             </div>
                             <h3 className="font-editorial text-2xl text-charcoal mb-1">{t.name}</h3>
                             <p className="font-title text-[0.6rem] tracking-[0.25em] uppercase text-gold mb-4">{t.role}</p>
-                            <p className="font-body text-[0.82rem] text-charcoal-muted/50 leading-relaxed">{t.bio}</p>
+                            <p className="font-body text-[0.82rem] text-charcoal-muted leading-relaxed">{t.bio}</p>
                         </motion.div>
                     ))}
                 </div>
@@ -60,7 +60,7 @@ export default function Team() {
                 <motion.div className="max-w-[700px] mx-auto p-16 border-2 border-dashed border-purple-rich/10"
                     initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}>
                     <h2 className="text-display-md text-purple-rich font-display mb-6">Join Our Vision</h2>
-                    <p className="font-body text-[0.88rem] text-charcoal-muted/60 mb-10 leading-relaxed">
+                    <p className="font-body text-[0.88rem] text-charcoal-muted mb-10 leading-relaxed">
                         We're always looking for talented designers, project managers, and creative spirits. Think you'd be a good fit for Maxims?
                     </p>
                     <Link to="/contact" className="btn-maxims btn-outline-gold">View Careers <ArrowRight size={14} /></Link>

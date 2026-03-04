@@ -113,7 +113,7 @@ export default function BulkOrders() {
                             <div className="absolute inset-0 bg-gold/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                             <b.icon size={28} className="text-gold mx-auto mb-5 relative z-10" />
                             <h3 className="font-title text-[0.7rem] tracking-[0.2em] uppercase text-purple-rich mb-3 relative z-10">{b.title}</h3>
-                            <p className="font-body text-[0.8rem] text-charcoal-muted/60 leading-relaxed relative z-10">{b.desc}</p>
+                            <p className="font-body text-[0.8rem] text-charcoal-muted leading-relaxed relative z-10">{b.desc}</p>
                         </div>
                     ))}
                 </div>
@@ -167,7 +167,7 @@ export default function BulkOrders() {
                         {FAQS.map(q => (
                             <div key={q.q} className="border-b border-purple-rich/10 pb-6 group cursor-pointer">
                                 <h4 className="font-title text-[0.75rem] tracking-[0.1em] text-purple-rich mb-3 group-hover:text-gold transition-colors">{q.q}</h4>
-                                <p className="font-body text-[0.82rem] text-charcoal-muted/55 leading-relaxed">{q.a}</p>
+                                <p className="font-body text-[0.82rem] text-charcoal-muted leading-relaxed">{q.a}</p>
                             </div>
                         ))}
                     </div>
