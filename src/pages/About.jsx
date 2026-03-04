@@ -44,7 +44,7 @@ export default function About() {
                         <span className="text-gold text-xs">✦</span>
                         <div className="h-px flex-1 max-w-[60px]" style={{ background: 'linear-gradient(to left, transparent, #C9A84C)' }} />
                     </div>
-                    <p className="font-body text-cream-soft/45 max-w-md mx-auto leading-relaxed text-sm">
+                    <p className="font-body text-cream-soft max-w-md mx-auto leading-relaxed text-sm">
                         Born from a passion for beauty and the belief that everyone deserves a space they love
                     </p>
                 </motion.div>
@@ -63,7 +63,7 @@ export default function About() {
 
                     <motion.div initial={{ opacity: 0, x: 36 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
                         <p className="eyebrow mb-4">Founder's Note</p>
-                        <h2 className="text-display-md text-purple-rich font-display mb-6">
+                        <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display mb-6">
                             A Letter From<br />
                             <em className="italic">
                                 <AnimatedGradientText speed={2} colorFrom="#3B1F6B" colorTo="#C9A84C">Our Founder</AnimatedGradientText>
@@ -90,7 +90,7 @@ export default function About() {
             <section className="section-base bg-cream">
                 <div className="section-header-center">
                     <p className="eyebrow mb-3">Our Foundation</p>
-                    <h2 className="text-display-md text-purple-rich font-display">Mission & Values</h2>
+                    <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Mission & Values</h2>
                     <div className="gold-divider" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-[1100px] mx-auto">
@@ -106,7 +106,7 @@ export default function About() {
                         >
                             <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-gold-deep via-gold to-gold-bright scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
                             <Icon size={22} className="text-gold mx-auto mb-4" />
-                            <h3 className="font-title text-[0.72rem] tracking-[0.2em] uppercase text-purple-rich mb-3">{title}</h3>
+                            <h3 className="font-title text-[0.72rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light mb-3">{title}</h3>
                             <p className="font-body text-[0.82rem] text-charcoal-muted leading-relaxed">{desc}</p>
                         </motion.div>
                     ))}
@@ -133,9 +133,9 @@ export default function About() {
                             viewport={{ once: true }}
                         >
                             <div className={`w-[calc(50%-2rem)] ${i % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
-                                <div className="border border-gold/15 bg-white/4 p-5 hover:border-gold/35 transition-colors">
+                                <div className="border border-gold/15 bg-card/4 p-5 hover:border-gold/35 transition-colors">
                                     <div className="font-title text-lg text-gold font-semibold mb-2">{item.year}</div>
-                                    <p className="font-body text-[0.82rem] text-cream-soft/50 leading-relaxed">{item.event}</p>
+                                    <p className="font-body text-[0.82rem] text-cream-soft leading-relaxed">{item.event}</p>
                                 </div>
                             </div>
                             <div className="w-3 h-3 rounded-full bg-gold border-2 border-charcoal-mid z-10 shrink-0 mx-[calc(1rem-1.5px)]" />
@@ -149,7 +149,7 @@ export default function About() {
             <section className="section-base bg-cream">
                 <div className="section-header-center">
                     <p className="eyebrow mb-3">The People</p>
-                    <h2 className="text-display-md text-purple-rich font-display">Meet the Team</h2>
+                    <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Meet the Team</h2>
                     <div className="gold-divider" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-[750px] mx-auto">

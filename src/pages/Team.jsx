@@ -14,7 +14,7 @@ export default function Team() {
                     <p className="eyebrow mb-4" style={{ color: 'rgba(201,168,76,0.65)' }}>The Visionaries</p>
                     <h1 className="text-display-lg text-cream-soft font-display mb-4">Our Team</h1>
                     <div className="gold-divider" />
-                    <p className="font-body text-cream-soft/45 text-sm mt-4">The artisans and experts behind the Maxims brand</p>
+                    <p className="font-body text-cream-soft text-sm mt-4">The artisans and experts behind the Maxims brand</p>
                 </motion.div>
             </section>
 
@@ -43,8 +43,8 @@ export default function Team() {
                                 )}
                                 <div className="absolute inset-0 bg-gold/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                                 <div className="absolute bottom-5 left-5 right-5 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all">
-                                    <a href={t.linkedin_url || '#'} className="w-9 h-9 bg-white flex items-center justify-center text-purple-rich hover:bg-gold hover:text-purple-darkest transition-colors z-10"><Linkedin size={14} /></a>
-                                    <a href={`mailto:${t.email || ''}`} className="w-9 h-9 bg-white flex items-center justify-center text-purple-rich hover:bg-gold hover:text-purple-darkest transition-colors z-10"><Mail size={14} /></a>
+                                    <a href={t.linkedin_url || '#'} className="w-9 h-9 bg-card flex items-center justify-center text-purple-rich dark:text-gold-light hover:bg-gold hover:text-purple-darkest dark:text-cream-soft transition-colors z-10"><Linkedin size={14} /></a>
+                                    <a href={`mailto:${t.email || ''}`} className="w-9 h-9 bg-card flex items-center justify-center text-purple-rich dark:text-gold-light hover:bg-gold hover:text-purple-darkest dark:text-cream-soft transition-colors z-10"><Mail size={14} /></a>
                                 </div>
                             </div>
                             <h3 className="font-editorial text-2xl text-charcoal mb-1">{t.name}</h3>
@@ -59,7 +59,7 @@ export default function Team() {
             <section className="section-base bg-cream text-center">
                 <motion.div className="max-w-[700px] mx-auto p-16 border-2 border-dashed border-purple-rich/10"
                     initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}>
-                    <h2 className="text-display-md text-purple-rich font-display mb-6">Join Our Vision</h2>
+                    <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display mb-6">Join Our Vision</h2>
                     <p className="font-body text-[0.88rem] text-charcoal-muted mb-10 leading-relaxed">
                         We're always looking for talented designers, project managers, and creative spirits. Think you'd be a good fit for Maxims?
                     </p>

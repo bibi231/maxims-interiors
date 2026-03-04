@@ -44,11 +44,11 @@ function MessageDetailModal({ msg, onClose, canWrite, userId }) {
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gold/10">
                     <div>
                         <div className="font-title text-[0.8rem] tracking-[0.15em] text-gold">Message #{msg.id.slice(0, 8)}</div>
-                        <div className="font-body text-[0.72rem] text-cream-soft/30 mt-0.5">
+                        <div className="font-body text-[0.72rem] text-cream-soft mt-0.5">
                             {new Date(msg.created_at).toLocaleDateString('en-NG', { dateStyle: 'long', timeStyle: 'short' })}
                         </div>
                     </div>
-                    <button onClick={onClose} className="text-cream-soft/30 hover:text-gold transition-colors"><X size={18} /></button>
+                    <button onClick={onClose} className="text-cream-soft hover:text-gold transition-colors"><X size={18} /></button>
                 </div>
 
                 <div className="p-6 space-y-5">
@@ -56,17 +56,17 @@ function MessageDetailModal({ msg, onClose, canWrite, userId }) {
                         <div className="font-title text-[0.55rem] tracking-[0.25em] uppercase text-gold/50 mb-3">Sender</div>
                         <div className="bg-charcoal border border-gold/8 p-4 space-y-2">
                             <div className="flex items-center gap-2.5">
-                                <UserIcon size={12} className="text-cream-soft/25 shrink-0" />
-                                <span className="font-body text-[0.82rem] text-cream-soft/60">{msg.name}</span>
+                                <UserIcon size={12} className="text-cream-soft shrink-0" />
+                                <span className="font-body text-[0.82rem] text-cream-soft">{msg.name}</span>
                             </div>
                             <div className="flex items-center gap-2.5">
-                                <Mail size={12} className="text-cream-soft/25 shrink-0" />
-                                <span className="font-body text-[0.82rem] text-cream-soft/60">{msg.email}</span>
+                                <Mail size={12} className="text-cream-soft shrink-0" />
+                                <span className="font-body text-[0.82rem] text-cream-soft">{msg.email}</span>
                             </div>
                             {msg.phone && (
                                 <div className="flex items-center gap-2.5">
-                                    <Phone size={12} className="text-cream-soft/25 shrink-0" />
-                                    <span className="font-body text-[0.82rem] text-cream-soft/60">{msg.phone}</span>
+                                    <Phone size={12} className="text-cream-soft shrink-0" />
+                                    <span className="font-body text-[0.82rem] text-cream-soft">{msg.phone}</span>
                                 </div>
                             )}
                         </div>
@@ -78,7 +78,7 @@ function MessageDetailModal({ msg, onClose, canWrite, userId }) {
                             <div className="font-title text-[0.55rem] tracking-[0.25em] uppercase text-gold bg-gold/10 px-2 py-0.5">{msg.service}</div>
                         </div>
 
-                        <p className="font-body text-[0.82rem] text-cream-soft/70 bg-charcoal border border-gold/8 p-4 whitespace-pre-wrap leading-relaxed">
+                        <p className="font-body text-[0.82rem] text-cream-soft bg-charcoal border border-gold/8 p-4 whitespace-pre-wrap leading-relaxed">
                             {msg.message}
                         </p>
                     </div>
@@ -86,7 +86,7 @@ function MessageDetailModal({ msg, onClose, canWrite, userId }) {
                     {msg.status === 'replied' && (
                         <div>
                             <div className="font-title text-[0.55rem] tracking-[0.25em] uppercase text-green-400 mb-2">Replied By: {msg.replied_profile?.full_name || 'Admin'}</div>
-                            <p className="font-body text-[0.82rem] text-cream-soft/50 bg-green-400/5 border border-green-400/10 p-4 whitespace-pre-wrap italic">
+                            <p className="font-body text-[0.82rem] text-cream-soft bg-green-400/5 border border-green-400/10 p-4 whitespace-pre-wrap italic">
                                 {msg.reply_text}
                             </p>
                         </div>
@@ -96,10 +96,10 @@ function MessageDetailModal({ msg, onClose, canWrite, userId }) {
                         <div>
                             <div className="font-title text-[0.55rem] tracking-[0.25em] uppercase text-gold/50 mb-3">Send Reply via App</div>
                             <textarea placeholder="Type your reply to the client..." value={replyText} onChange={e => setReplyText(e.target.value)}
-                                className="w-full bg-charcoal border border-gold/10 p-3 font-body text-[0.82rem] text-cream-soft/70 placeholder:text-cream-soft/20 focus:outline-none focus:border-gold/35 mb-3 resize-none" rows={4} />
+                                className="w-full bg-charcoal border border-gold/10 p-3 font-body text-[0.82rem] text-cream-soft placeholder:text-cream-soft focus:outline-none focus:border-gold/35 mb-3 resize-none" rows={4} />
 
                             <button onClick={handleReply} disabled={saving || !replyText.trim()}
-                                className="w-full bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.65rem] tracking-[0.18em] uppercase py-3 hover:shadow-gold transition-all disabled:opacity-40">
+                                className="w-full bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest dark:text-cream-soft font-title text-[0.65rem] tracking-[0.18em] uppercase py-3 hover:shadow-gold transition-all disabled:opacity-40">
                                 {saving ? 'Sending Reply...' : 'Mark Replied & Send'}
                             </button>
                         </div>
@@ -124,7 +124,7 @@ export default function Messages() {
             <div className="flex items-center justify-between mb-6">
                 <div>
                     <h1 className="font-title text-xl text-cream-soft tracking-wide">Contact Messages</h1>
-                    <p className="font-body text-[0.75rem] text-cream-soft/30 mt-0.5">{messages.length} total records</p>
+                    <p className="font-body text-[0.75rem] text-cream-soft mt-0.5">{messages.length} total records</p>
                 </div>
             </div>
 
@@ -135,7 +135,7 @@ export default function Messages() {
                             className={cn('px-3 py-1.5 font-title text-[0.55rem] tracking-[0.15em] uppercase border transition-all',
                                 statusFilter === s
                                     ? s === 'all' ? 'bg-gold/10 border-gold/30 text-gold' : cn(STATUS_STYLE[s], 'border')
-                                    : 'border-gold/8 text-cream-soft/30 hover:border-gold/20')}>
+                                    : 'border-gold/8 text-cream-soft hover:border-gold/20')}>
                             {s}
                         </button>
                     ))}
@@ -148,7 +148,7 @@ export default function Messages() {
                         <thead>
                             <tr className="border-b border-gold/8">
                                 {['Date', 'Sender', 'Service', 'Status', ''].map(h => (
-                                    <th key={h} className="px-5 py-3.5 text-left font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/22">{h}</th>
+                                    <th key={h} className="px-5 py-3.5 text-left font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft">{h}</th>
                                 ))}
                             </tr>
                         </thead>
@@ -162,7 +162,7 @@ export default function Messages() {
                                     </tr>
                                 ))
                             ) : messages.length === 0 ? (
-                                <tr><td colSpan={5} className="px-5 py-12 text-center font-body text-[0.8rem] text-cream-soft/20">No messages found</td></tr>
+                                <tr><td colSpan={5} className="px-5 py-12 text-center font-body text-[0.8rem] text-cream-soft">No messages found</td></tr>
                             ) : (
                                 messages.map(msg => (
                                     <tr key={msg.id} className="border-b border-gold/5 hover:bg-gold/3 transition-colors cursor-pointer" onClick={() => setSelected(msg)}>
@@ -170,10 +170,10 @@ export default function Messages() {
                                             <div className="font-title text-[0.7rem] text-gold/75">{new Date(msg.created_at).toLocaleDateString('en-NG', { month: 'short', day: 'numeric' })}</div>
                                         </td>
                                         <td className="px-5 py-4">
-                                            <div className="font-body text-[0.82rem] text-cream-soft/65">{msg.name}</div>
-                                            <div className="font-body text-[0.68rem] text-cream-soft/28">{msg.email}</div>
+                                            <div className="font-body text-[0.82rem] text-cream-soft">{msg.name}</div>
+                                            <div className="font-body text-[0.68rem] text-cream-soft">{msg.email}</div>
                                         </td>
-                                        <td className="px-5 py-4 font-body text-[0.78rem] text-cream-soft/40">
+                                        <td className="px-5 py-4 font-body text-[0.78rem] text-cream-soft">
                                             {msg.service}
                                         </td>
                                         <td className="px-5 py-4">
@@ -182,7 +182,7 @@ export default function Messages() {
                                             </span>
                                         </td>
                                         <td className="px-5 py-4 text-right">
-                                            <button className="text-cream-soft/20 hover:text-gold transition-colors" onClick={e => { e.stopPropagation(); setSelected(msg) }}>
+                                            <button className="text-cream-soft hover:text-gold transition-colors" onClick={e => { e.stopPropagation(); setSelected(msg) }}>
                                                 <Eye size={14} />
                                             </button>
                                         </td>

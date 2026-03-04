@@ -55,7 +55,7 @@ export default function InteriorDecor() {
             <section className="section-base bg-cream-soft">
                 <div className="section-header-center">
                     <p className="eyebrow mb-3">Our Expertise</p>
-                    <h2 className="text-display-md text-purple-rich font-display">Design Services</h2>
+                    <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Design Services</h2>
                     <div className="gold-divider" />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-[1200px] mx-auto">
@@ -64,7 +64,7 @@ export default function InteriorDecor() {
                             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }} viewport={{ once: true }}>
                             <div className="absolute top-0 left-0 w-full h-[2px] bg-gold scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
                             <div className="text-4xl mb-5">{s.icon}</div>
-                            <h3 className="font-title text-[0.8rem] tracking-[0.2em] uppercase text-purple-rich mb-3">{s.title}</h3>
+                            <h3 className="font-title text-[0.8rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light mb-3">{s.title}</h3>
                             <p className="font-body text-[0.85rem] text-charcoal-muted leading-relaxed mb-6">{s.desc}</p>
                             <Link to="/contact" className="font-title text-[0.6rem] tracking-[0.2em] text-gold opacity-0 group-hover:opacity-100 transition-opacity">Enquire <ArrowRight size={10} className="inline ml-1" /></Link>
                         </motion.div>
@@ -86,7 +86,7 @@ export default function InteriorDecor() {
                             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} viewport={{ once: true }}>
                             <div className="w-12 h-12 rounded-full border border-gold bg-charcoal-mid text-gold font-title text-sm flex items-center justify-center mx-auto mb-6">{s.num}</div>
                             <h3 className="font-title text-[0.7rem] tracking-[0.2em] uppercase text-cream-soft mb-3">{s.title}</h3>
-                            <p className="font-body text-[0.78rem] text-cream-soft/40 leading-relaxed">{s.desc}</p>
+                            <p className="font-body text-[0.78rem] text-cream-soft leading-relaxed">{s.desc}</p>
                         </motion.div>
                     ))}
                 </div>
@@ -96,13 +96,13 @@ export default function InteriorDecor() {
             <section className="section-base bg-cream">
                 <div className="section-header-center">
                     <p className="eyebrow mb-3">Aesthetic Range</p>
-                    <h2 className="text-display-md text-purple-rich font-display">Design Styles</h2>
+                    <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Design Styles</h2>
                     <div className="gold-divider" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[1000px] mx-auto">
                     {STYLES.map(s => (
                         <div key={s.name} className="p-6 border border-purple-rich/10 hover:border-gold hover:bg-gold/5 transition-all text-center group cursor-default">
-                            <h3 className="font-editorial text-xl text-purple-rich mb-2 group-hover:text-gold transition-colors">{s.name}</h3>
+                            <h3 className="font-editorial text-xl text-purple-rich dark:text-gold-light mb-2 group-hover:text-gold transition-colors">{s.name}</h3>
                             <p className="font-body text-[0.8rem] text-charcoal-muted">{s.desc}</p>
                         </div>
                     ))}
@@ -113,19 +113,19 @@ export default function InteriorDecor() {
             <section id="packages" className="section-base bg-cream-soft">
                 <div className="section-header-center">
                     <p className="eyebrow mb-3">Transparent Value</p>
-                    <h2 className="text-display-md text-purple-rich font-display">Pricing Packages</h2>
+                    <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Pricing Packages</h2>
                     <div className="gold-divider" />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-[1100px] mx-auto">
                     {PACKAGES.map(p => (
-                        <motion.div key={p.name} className={`relative p-12 border ${p.featured ? 'bg-purple-rich border-gold shadow-gold-lg' : 'bg-white border-purple-rich/10'}`}
+                        <motion.div key={p.name} className={`relative p-12 border ${p.featured ? 'bg-purple-rich border-gold shadow-gold-lg' : 'bg-card border-purple-rich/10'}`}
                             initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                            {p.featured && <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gold text-purple-darkest font-title text-[0.55rem] tracking-[0.3em] uppercase py-2 px-4">Most Popular</div>}
-                            <h3 className={`font-title text-[0.75rem] tracking-[0.3em] uppercase mb-2 ${p.featured ? 'text-gold' : 'text-purple-rich'}`}>{p.name}</h3>
+                            {p.featured && <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gold text-purple-darkest dark:text-cream-soft font-title text-[0.55rem] tracking-[0.3em] uppercase py-2 px-4">Most Popular</div>}
+                            <h3 className={`font-title text-[0.75rem] tracking-[0.3em] uppercase mb-2 ${p.featured ? 'text-gold' : 'text-purple-rich dark:text-gold-light'}`}>{p.name}</h3>
                             <div className={`font-editorial text-4xl mb-8 ${p.featured ? 'text-cream-soft' : 'text-charcoal'}`}>{p.price}</div>
                             <ul className="space-y-4 mb-10">
                                 {p.features.map(f => (
-                                    <li key={f} className={`flex gap-3 items-center font-body text-[0.82rem] ${p.featured ? 'text-cream-soft/60' : 'text-charcoal-muted'}`}>
+                                    <li key={f} className={`flex gap-3 items-center font-body text-[0.82rem] ${p.featured ? 'text-cream-soft' : 'text-charcoal-muted'}`}>
                                         <Check size={14} className="text-gold shrink-0" /> {f}
                                     </li>
                                 ))}

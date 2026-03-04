@@ -65,7 +65,7 @@ function ProjectModal({ project, onClose, onSave }) {
                 onClick={e => e.stopPropagation()}>
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gold/10 sticky top-0 bg-charcoal-mid z-10">
                     <h2 className="font-title text-[0.9rem] tracking-[0.15em] text-gold">{project ? 'Edit Project' : 'New Project'}</h2>
-                    <button onClick={onClose} className="text-cream-soft/30 hover:text-gold transition-colors"><X size={18} /></button>
+                    <button onClick={onClose} className="text-cream-soft hover:text-gold transition-colors"><X size={18} /></button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-5">
@@ -83,7 +83,7 @@ function ProjectModal({ project, onClose, onSave }) {
                             ) : (
                                 <div className="text-center group-hover:scale-105 transition-transform duration-300">
                                     <UploadCloud size={24} className="text-gold/40 mx-auto mb-2" />
-                                    <span className="font-body text-[0.7rem] text-cream-soft/50 group-hover:text-gold transition-colors">Click to upload cover image</span>
+                                    <span className="font-body text-[0.7rem] text-cream-soft group-hover:text-gold transition-colors">Click to upload cover image</span>
                                 </div>
                             )}
                             {(imageFile || project?.image_url) && (
@@ -128,20 +128,20 @@ function ProjectModal({ project, onClose, onSave }) {
                     <div className="flex flex-wrap gap-6 pt-2">
                         <label className="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" checked={formData.is_published} onChange={e => setFormData({ ...formData, is_published: e.target.checked })} className="accent-gold" />
-                            <span className="font-title text-[0.6rem] tracking-wider text-cream-soft/70 uppercase">Published</span>
+                            <span className="font-title text-[0.6rem] tracking-wider text-cream-soft uppercase">Published</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" checked={formData.is_featured} onChange={e => setFormData({ ...formData, is_featured: e.target.checked })} className="accent-gold" />
-                            <span className="font-title text-[0.6rem] tracking-wider text-cream-soft/70 uppercase">Featured (Home)</span>
+                            <span className="font-title text-[0.6rem] tracking-wider text-cream-soft uppercase">Featured (Home)</span>
                         </label>
                         <div className="flex items-center gap-2 ml-auto">
-                            <span className="font-title text-[0.6rem] tracking-wider text-cream-soft/70 uppercase">Sort Order</span>
+                            <span className="font-title text-[0.6rem] tracking-wider text-cream-soft uppercase">Sort Order</span>
                             <input type="number" value={formData.sort_order} onChange={e => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })} className="w-16 bg-charcoal border border-gold/10 px-2 py-1 font-body text-sm text-cream-soft text-center focus:border-gold/40 outline-none" />
                         </div>
                     </div>
 
                     <button type="submit" disabled={saving}
-                        className="w-full bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.65rem] tracking-[0.18em] uppercase py-3 hover:shadow-gold transition-all mt-4 disabled:opacity-50">
+                        className="w-full bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest dark:text-cream-soft font-title text-[0.65rem] tracking-[0.18em] uppercase py-3 hover:shadow-gold transition-all mt-4 disabled:opacity-50">
                         {saving ? 'Saving...' : 'Save Project'}
                     </button>
                 </form>
@@ -180,7 +180,7 @@ export default function Gallery() {
             <div className="flex items-center justify-between mb-6">
                 <div>
                     <h1 className="font-title text-xl text-cream-soft tracking-wide">Gallery Projects</h1>
-                    <p className="font-body text-[0.75rem] text-cream-soft/30 mt-0.5">{projects.length} total projects</p>
+                    <p className="font-body text-[0.75rem] text-cream-soft mt-0.5">{projects.length} total projects</p>
                 </div>
                 {canWrite('gallery') && (
                     <button onClick={() => setIsAdding(true)} className="flex items-center gap-2 bg-gold/10 text-gold border border-gold/20 px-4 py-2 font-title text-[0.6rem] tracking-widest uppercase hover:bg-gold/20 transition-all">
@@ -191,9 +191,9 @@ export default function Gallery() {
 
             <div className="flex items-center gap-3 mb-5">
                 <div className="relative">
-                    <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-cream-soft/25" />
+                    <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-cream-soft" />
                     <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search projects..."
-                        className="bg-charcoal border border-gold/10 pl-8 pr-4 py-2 font-body text-[0.8rem] text-cream-soft/70 placeholder:text-cream-soft/20 focus:outline-none focus:border-gold/35 w-64 transition-colors" />
+                        className="bg-charcoal border border-gold/10 pl-8 pr-4 py-2 font-body text-[0.8rem] text-cream-soft placeholder:text-cream-soft focus:outline-none focus:border-gold/35 w-64 transition-colors" />
                 </div>
             </div>
 
@@ -203,7 +203,7 @@ export default function Gallery() {
                         <thead>
                             <tr className="border-b border-gold/8">
                                 {['Project', 'Location', 'Client', 'Visibility', 'Order', ''].map(h => (
-                                    <th key={h} className="px-5 py-3.5 text-left font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/22">{h}</th>
+                                    <th key={h} className="px-5 py-3.5 text-left font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft">{h}</th>
                                 ))}
                             </tr>
                         </thead>
@@ -217,7 +217,7 @@ export default function Gallery() {
                                     </tr>
                                 ))
                             ) : filtered.length === 0 ? (
-                                <tr><td colSpan={6} className="px-5 py-12 text-center font-body text-[0.8rem] text-cream-soft/20">No projects found</td></tr>
+                                <tr><td colSpan={6} className="px-5 py-12 text-center font-body text-[0.8rem] text-cream-soft">No projects found</td></tr>
                             ) : (
                                 filtered.map(p => (
                                     <tr key={p.id} className="border-b border-gold/5 hover:bg-gold/3 transition-colors cursor-pointer" onClick={() => setSelected(p)}>
@@ -230,30 +230,30 @@ export default function Gallery() {
                                                 </div>
                                                 <div>
                                                     <div className="font-title text-[0.7rem] text-gold/75">{p.title}</div>
-                                                    <div className="font-body text-[0.65rem] text-cream-soft/40 mt-0.5">{p.category}</div>
+                                                    <div className="font-body text-[0.65rem] text-cream-soft mt-0.5">{p.category}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-5 py-3 font-body text-[0.75rem] text-cream-soft/50">
+                                        <td className="px-5 py-3 font-body text-[0.75rem] text-cream-soft">
                                             {p.location || '-'}
                                         </td>
-                                        <td className="px-5 py-3 font-body text-[0.75rem] text-cream-soft/50">
+                                        <td className="px-5 py-3 font-body text-[0.75rem] text-cream-soft">
                                             {p.client_name || '-'}
                                         </td>
                                         <td className="px-5 py-3">
                                             <div className="flex gap-2">
                                                 {p.is_published && <span className="px-2 py-0.5 bg-green-400/10 border border-green-400/20 text-green-400 font-title text-[0.5rem] tracking-wider uppercase">Live</span>}
                                                 {p.is_featured && <span className="px-2 py-0.5 bg-gold/10 border border-gold/20 text-gold font-title text-[0.5rem] tracking-wider uppercase">Featured</span>}
-                                                {!p.is_published && !p.is_featured && <span className="px-2 py-0.5 border border-cream-soft/10 text-cream-soft/30 font-title text-[0.5rem] tracking-wider uppercase">Draft</span>}
+                                                {!p.is_published && !p.is_featured && <span className="px-2 py-0.5 border border-cream-soft/10 text-cream-soft font-title text-[0.5rem] tracking-wider uppercase">Draft</span>}
                                             </div>
                                         </td>
-                                        <td className="px-5 py-3 font-title text-[0.7rem] text-cream-soft/40">
+                                        <td className="px-5 py-3 font-title text-[0.7rem] text-cream-soft">
                                             {p.sort_order}
                                         </td>
                                         <td className="px-5 py-3">
                                             <div className="flex justify-end gap-3">
                                                 {canWrite('gallery') && (
-                                                    <button className="text-cream-soft/20 hover:text-red-400 transition-colors" onClick={(e) => handleDelete(e, p.id)}>
+                                                    <button className="text-cream-soft hover:text-red-400 transition-colors" onClick={(e) => handleDelete(e, p.id)}>
                                                         <Trash2 size={14} />
                                                     </button>
                                                 )}

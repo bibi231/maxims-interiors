@@ -63,7 +63,7 @@ export default function AdminLogin() {
         {/* Card */}
         <div className="bg-charcoal-mid border border-gold/12 p-8">
           <h1 className="font-display text-2xl text-cream-soft mb-1">Welcome back</h1>
-          <p className="font-body text-[0.8rem] text-cream-soft/35 mb-8">Sign in to your admin account</p>
+          <p className="font-body text-[0.8rem] text-cream-soft mb-8">Sign in to your admin account</p>
 
           {error && (
             <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 px-4 py-3 mb-5">
@@ -80,18 +80,18 @@ export default function AdminLogin() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-cream-soft/40 block mb-2">
+              <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-cream-soft block mb-2">
                 Email Address
               </label>
               <input
                 type="email" value={email} onChange={e => setEmail(e.target.value)} required
                 className="w-full bg-charcoal border border-gold/12 px-4 py-3 font-body text-[0.88rem] text-cream-soft
-                           placeholder:text-cream-soft/20 focus:outline-none focus:border-gold/50 transition-colors"
+                           placeholder:text-cream-soft focus:outline-none focus:border-gold/50 transition-colors"
                 placeholder="you@maximsinteriors.com"
               />
             </div>
             <div>
-              <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-cream-soft/40 block mb-2">
+              <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-cream-soft block mb-2">
                 Password
               </label>
               <div className="relative">
@@ -99,11 +99,11 @@ export default function AdminLogin() {
                   type={showPwd ? 'text' : 'password'} value={password}
                   onChange={e => setPassword(e.target.value)} required
                   className="w-full bg-charcoal border border-gold/12 px-4 py-3 pr-11 font-body text-[0.88rem] text-cream-soft
-                             placeholder:text-cream-soft/20 focus:outline-none focus:border-gold/50 transition-colors"
+                             placeholder:text-cream-soft focus:outline-none focus:border-gold/50 transition-colors"
                   placeholder="••••••••"
                 />
                 <button type="button" onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-cream-soft/30 hover:text-gold transition-colors">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-cream-soft hover:text-gold transition-colors">
                   {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -111,7 +111,7 @@ export default function AdminLogin() {
 
             <button
               type="submit" disabled={loading}
-              className="w-full bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest
+              className="w-full bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest dark:text-cream-soft
                          font-title text-[0.68rem] tracking-[0.2em] uppercase py-3.5 flex items-center justify-center gap-2
                          hover:shadow-[0_4px_20px_rgba(201,168,76,0.35)] transition-all disabled:opacity-50 mt-2"
             >
@@ -124,12 +124,12 @@ export default function AdminLogin() {
           </form>
 
           <button onClick={handleForgotPassword}
-            className="w-full text-center font-body text-[0.75rem] text-cream-soft/25 hover:text-gold transition-colors mt-5">
+            className="w-full text-center font-body text-[0.75rem] text-cream-soft hover:text-gold transition-colors mt-5">
             Forgot your password?
           </button>
         </div>
 
-        <p className="text-center font-body text-[0.65rem] text-cream-soft/15 mt-6">
+        <p className="text-center font-body text-[0.65rem] text-cream-soft mt-6">
           Maxims Interiors & Home Goods · Admin Portal
         </p>
       </motion.div>

@@ -245,7 +245,7 @@
   }
 
   .card-luxury {
-    @apply bg-white border border-purple-rich/10 transition-all duration-300 cursor-pointer;
+    @apply bg-card border border-purple-rich/10 transition-all duration-300 cursor-pointer;
   }
 
   .card-luxury:hover {

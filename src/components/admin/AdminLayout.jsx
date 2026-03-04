@@ -31,7 +31,7 @@ const ROLE_BADGES = {
   senior_designer:  'bg-purple-light/15 text-purple-light',
   project_manager:  'bg-blue-400/15 text-blue-400',
   shop_manager:     'bg-green-400/15 text-green-400',
-  content_editor:   'bg-cream-soft/10 text-cream-soft/60',
+  content_editor:   'bg-cream-soft/10 text-cream-soft',
 }
 
 export default function AdminLayout({ children, badgeCounts = {} }) {
@@ -56,7 +56,7 @@ export default function AdminLayout({ children, badgeCounts = {} }) {
           <div className="font-title text-[0.9rem] tracking-[0.28em] text-gold font-bold leading-none">MAXIMS</div>
           <div className="font-body text-[0.42rem] tracking-[0.2em] uppercase text-gold/30 mt-1">Admin Dashboard</div>
         </div>
-        <button onClick={() => setSidebarOpen(false)} className="text-cream-soft/20 hover:text-gold transition-colors hidden lg:block">
+        <button onClick={() => setSidebarOpen(false)} className="text-cream-soft hover:text-gold transition-colors hidden lg:block">
           <ChevronRight size={14} />
         </button>
       </div>
@@ -71,7 +71,7 @@ export default function AdminLayout({ children, badgeCounts = {} }) {
             }
           </div>
           <div className="min-w-0">
-            <div className="font-title text-[0.68rem] tracking-wide text-cream-soft/80 truncate leading-none mb-1">
+            <div className="font-title text-[0.68rem] tracking-wide text-cream-soft truncate leading-none mb-1">
               {profile?.full_name}
             </div>
             <span className={cn('font-body text-[0.5rem] tracking-[0.1em] uppercase px-1.5 py-0.5', ROLE_BADGES[profile?.role])}>
@@ -94,15 +94,15 @@ export default function AdminLayout({ children, badgeCounts = {} }) {
                 'flex items-center gap-3 px-3 py-2.5 mb-0.5 font-body text-[0.75rem] transition-all duration-200 group relative',
                 isActive
                   ? 'bg-gold/10 text-gold'
-                  : 'text-cream-soft/45 hover:text-gold hover:bg-gold/5',
+                  : 'text-cream-soft hover:text-gold hover:bg-gold/5',
               )}
               onClick={() => setMobileSidebar(false)}
             >
               {isActive && <div className="absolute left-0 top-1 bottom-1 w-0.5 bg-gold" />}
-              <item.icon size={15} className={isActive ? 'text-gold' : 'text-cream-soft/30 group-hover:text-gold'} />
+              <item.icon size={15} className={isActive ? 'text-gold' : 'text-cream-soft group-hover:text-gold'} />
               <span className="flex-1">{item.label}</span>
               {count > 0 && (
-                <span className="bg-gold text-purple-darkest font-body font-black text-[0.5rem] leading-none px-1.5 py-0.5 min-w-[18px] text-center">
+                <span className="bg-gold text-purple-darkest dark:text-cream-soft font-body font-black text-[0.5rem] leading-none px-1.5 py-0.5 min-w-[18px] text-center">
                   {count > 99 ? '99+' : count}
                 </span>
               )}
@@ -114,11 +114,11 @@ export default function AdminLayout({ children, badgeCounts = {} }) {
       {/* Bottom actions */}
       <div className="px-3 py-3 border-t border-gold/8 space-y-0.5">
         <Link to="/" target="_blank"
-          className="flex items-center gap-3 px-3 py-2 font-body text-[0.72rem] text-cream-soft/25 hover:text-gold transition-colors">
+          className="flex items-center gap-3 px-3 py-2 font-body text-[0.72rem] text-cream-soft hover:text-gold transition-colors">
           <span className="text-xs">↗</span> View Live Site
         </Link>
         <button onClick={handleSignOut}
-          className="w-full flex items-center gap-3 px-3 py-2 font-body text-[0.72rem] text-cream-soft/25 hover:text-red-400 transition-colors">
+          className="w-full flex items-center gap-3 px-3 py-2 font-body text-[0.72rem] text-cream-soft hover:text-red-400 transition-colors">
           <LogOut size={13} /> Sign Out
         </button>
       </div>
@@ -153,7 +153,7 @@ export default function AdminLayout({ children, badgeCounts = {} }) {
             const isActive = location.pathname === item.path
             return (
               <Link key={item.path} to={item.path}
-                className={cn('p-2.5 mb-0.5 transition-colors', isActive ? 'text-gold' : 'text-cream-soft/25 hover:text-gold')}>
+                className={cn('p-2.5 mb-0.5 transition-colors', isActive ? 'text-gold' : 'text-cream-soft hover:text-gold')}>
                 <item.icon size={16} />
               </Link>
             )
@@ -190,10 +190,10 @@ export default function AdminLayout({ children, badgeCounts = {} }) {
         <header className="h-14 bg-charcoal border-b border-gold/8 flex items-center justify-between px-5 shrink-0">
           <div className="flex items-center gap-3">
             <button onClick={() => { setSidebarOpen(s => !s); setMobileSidebar(s => !s) }}
-              className="text-cream-soft/30 hover:text-gold transition-colors">
+              className="text-cream-soft hover:text-gold transition-colors">
               <Menu size={18} />
             </button>
-            <div className="hidden sm:flex items-center gap-1 text-cream-soft/25 font-body text-[0.72rem]">
+            <div className="hidden sm:flex items-center gap-1 text-cream-soft font-body text-[0.72rem]">
               <span>Admin</span>
               {location.pathname !== '/admin' && (
                 <>
@@ -206,15 +206,15 @@ export default function AdminLayout({ children, badgeCounts = {} }) {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <button className="relative text-cream-soft/30 hover:text-gold transition-colors">
+            <button className="relative text-cream-soft hover:text-gold transition-colors">
               <Bell size={16} />
               {(badgeCounts.total ?? 0) > 0 && (
-                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-gold rounded-full text-[0.4rem] text-purple-darkest font-black flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-gold rounded-full text-[0.4rem] text-purple-darkest dark:text-cream-soft font-black flex items-center justify-center">
                   {badgeCounts.total > 9 ? '9+' : badgeCounts.total}
                 </span>
               )}
             </button>
-            <Link to="/admin/settings" className="text-cream-soft/30 hover:text-gold transition-colors">
+            <Link to="/admin/settings" className="text-cream-soft hover:text-gold transition-colors">
               <User size={16} />
             </Link>
           </div>

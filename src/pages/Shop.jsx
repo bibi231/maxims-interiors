@@ -78,7 +78,7 @@ export default function Shop() {
                         <span className="text-gold text-xs">✦</span>
                         <div className="h-px w-16" style={{ background: 'linear-gradient(to left, transparent, #C9A84C)' }} />
                     </div>
-                    <p className="font-body text-cream-soft/45 text-sm mt-2">Curated luxury for every corner of your home</p>
+                    <p className="font-body text-cream-soft text-sm mt-2">Curated luxury for every corner of your home</p>
                 </motion.div>
             </section>
 
@@ -93,7 +93,7 @@ export default function Shop() {
                             >{c}</button>
                         ))}
                     </div>
-                    <div className="flex items-center gap-2 border border-purple-rich/12 px-3 py-2 bg-white">
+                    <div className="flex items-center gap-2 border border-purple-rich/12 px-3 py-2 bg-card">
                         <Filter size={12} className="text-charcoal-muted" />
                         <select value={sort} onChange={e => setSort(e.target.value)} className="font-body text-[0.72rem] text-charcoal-muted bg-transparent outline-none cursor-pointer">
                             <option value="featured">Featured</option>
@@ -135,7 +135,7 @@ export default function Shop() {
                                         )}
                                         {p.badge && <div className={`absolute top-2.5 left-2.5 font-body font-black text-[0.5rem] tracking-[0.12em] uppercase px-2 py-0.5 ${badgeClass(p.badge)}`}>{p.badge}</div>}
                                         <button onClick={() => setWished(w => w.includes(p.id) ? w.filter(x => x !== p.id) : [...w, p.id])}
-                                            className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/85 flex items-center justify-center shadow">
+                                            className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-card/85 flex items-center justify-center shadow">
                                             <Heart size={13} fill={wished.includes(p.id) ? '#C9A84C' : 'none'} color={wished.includes(p.id) ? '#C9A84C' : '#7A7890'} />
                                         </button>
                                         <div className="absolute inset-0 bg-purple-rich/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -148,8 +148,8 @@ export default function Shop() {
                                         <p className="eyebrow text-[0.52rem] mb-1">{p.category}</p>
                                         <h3 className="font-editorial text-[0.88rem] text-charcoal mb-2">{p.name}</h3>
                                         <div className="flex items-center justify-between">
-                                            <span className="font-title text-[0.82rem] text-purple-rich font-semibold">{fmt(p.price)}</span>
-                                            <button onClick={() => addCart(p)} className="w-8 h-8 bg-purple-rich hover:bg-gold hover:text-purple-darkest text-gold-light flex items-center justify-center transition-colors">
+                                            <span className="font-title text-[0.82rem] text-purple-rich dark:text-gold-light font-semibold">{fmt(p.price)}</span>
+                                            <button onClick={() => addCart(p)} className="w-8 h-8 bg-purple-rich hover:bg-gold hover:text-purple-darkest dark:text-cream-soft text-gold-light flex items-center justify-center transition-colors">
                                                 <ShoppingBag size={13} />
                                             </button>
                                         </div>
@@ -167,7 +167,7 @@ export default function Shop() {
                     <div className="relative z-10">
                         <p className="eyebrow mb-3" style={{ color: 'rgba(201,168,76,0.65)' }}>Staff Pick of the Season</p>
                         <h2 className="text-display-md text-cream-soft font-display mb-3">The Elara Collection</h2>
-                        <p className="font-body text-[0.88rem] text-cream-soft/45 leading-relaxed mb-5 max-w-md">
+                        <p className="font-body text-[0.88rem] text-cream-soft leading-relaxed mb-5 max-w-md">
                             Our bestselling living room series — handcrafted velvet chairs, sculptural side tables, and curated accent pieces.
                         </p>
                         <button className="btn-maxims btn-gold-solid">Shop the Collection</button>

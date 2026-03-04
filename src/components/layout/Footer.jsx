@@ -32,7 +32,7 @@ export default function Footer() {
                             <div className="font-body text-[0.46rem] tracking-[0.2em] uppercase text-gold/40 mt-1">Interiors & Home Goods</div>
                         </div>
                     </Link>
-                    <p className="font-body text-[0.82rem] text-cream-soft/35 leading-relaxed mb-6">
+                    <p className="font-body text-[0.82rem] text-cream-soft leading-relaxed mb-6">
                         Where luxury meets living. Transforming spaces into timeless experiences through refined design, curated home goods, and uncompromising craftsmanship.
                     </p>
                     <div className="flex gap-2">
@@ -51,7 +51,7 @@ export default function Footer() {
                     <ul className="space-y-2.5">
                         {NAV_LINKS.map((path, i) => (
                             <li key={path}>
-                                <Link to={path} className="font-body text-[0.8rem] text-cream-soft/38 hover:text-gold hover:pl-1 transition-all duration-200 block">
+                                <Link to={path} className="font-body text-[0.8rem] text-cream-soft hover:text-gold hover:pl-1 transition-all duration-200 block">
                                     {NAV_NAMES[i]}
                                 </Link>
                             </li>
@@ -65,7 +65,7 @@ export default function Footer() {
                     <ul className="space-y-2.5">
                         {SERVICES.map((s) => (
                             <li key={s}>
-                                <Link to="/interior-decor" className="font-body text-[0.8rem] text-cream-soft/38 hover:text-gold hover:pl-1 transition-all duration-200 block">
+                                <Link to="/interior-decor" className="font-body text-[0.8rem] text-cream-soft hover:text-gold hover:pl-1 transition-all duration-200 block">
                                     {s}
                                 </Link>
                             </li>
@@ -80,7 +80,7 @@ export default function Footer() {
                         {CONTACT.map(({ icon: Icon, text }) => (
                             <div key={text} className="flex gap-3 items-start">
                                 <Icon size={13} className="text-gold mt-0.5 shrink-0" />
-                                <span className="font-body text-[0.79rem] text-cream-soft/38 leading-relaxed">{text}</span>
+                                <span className="font-body text-[0.79rem] text-cream-soft leading-relaxed">{text}</span>
                             </div>
                         ))}
                     </div>
@@ -90,10 +90,10 @@ export default function Footer() {
             {/* Bottom bar */}
             <div className="border-t border-gold/8 mx-8 md:mx-16">
                 <div className="max-w-screen-xl mx-auto py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-                    <p className="font-body text-[0.7rem] text-cream-soft/22 tracking-wide">
+                    <p className="font-body text-[0.7rem] text-cream-soft tracking-wide">
                         © {new Date().getFullYear()} Maxims Interiors & Home Goods. All Rights Reserved.
                     </p>
-                    <div className="flex items-center gap-4 text-[0.7rem] text-cream-soft/22">
+                    <div className="flex items-center gap-4 text-[0.7rem] text-cream-soft">
                         <a href="#" className="hover:text-gold transition-colors">Privacy</a>
                         <span>·</span>
                         <a href="#" className="hover:text-gold transition-colors">Terms</a>

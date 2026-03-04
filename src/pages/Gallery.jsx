@@ -34,7 +34,7 @@ export default function Gallery() {
                         <div className="h-px w-16" style={{ background: 'linear-gradient(to right, transparent, #C9A84C)' }} /><span className="text-gold text-xs">✦</span>
                         <div className="h-px w-16" style={{ background: 'linear-gradient(to left, transparent, #C9A84C)' }} />
                     </div>
-                    <p className="font-body text-cream-soft/45 text-sm mt-2">200+ completed projects across Nigeria</p>
+                    <p className="font-body text-cream-soft text-sm mt-2">200+ completed projects across Nigeria</p>
                 </motion.div>
             </section>
 
@@ -69,7 +69,7 @@ export default function Gallery() {
                                     <p className="eyebrow text-gold mb-1">{p.category}</p>
                                     <h3 className="font-editorial text-base text-white font-normal mb-1">{p.title}</h3>
                                     <div className="flex items-center justify-between">
-                                        <p className="font-body text-[0.68rem] text-cream-soft/80">📍 {p.location} · {p.year}</p>
+                                        <p className="font-body text-[0.68rem] text-cream-soft">📍 {p.location} · {p.year}</p>
                                         <ExternalLink size={13} className="text-gold/80" />
                                     </div>
                                 </div>
@@ -91,7 +91,7 @@ export default function Gallery() {
                         </div>
                         <div>
                             <p className="eyebrow mb-3">Case Study</p>
-                            <h2 className="text-display-md text-purple-rich font-display mb-4">{spotlight.title}</h2>
+                            <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display mb-4">{spotlight.title}</h2>
                             <p className="font-body text-[0.88rem] text-charcoal-muted leading-relaxed mb-6">{spotlight.description || 'A comprehensive interior redesign spanning living, dining, and suite spaces. A cohesive statement of modern Nigerian luxury.'}</p>
                             <div className="grid grid-cols-2 gap-4">
                                 {[['Location', spotlight.location || '-'], ['Size', spotlight.sqft || '-'], ['Duration', spotlight.duration || '-'], ['Year', spotlight.year || '-']].map(([l, v]) => (
@@ -130,7 +130,7 @@ export default function Gallery() {
                             <div className="p-8">
                                 <p className="eyebrow text-gold mb-1">{lb.category}</p>
                                 <h3 className="text-display-md text-cream-soft font-display mb-2">{lb.title}</h3>
-                                <p className="font-body text-cream-soft/45">📍 {lb.location} · Completed {lb.year}</p>
+                                <p className="font-body text-cream-soft">📍 {lb.location} · Completed {lb.year}</p>
                                 <button className="absolute top-4 right-4 text-gold/60 hover:text-gold" onClick={() => setLb(null)}><X size={24} /></button>
                             </div>
                             <div className="absolute top-1/2 -left-16 -translate-y-1/2 hidden lg:block">

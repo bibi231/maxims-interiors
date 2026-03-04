@@ -81,17 +81,17 @@ export default function Contact() {
                     {METHODS.map(m => (
                         <motion.div key={m.title} className="card-luxury p-10 text-center group" whileHover={{ y: -5 }}>
                             <m.icon size={28} className="text-gold mx-auto mb-6" />
-                            <h3 className="font-title text-[0.75rem] tracking-[0.2em] uppercase text-purple-rich mb-3">{m.title}</h3>
+                            <h3 className="font-title text-[0.75rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light mb-3">{m.title}</h3>
                             <p className="font-body text-xs text-charcoal-muted leading-relaxed mb-6">{m.desc}</p>
                             <button className="btn-maxims btn-outline-gold text-[0.55rem] px-5 py-2.5">{m.cta}</button>
                         </motion.div>
                     ))}
                 </div>
 
-                <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-12 bg-white border border-purple-rich/5 overflow-hidden">
+                <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-12 bg-card border border-purple-rich/5 overflow-hidden">
                     {/* Form */}
                     <div className="p-12 lg:p-16">
-                        <h2 className="text-display-md text-purple-rich font-display mb-8">Send a Message</h2>
+                        <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display mb-8">Send a Message</h2>
                         <form className="grid grid-cols-1 sm:grid-cols-2 gap-6" onSubmit={handleMsgSubmit}>
                             <div className="sm:col-span-2 flex flex-col gap-2">
                                 <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-gold">Full Name</label>
@@ -131,11 +131,11 @@ export default function Contact() {
                             <h3 className="font-editorial text-2xl text-cream-soft mb-8">Book a Meeting</h3>
                             <form onSubmit={handleApptSubmit}>
                                 <div className="mb-6 flex gap-3">
-                                    <input type="text" required placeholder="Name" value={apptName} onChange={e => setApptName(e.target.value)} className="w-1/2 bg-transparent border-b border-gold/30 px-2 py-2 text-sm text-cream-soft focus:border-gold outline-none placeholder:text-cream-soft/30" disabled={apptStatus === 'submitting'} />
-                                    <input type="email" required placeholder="Email" value={apptEmail} onChange={e => setApptEmail(e.target.value)} className="w-1/2 bg-transparent border-b border-gold/30 px-2 py-2 text-sm text-cream-soft focus:border-gold outline-none placeholder:text-cream-soft/30" disabled={apptStatus === 'submitting'} />
+                                    <input type="text" required placeholder="Name" value={apptName} onChange={e => setApptName(e.target.value)} className="w-1/2 bg-transparent border-b border-gold/30 px-2 py-2 text-sm text-cream-soft focus:border-gold outline-none placeholder:text-cream-soft" disabled={apptStatus === 'submitting'} />
+                                    <input type="email" required placeholder="Email" value={apptEmail} onChange={e => setApptEmail(e.target.value)} className="w-1/2 bg-transparent border-b border-gold/30 px-2 py-2 text-sm text-cream-soft focus:border-gold outline-none placeholder:text-cream-soft" disabled={apptStatus === 'submitting'} />
                                 </div>
                                 <div className="mb-8">
-                                    <input type="date" required value={apptDate} onChange={e => setApptDate(e.target.value)} min={new Date().toISOString().split('T')[0]} className="w-full bg-transparent border-b border-gold/30 px-2 py-2 text-sm text-cream-soft focus:border-gold outline-none placeholder:text-cream-soft/30" disabled={apptStatus === 'submitting'} />
+                                    <input type="date" required value={apptDate} onChange={e => setApptDate(e.target.value)} min={new Date().toISOString().split('T')[0]} className="w-full bg-transparent border-b border-gold/30 px-2 py-2 text-sm text-cream-soft focus:border-gold outline-none placeholder:text-cream-soft" disabled={apptStatus === 'submitting'} />
                                 </div>
                                 <div className="grid grid-cols-2 gap-3 mb-10">
                                     {TIMES.map(t => (
@@ -153,11 +153,11 @@ export default function Contact() {
                             <div className="space-y-4 mb-10">
                                 <div className="flex gap-4 items-start">
                                     <MapPin className="text-gold shrink-0 mt-1" size={16} />
-                                    <p className="font-body text-sm text-cream-soft/50 leading-relaxed">123 Design Boulevard, Wuse 2, Abuja, FCT, Nigeria</p>
+                                    <p className="font-body text-sm text-cream-soft leading-relaxed">123 Design Boulevard, Wuse 2, Abuja, FCT, Nigeria</p>
                                 </div>
                                 <div className="flex gap-4 items-center">
                                     <Phone className="text-gold shrink-0" size={16} />
-                                    <p className="font-body text-sm text-cream-soft/50">+234 800 000 0000</p>
+                                    <p className="font-body text-sm text-cream-soft">+234 800 000 0000</p>
                                 </div>
                             </div>
                             <div className="flex gap-3">

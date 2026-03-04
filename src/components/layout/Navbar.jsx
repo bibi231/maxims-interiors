@@ -43,10 +43,10 @@ function MegaDrop({ items }) {
                         className="group flex flex-col gap-0.5 px-4 py-3
                        hover:bg-gold/8 transition-colors duration-200"
                     >
-                        <span className="font-title text-[0.7rem] tracking-[0.15em] uppercase text-cream-soft/80 group-hover:text-gold transition-colors">
+                        <span className="font-title text-[0.7rem] tracking-[0.15em] uppercase text-cream-soft group-hover:text-gold transition-colors">
                             {item.label}
                         </span>
-                        <span className="font-body text-[0.72rem] text-cream-soft/35 group-hover:text-cream-soft/55 transition-colors">
+                        <span className="font-body text-[0.72rem] text-cream-soft group-hover:text-cream-soft transition-colors">
                             {item.desc}
                         </span>
                     </Link>
@@ -122,7 +122,7 @@ export default function Navbar() {
                                 <button className={cn(
                                     'flex items-center gap-1.5 px-3 py-2',
                                     'font-body text-[0.7rem] font-bold tracking-[0.12em] uppercase transition-colors duration-200',
-                                    transparent ? 'text-cream-soft/75 hover:text-gold' : 'text-cream-soft/65 hover:text-gold',
+                                    transparent ? 'text-cream-soft hover:text-gold' : 'text-cream-soft hover:text-gold',
                                 )}>
                                     {item.label}
                                     <ChevronDown size={11} className={cn('transition-transform duration-200', activeDropdown === item.label && 'rotate-180')} />
@@ -142,8 +142,8 @@ export default function Navbar() {
                                         location.pathname === item.path
                                             ? 'text-gold after:w-[80%]'
                                             : transparent
-                                                ? 'text-cream-soft/75 hover:text-gold after:w-0 hover:after:w-[80%]'
-                                                : 'text-cream-soft/65 hover:text-gold after:w-0 hover:after:w-[80%]',
+                                                ? 'text-cream-soft hover:text-gold after:w-0 hover:after:w-[80%]'
+                                                : 'text-cream-soft hover:text-gold after:w-0 hover:after:w-[80%]',
                                     )}
                                 >
                                     {item.label}
@@ -211,7 +211,7 @@ export default function Navbar() {
                                             {item.children.map((c) => (
                                                 <Link
                                                     key={c.path} to={c.path}
-                                                    className="block px-4 py-2.5 font-title text-[0.8rem] tracking-[0.08em] text-cream-soft/70 hover:text-gold hover:pl-6 transition-all duration-200 border-b border-gold/5"
+                                                    className="block px-4 py-2.5 font-title text-[0.8rem] tracking-[0.08em] text-cream-soft hover:text-gold hover:pl-6 transition-all duration-200 border-b border-gold/5"
                                                 >
                                                     {c.label}
                                                 </Link>
@@ -222,7 +222,7 @@ export default function Navbar() {
                                             key={item.path} to={item.path}
                                             className={cn(
                                                 'block px-4 py-3 font-title text-[0.95rem] tracking-[0.08em] transition-all duration-200 border-b border-gold/5',
-                                                location.pathname === item.path ? 'text-gold' : 'text-cream-soft/70 hover:text-gold hover:pl-6',
+                                                location.pathname === item.path ? 'text-gold' : 'text-cream-soft hover:text-gold hover:pl-6',
                                             )}
                                         >
                                             {item.label}

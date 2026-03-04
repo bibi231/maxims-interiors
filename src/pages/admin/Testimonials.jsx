@@ -45,7 +45,7 @@ function TestimonialModal({ testi, onClose, onSave }) {
                 onClick={e => e.stopPropagation()}>
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gold/10">
                     <h2 className="font-title text-[0.9rem] tracking-[0.15em] text-gold">{testi ? 'Edit Testimonial' : 'New Testimonial'}</h2>
-                    <button onClick={onClose} className="text-cream-soft/30 hover:text-gold transition-colors"><X size={18} /></button>
+                    <button onClick={onClose} className="text-cream-soft hover:text-gold transition-colors"><X size={18} /></button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
@@ -82,16 +82,16 @@ function TestimonialModal({ testi, onClose, onSave }) {
                     <div className="flex flex-wrap gap-6 pt-2 pb-2">
                         <label className="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" checked={formData.is_published} onChange={e => setFormData({ ...formData, is_published: e.target.checked })} className="accent-gold" />
-                            <span className="font-title text-[0.6rem] tracking-wider text-cream-soft/70 uppercase">Published</span>
+                            <span className="font-title text-[0.6rem] tracking-wider text-cream-soft uppercase">Published</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" checked={formData.is_featured} onChange={e => setFormData({ ...formData, is_featured: e.target.checked })} className="accent-gold" />
-                            <span className="font-title text-[0.6rem] tracking-wider text-cream-soft/70 uppercase">Featured (Home)</span>
+                            <span className="font-title text-[0.6rem] tracking-wider text-cream-soft uppercase">Featured (Home)</span>
                         </label>
                     </div>
 
                     <button type="submit" disabled={saving}
-                        className="w-full bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.65rem] tracking-[0.18em] uppercase py-3 hover:shadow-gold transition-all mt-4 disabled:opacity-50">
+                        className="w-full bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest dark:text-cream-soft font-title text-[0.65rem] tracking-[0.18em] uppercase py-3 hover:shadow-gold transition-all mt-4 disabled:opacity-50">
                         {saving ? 'Saving...' : 'Save Testimonial'}
                     </button>
                 </form>
@@ -125,7 +125,7 @@ export default function Testimonials() {
             <div className="flex items-center justify-between mb-6">
                 <div>
                     <h1 className="font-title text-xl text-cream-soft tracking-wide">Testimonials</h1>
-                    <p className="font-body text-[0.75rem] text-cream-soft/30 mt-0.5">{testimonials.length} reviews</p>
+                    <p className="font-body text-[0.75rem] text-cream-soft mt-0.5">{testimonials.length} reviews</p>
                 </div>
                 {canWrite('testimonials') && (
                     <button onClick={() => setIsAdding(true)} className="flex items-center gap-2 bg-gold/10 text-gold border border-gold/20 px-4 py-2 font-title text-[0.6rem] tracking-widest uppercase hover:bg-gold/20 transition-all">
@@ -140,7 +140,7 @@ export default function Testimonials() {
                         <thead>
                             <tr className="border-b border-gold/8">
                                 {['Client', 'Quote excerpt', 'Rating', 'Visibility', ''].map(h => (
-                                    <th key={h} className="px-5 py-3.5 text-left font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/22">{h}</th>
+                                    <th key={h} className="px-5 py-3.5 text-left font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft">{h}</th>
                                 ))}
                             </tr>
                         </thead>
@@ -154,15 +154,15 @@ export default function Testimonials() {
                                     </tr>
                                 ))
                             ) : testimonials.length === 0 ? (
-                                <tr><td colSpan={5} className="px-5 py-12 text-center font-body text-[0.8rem] text-cream-soft/20">No testimonials found</td></tr>
+                                <tr><td colSpan={5} className="px-5 py-12 text-center font-body text-[0.8rem] text-cream-soft">No testimonials found</td></tr>
                             ) : (
                                 testimonials.map(t => (
                                     <tr key={t.id} className="border-b border-gold/5 hover:bg-gold/3 transition-colors cursor-pointer" onClick={() => setSelected(t)}>
                                         <td className="px-5 py-4">
                                             <div className="font-title text-[0.7rem] text-gold/75">{t.client_name}</div>
-                                            <div className="font-body text-[0.65rem] text-cream-soft/40 mt-0.5">{t.client_role}</div>
+                                            <div className="font-body text-[0.65rem] text-cream-soft mt-0.5">{t.client_role}</div>
                                         </td>
-                                        <td className="px-5 py-4 font-body text-[0.75rem] text-cream-soft/70 max-w-xs truncate">
+                                        <td className="px-5 py-4 font-body text-[0.75rem] text-cream-soft max-w-xs truncate">
                                             "{t.quote}"
                                         </td>
                                         <td className="px-5 py-4">
@@ -176,13 +176,13 @@ export default function Testimonials() {
                                             <div className="flex gap-2">
                                                 {t.is_published && <span className="px-2 py-0.5 bg-green-400/10 border border-green-400/20 text-green-400 font-title text-[0.5rem] tracking-wider uppercase">Live</span>}
                                                 {t.is_featured && <span className="px-2 py-0.5 bg-gold/10 border border-gold/20 text-gold font-title text-[0.5rem] tracking-wider uppercase">Featured</span>}
-                                                {!t.is_published && !t.is_featured && <span className="px-2 py-0.5 border border-cream-soft/10 text-cream-soft/30 font-title text-[0.5rem] tracking-wider uppercase">Draft</span>}
+                                                {!t.is_published && !t.is_featured && <span className="px-2 py-0.5 border border-cream-soft/10 text-cream-soft font-title text-[0.5rem] tracking-wider uppercase">Draft</span>}
                                             </div>
                                         </td>
                                         <td className="px-5 py-4">
                                             <div className="flex justify-end gap-3">
                                                 {canWrite('testimonials') && (
-                                                    <button className="text-cream-soft/20 hover:text-red-400 transition-colors" onClick={(e) => handleDelete(e, t.id)}>
+                                                    <button className="text-cream-soft hover:text-red-400 transition-colors" onClick={(e) => handleDelete(e, t.id)}>
                                                         <Trash2 size={14} />
                                                     </button>
                                                 )}
