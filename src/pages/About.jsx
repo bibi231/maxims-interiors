@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Award, Heart, Star, Users } from 'lucide-react'
 import { useTeamMembers } from '@/hooks/useData'
 import { getStorageUrl, BUCKETS } from '@/lib/supabase'
+import { AnimatedGradientText } from '@/components/ui/animated-gradient-text'
 
 const VALUES = [
     { icon: Award, title: 'Excellence', desc: 'We hold every project to an uncompromising standard — from concept to installation.' },
@@ -35,7 +36,9 @@ export default function About() {
                     transition={{ duration: 0.75 }}
                 >
                     <p className="eyebrow mb-4" style={{ color: 'rgba(201,168,76,0.65)' }}>Who We Are</p>
-                    <h1 className="text-display-lg text-cream-soft font-display mb-4">Our Story</h1>
+                    <h1 className="text-display-lg text-cream-soft font-display mb-4">
+                        <AnimatedGradientText speed={1.5} colorFrom="#E4C56A" colorTo="#FFFFFF">Our Story</AnimatedGradientText>
+                    </h1>
                     <div className="flex items-center justify-center gap-4 my-3">
                         <div className="h-px flex-1 max-w-[60px]" style={{ background: 'linear-gradient(to right, transparent, #C9A84C)' }} />
                         <span className="text-gold text-xs">✦</span>
@@ -61,7 +64,10 @@ export default function About() {
                     <motion.div initial={{ opacity: 0, x: 36 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
                         <p className="eyebrow mb-4">Founder's Note</p>
                         <h2 className="text-display-md text-purple-rich font-display mb-6">
-                            A Letter From<br /><em className="italic">Our Founder</em>
+                            A Letter From<br />
+                            <em className="italic">
+                                <AnimatedGradientText speed={2} colorFrom="#3B1F6B" colorTo="#C9A84C">Our Founder</AnimatedGradientText>
+                            </em>
                         </h2>
                         <p className="font-body text-[0.93rem] text-charcoal-muted/70 leading-[1.9] mb-4">
                             I started Maxims from a single belief: that beautiful spaces are not a luxury for the few — they are a right for everyone who wants to live with intention.

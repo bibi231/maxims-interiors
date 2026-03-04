@@ -8,6 +8,8 @@ import Hero3D from '@/components/sections/Hero3D'
 import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid'
 import { InfiniteMovingCards } from '@/components/ui/infinite-moving-cards'
 import { VelocityScroll } from '@/components/ui/velocity-scroll'
+import { AnimatedGradientText } from '@/components/ui/animated-gradient-text'
+import { ShinyButton } from '@/components/ui/shiny-button'
 
 /* ────────── DATA ────────────────────────────────────── */
 const SERVICES = [
@@ -81,7 +83,10 @@ export default function Home() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.9, duration: 0.85 }}
                     >
-                        Where Luxury<br /><em className="text-gold-light italic">Meets Living</em>
+                        Where Luxury<br />
+                        <em className="italic">
+                            <AnimatedGradientText className="text-display-xl" speed={1.5}>Meets Living</AnimatedGradientText>
+                        </em>
                     </motion.h1>
 
                     <motion.p
@@ -99,8 +104,10 @@ export default function Home() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 1.3, duration: 0.7 }}
                     >
-                        <Link to="/gallery" className="btn-maxims btn-gold-solid">
-                            Explore Our Work <ArrowRight size={14} />
+                        <Link to="/gallery">
+                            <ShinyButton className="bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest hover:shadow-gold rounded-none">
+                                <span className="flex items-center gap-2">Explore Our Work <ArrowRight size={14} /></span>
+                            </ShinyButton>
                         </Link>
                         <Link to="/contact" className="btn-maxims btn-outline-light">
                             Book Consultation
