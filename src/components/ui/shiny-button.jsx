@@ -27,7 +27,7 @@ const animationProps = {
 
 export const ShinyButton = React.forwardRef(({ children, className, ...props }, ref) => {
     return (
-        <motion.button
+        <motion.div
             ref={ref}
             className={cn(
                 "relative cursor-pointer rounded-lg border px-6 py-2 font-medium backdrop-blur-xl transition-shadow duration-300 ease-in-out hover:shadow bg-purple-rich/10 border-gold/10",
@@ -55,7 +55,7 @@ export const ShinyButton = React.forwardRef(({ children, className, ...props }, 
                 }}
                 className="absolute inset-0 z-10 block rounded-[inherit] p-px"
             />
-        </motion.button>
+        </motion.div>
     )
 })
 ShinyButton.displayName = "ShinyButton"
