@@ -1,0 +1,313 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   MAXIMS INTERIORS — GLOBAL STYLES
+   Tailwind + shadcn/ui tokens + Brand System
+============================================================ */
+
+@layer base {
+  :root {
+    /* shadcn/ui tokens — mapped to brand */
+    --background: 30 33% 97%;
+    /* cream-soft */
+    --foreground: 246 22% 15%;
+    /* charcoal */
+    --card: 0 0% 100%;
+    --card-foreground: 246 22% 15%;
+    --popover: 246 30% 10%;
+    --popover-foreground: 35 50% 95%;
+    --primary: 270 54% 27%;
+    /* purple-rich */
+    --primary-foreground: 43 56% 55%;
+    /* gold */
+    --secondary: 43 45% 54%;
+    /* gold */
+    --secondary-foreground: 270 54% 14%;
+    --muted: 30 20% 91%;
+    --muted-foreground: 246 15% 50%;
+    --accent: 43 56% 55%;
+    --accent-foreground: 270 54% 14%;
+    --destructive: 0 62% 38%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 270 20% 88%;
+    --input: 270 20% 88%;
+    --ring: 43 56% 55%;
+    --radius: 0rem;
+
+    /* Semantic Brand Colors for Light Mode */
+    --color-cream: #F0EBE6;
+    --color-cream-dark: #E1D9D4;
+    --color-cream-soft: #F7F5F8;
+    --color-charcoal: #12111A;
+    --color-charcoal-mid: #1E1C2C;
+    --color-charcoal-soft: #2A2840;
+    --color-charcoal-muted: #3D3B50;
+  }
+
+  .dark {
+    --background: 246 30% 8%;
+    --foreground: 35 50% 95%;
+    --card: 246 30% 10%;
+    --card-foreground: 35 50% 95%;
+    --popover: 246 30% 10%;
+    --popover-foreground: 35 50% 95%;
+    --primary: 43 56% 55%;
+    --primary-foreground: 270 54% 14%;
+    --secondary: 270 54% 27%;
+    --secondary-foreground: 43 56% 55%;
+    --muted: 246 22% 18%;
+    --muted-foreground: 246 15% 55%;
+    --accent: 270 54% 27%;
+    --accent-foreground: 43 56% 55%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 246 22% 20%;
+    --input: 246 22% 20%;
+    --ring: 43 56% 55%;
+
+    /* Semantic Brand Colors for Dark Mode (Inverted Light/Dark pairs) */
+    --color-cream: #1E1C2C;
+    /* Maps light cream to charcoal-mid */
+    --color-cream-dark: #2A2840;
+    /* Maps cream-dark to charcoal-soft */
+    --color-cream-soft: #12111A;
+    /* Maps light cream-soft to deep charcoal */
+
+    --color-charcoal: #F7F5F8;
+    /* Maps dark charcoal to cream-soft */
+    --color-charcoal-mid: #F0EBE6;
+    /* Maps charcoal-mid to cream */
+    --color-charcoal-soft: #E1D9D4;
+    /* Maps charcoal-soft to cream-dark */
+    --color-charcoal-muted: #E1D9D4;
+    /* Maps muted charcoal to cream-dark */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream-soft text-charcoal-muted font-body antialiased overflow-x-hidden;
+  }
+
+  ::selection {
+    background: #C9A84C;
+    color: #1C0D35;
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #12111A;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #C9A84C;
+    border-radius: 3px;
+  }
+}
+
+/* ============================================================
+   TYPOGRAPHY UTILITIES
+============================================================ */
+@layer components {
+  .font-display {
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  .font-title {
+    font-family: 'Cinzel', serif;
+  }
+
+  .font-editorial {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .eyebrow {
+    @apply font-body text-[0.65rem] font-bold tracking-[0.4em] uppercase text-gold;
+  }
+
+  .text-display-xl {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    line-height: 1.05;
+    font-weight: 300;
+  }
+
+  .text-display-lg {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 1.1;
+    font-weight: 300;
+  }
+
+  .text-display-md {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
+    line-height: 1.2;
+    font-weight: 400;
+  }
+
+  /* ============ BRAND BUTTONS ============ */
+  .btn-maxims {
+    @apply inline-flex items-center gap-2 font-title text-[0.68rem] font-semibold tracking-[0.2em] uppercase transition-all duration-300 cursor-pointer border-none outline-none;
+  }
+
+  .btn-gold-solid {
+    @apply btn-maxims px-8 py-3.5 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest;
+    box-shadow: 0 4px 20px rgba(201, 168, 76, 0.3);
+  }
+
+  .btn-gold-solid:hover {
+    @apply -translate-y-0.5;
+    box-shadow: 0 8px 30px rgba(201, 168, 76, 0.5);
+  }
+
+  .btn-outline-gold {
+    @apply btn-maxims px-8 py-3.5 bg-transparent text-gold border border-gold/60;
+  }
+
+  .btn-outline-gold:hover {
+    @apply bg-gold text-purple-darkest border-gold -translate-y-0.5;
+  }
+
+  .btn-outline-light {
+    @apply btn-maxims px-8 py-3.5 bg-transparent text-cream-soft border;
+    border-color: rgba(247, 245, 248, 0.3);
+  }
+
+  .btn-outline-light:hover {
+    @apply border-cream-soft -translate-y-0.5;
+    background-color: rgba(247, 245, 248, 0.1);
+  }
+
+  .btn-purple-solid {
+    @apply btn-maxims px-8 py-3.5 bg-purple-rich text-gold-light border border-gold/15;
+  }
+
+  .btn-purple-solid:hover {
+    @apply bg-purple-mid -translate-y-0.5 shadow-gold;
+  }
+
+  /* ============ SECTION PATTERNS ============ */
+  .section-base {
+    @apply px-6 py-24 md:px-16 lg:px-24;
+  }
+
+  .section-header-center {
+    @apply text-center mb-16;
+  }
+
+  .gold-divider {
+    @apply w-16 h-px mx-auto mt-5;
+    background: linear-gradient(to right, transparent, #C9A84C, transparent);
+  }
+
+  .gold-divider-left {
+    @apply w-16 h-px mt-4;
+    background: linear-gradient(to right, #C9A84C, transparent);
+  }
+
+  /* ============ ORNAMENTAL ============ */
+  .ornament-line {
+    @apply flex items-center gap-4 my-5;
+  }
+
+  .ornament-line::before,
+  .ornament-line::after {
+    content: '';
+    @apply flex-1 h-px;
+    background: linear-gradient(to right, transparent, #C9A84C);
+  }
+
+  .ornament-line::after {
+    background: linear-gradient(to left, transparent, #C9A84C);
+  }
+
+  /* ============ CARDS ============ */
+  .card-glass {
+    @apply bg-white/5 border border-gold/15 backdrop-blur-sm transition-all duration-300;
+  }
+
+  .card-glass:hover {
+    @apply border-gold/40 shadow-gold -translate-y-1;
+  }
+
+  .card-luxury {
+    @apply bg-white border border-purple-rich/10 transition-all duration-300 cursor-pointer;
+  }
+
+  .card-luxury:hover {
+    @apply border-gold/30 shadow-card-hover -translate-y-1.5;
+  }
+
+  /* ============ 21st.dev OVERRIDE TARGETS ============ */
+  /* These classes let 21st.dev components inherit brand colors */
+  .maxims-nav {
+    --nav-bg: rgba(12, 11, 20, 0.95);
+    --nav-border: rgba(201, 168, 76, 0.15);
+    --nav-text: rgba(250, 247, 242, 0.75);
+    --nav-text-active: #C9A84C;
+  }
+
+  .maxims-card {
+    --card-bg: #1E1C2C;
+    --card-border: rgba(201, 168, 76, 0.15);
+    --card-text: rgba(250, 247, 242, 0.8);
+  }
+
+  /* ============ PAGE HERO ============ */
+  .page-hero {
+    @apply relative flex items-center justify-center text-center overflow-hidden;
+    padding-top: 80px;
+    min-height: 400px;
+    background: #1E1C2C;
+  }
+
+  .page-hero-overlay {
+    @apply absolute inset-0;
+    background: radial-gradient(ellipse at center, rgba(59, 31, 107, 0.5) 0%, transparent 70%);
+  }
+
+  .page-hero-pattern {
+    @apply absolute inset-0;
+    background-image: repeating-linear-gradient(-45deg,
+        rgba(201, 168, 76, 0.03) 0px, rgba(201, 168, 76, 0.03) 1px,
+        transparent 1px, transparent 30px);
+  }
+
+  /* ============ ANIMATIONS ============ */
+  .animate-fade-up {
+    animation: fadeUp 0.7s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Grain texture overlay */
+  .grain::after {
+    content: '';
+    @apply absolute inset-0 pointer-events-none opacity-[0.04];
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  }
+}

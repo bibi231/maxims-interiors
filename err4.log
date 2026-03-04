@@ -1,0 +1,28 @@
+
+> maxims-interiors@1.0.0 build
+> vite build
+
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 1998 modules transformed.
+[31mx[39m Build failed in 6.49s
+[31merror during build:
+[31msrc/pages/About.jsx (4:9): "useTeam" is not exported by "src/hooks/useData.js", imported by "src/pages/About.jsx".[31m
+file: [36mC:/Users/bgadz/.gemini/antigravity/scratch/maxims-interiors/src/pages/About.jsx:4:9[31m
+[33m
+2: import { Link } from 'react-router-dom'
+3: import { ArrowRight, Award, Heart, Star, Users } from 'lucide-react'
+4: import { useTeam } from '@/hooks/useData'
+            ^
+5: import { getStorageUrl, BUCKETS } from '@/lib/supabase'
+[31m
+    at getRollupError (file:///C:/Users/bgadz/.gemini/antigravity/scratch/maxims-interiors/node_modules/rollup/dist/es/shared/parseAst.js:402:41)
+    at error (file:///C:/Users/bgadz/.gemini/antigravity/scratch/maxims-interiors/node_modules/rollup/dist/es/shared/parseAst.js:398:42)
+    at Module.error (file:///C:/Users/bgadz/.gemini/antigravity/scratch/maxims-interiors/node_modules/rollup/dist/es/shared/node-entry.js:17040:16)
+    at Module.traceVariable (file:///C:/Users/bgadz/.gemini/antigravity/scratch/maxims-interiors/node_modules/rollup/dist/es/shared/node-entry.js:17452:29)
+    at ModuleScope.findVariable (file:///C:/Users/bgadz/.gemini/antigravity/scratch/maxims-interiors/node_modules/rollup/dist/es/shared/node-entry.js:15070:39)
+    at FunctionScope.findVariable (file:///C:/Users/bgadz/.gemini/antigravity/scratch/maxims-interiors/node_modules/rollup/dist/es/shared/node-entry.js:5673:38)
+    at FunctionBodyScope.findVariable (file:///C:/Users/bgadz/.gemini/antigravity/scratch/maxims-interiors/node_modules/rollup/dist/es/shared/node-entry.js:5673:38)
+    at Identifier.bind (file:///C:/Users/bgadz/.gemini/antigravity/scratch/maxims-interiors/node_modules/rollup/dist/es/shared/node-entry.js:5447:40)
+    at CallExpression.bind (file:///C:/Users/bgadz/.gemini/antigravity/scratch/maxims-interiors/node_modules/rollup/dist/es/shared/node-entry.js:2829:23)
+    at CallExpression.bind (file:///C:/Users/bgadz/.gemini/antigravity/scratch/maxims-interiors/node_modules/rollup/dist/es/shared/node-entry.js:12179:15)[39m

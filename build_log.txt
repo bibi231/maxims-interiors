@@ -1,0 +1,117 @@
+
+> maxims-interiors@1.0.0 build
+> vite build
+
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32m???[39m 1944 modules transformed.
+node.exe : [31mx[39m 
+Build failed in 6.06s
+At line:1 char:1
++ & "C:\Program 
+Files\nodejs/node.exe" 
+"C:\Program 
+Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
+    + CategoryInfo         
+     : NotSpecifi    ed: 
+([31mx[39m B    uild 
+failed in 6.0    
+6s:String) [], Rem    
+oteException
+    + FullyQualifiedEr    
+rorId : NativeComm    
+andError
+ 
+[31merror during build:
+[31msrc/pages/Gallery.jsx 
+(2:9): "motion" is not 
+exported by "node_modules/r
+eact-router-dom/dist/index.
+js", imported by "src/pages
+/Gallery.jsx".[31m
+file: [36mC:/Users/bgadz/.
+gemini/antigravity/scratch/
+maxims-interiors/src/pages/
+Gallery.jsx:2:9[31m
+[33m
+1: import { useState } 
+from 'react'
+2: import { motion, 
+AnimatePresence } from 
+'react-router-dom'
+            ^
+3: import { X, 
+ChevronLeft, ChevronRight, 
+ExternalLink } from 
+'lucide-react'
+4: import { Link } from 
+'react-router-dom'
+[31m
+    at getRollupError (file
+:///C:/Users/bgadz/.gemini/
+antigravity/scratch/maxims-
+interiors/node_modules/roll
+up/dist/es/shared/parseAst.
+js:402:41)
+    at error (file:///C:/Us
+ers/bgadz/.gemini/antigravi
+ty/scratch/maxims-interiors
+/node_modules/rollup/dist/e
+s/shared/parseAst.js:398:42
+)
+    at Module.error (file:/
+//C:/Users/bgadz/.gemini/an
+tigravity/scratch/maxims-in
+teriors/node_modules/rollup
+/dist/es/shared/node-entry.
+js:17040:16)
+    at 
+Module.traceVariable (file:
+///C:/Users/bgadz/.gemini/a
+ntigravity/scratch/maxims-i
+nteriors/node_modules/rollu
+p/dist/es/shared/node-entry
+.js:17452:29)
+    at 
+ModuleScope.findVariable (f
+ile:///C:/Users/bgadz/.gemi
+ni/antigravity/scratch/maxi
+ms-interiors/node_modules/r
+ollup/dist/es/shared/node-e
+ntry.js:15070:39)
+    at 
+FunctionScope.findVariable 
+(file:///C:/Users/bgadz/.ge
+mini/antigravity/scratch/ma
+xims-interiors/node_modules
+/rollup/dist/es/shared/node
+-entry.js:5673:38)
+    at FunctionBodyScope.fi
+ndVariable (file:///C:/User
+s/bgadz/.gemini/antigravity
+/scratch/maxims-interiors/n
+ode_modules/rollup/dist/es/
+shared/node-entry.js:5673:3
+8)
+    at 
+MemberExpression.bind (file
+:///C:/Users/bgadz/.gemini/
+antigravity/scratch/maxims-
+interiors/node_modules/roll
+up/dist/es/shared/node-entr
+y.js:7392:49)
+    at CallExpression.bind 
+(file:///C:/Users/bgadz/.ge
+mini/antigravity/scratch/ma
+xims-interiors/node_modules
+/rollup/dist/es/shared/node
+-entry.js:2825:28)
+    at CallExpression.bind 
+(file:///C:/Users/bgadz/.ge
+mini/antigravity/scratch/ma
+xims-interiors/node_modules
+/rollup/dist/es/shared/node
+-entry.js:12179:15)[39m
