@@ -55,12 +55,12 @@ function ProductForm({ initial = BLANK, onSave, onClose, uploading, setUploading
 
   const Field = ({ label, children, half }) => (
     <div className={half ? '' : 'col-span-2 md:col-span-1'}>
-      <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/35 block mb-2">{label}</label>
+      <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft block mb-2">{label}</label>
       {children}
     </div>
   )
 
-  const inputCls = "w-full bg-charcoal border border-gold/10 px-3 py-2.5 font-body text-[0.85rem] text-cream-soft/80 placeholder:text-cream-soft/15 focus:outline-none focus:border-gold/40 transition-colors"
+  const inputCls = "w-full bg-charcoal border border-gold/10 px-3 py-2.5 font-body text-[0.85rem] text-cream-soft placeholder:text-cream-soft focus:outline-none focus:border-gold/40 transition-colors"
 
   return (
     <motion.div className="fixed inset-0 z-[300] bg-charcoal/85 backdrop-blur-sm flex items-center justify-center p-4"
@@ -70,7 +70,7 @@ function ProductForm({ initial = BLANK, onSave, onClose, uploading, setUploading
         onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-gold/10">
           <h2 className="font-display text-xl text-cream-soft">{initial.id ? 'Edit Product' : 'New Product'}</h2>
-          <button onClick={onClose} className="text-cream-soft/30 hover:text-gold"><X size={18} /></button>
+          <button onClick={onClose} className="text-cream-soft hover:text-gold"><X size={18} /></button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6">
@@ -93,14 +93,14 @@ function ProductForm({ initial = BLANK, onSave, onClose, uploading, setUploading
             <Field label="SKU"><input className={inputCls} value={form.sku} onChange={e => set('sku', e.target.value)} placeholder="MAX-CHR-001" /></Field>
             <Field label="Stock Quantity"><input className={inputCls} type="number" value={form.stock_qty} onChange={e => set('stock_qty', Number(e.target.value))} /></Field>
             <div className="col-span-2">
-              <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/35 block mb-2">Description</label>
+              <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft block mb-2">Description</label>
               <textarea className={inputCls + ' resize-none'} rows={3} value={form.description} onChange={e => set('description', e.target.value)} placeholder="Product description..." />
             </div>
           </div>
 
           {/* Images */}
           <div className="mb-5">
-            <div className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/35 mb-3">Product Images</div>
+            <div className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft mb-3">Product Images</div>
             <div className="flex flex-wrap gap-3 mb-3">
               {form.images.map((img, i) => (
                 <div key={i} className="relative w-20 h-20 border border-gold/15 overflow-hidden group">
@@ -109,12 +109,12 @@ function ProductForm({ initial = BLANK, onSave, onClose, uploading, setUploading
                     className="absolute inset-0 bg-red-500/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <Trash2 size={14} className="text-white" />
                   </button>
-                  {form.cover_image === img && <div className="absolute bottom-0 left-0 right-0 bg-gold/80 text-purple-darkest text-center font-title text-[0.4rem] tracking-wide py-0.5">COVER</div>}
+                  {form.cover_image === img && <div className="absolute bottom-0 left-0 right-0 bg-gold/80 text-purple-darkest dark:text-cream-soft text-center font-title text-[0.4rem] tracking-wide py-0.5">COVER</div>}
                 </div>
               ))}
               <label className={cn('w-20 h-20 border border-dashed border-gold/20 flex flex-col items-center justify-center cursor-pointer hover:border-gold/50 transition-colors', imgLoading && 'opacity-50 pointer-events-none')}>
-                <Upload size={16} className="text-cream-soft/25 mb-1" />
-                <span className="font-title text-[0.45rem] tracking-wider uppercase text-cream-soft/25">Upload</span>
+                <Upload size={16} className="text-cream-soft mb-1" />
+                <span className="font-title text-[0.45rem] tracking-wider uppercase text-cream-soft">Upload</span>
                 <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={imgLoading} />
               </label>
             </div>
@@ -123,7 +123,7 @@ function ProductForm({ initial = BLANK, onSave, onClose, uploading, setUploading
                 {form.images.map((img, i) => (
                   <button key={i} type="button" onClick={() => set('cover_image', img)}
                     className={cn('font-title text-[0.52rem] tracking-wider uppercase px-2.5 py-1 border transition-all',
-                      form.cover_image === img ? 'border-gold text-gold bg-gold/8' : 'border-gold/12 text-cream-soft/30 hover:border-gold/30')}>
+                      form.cover_image === img ? 'border-gold text-gold bg-gold/8' : 'border-gold/12 text-cream-soft hover:border-gold/30')}>
                     Set as Cover {i+1}
                   </button>
                 ))}
@@ -136,18 +136,18 @@ function ProductForm({ initial = BLANK, onSave, onClose, uploading, setUploading
             {[['Active', 'status', 'active', 'draft'], ['Featured', 'is_featured', true, false]].map(([label, key, on, off]) => (
               <button key={key} type="button" onClick={() => set(key, form[key] === on ? off : on)}
                 className="flex items-center gap-2.5 group">
-                {form[key] === on ? <ToggleRight size={22} className="text-gold" /> : <ToggleLeft size={22} className="text-cream-soft/25" />}
-                <span className="font-title text-[0.6rem] tracking-[0.15em] uppercase text-cream-soft/45 group-hover:text-cream-soft/70">{label}</span>
+                {form[key] === on ? <ToggleRight size={22} className="text-gold" /> : <ToggleLeft size={22} className="text-cream-soft" />}
+                <span className="font-title text-[0.6rem] tracking-[0.15em] uppercase text-cream-soft group-hover:text-cream-soft">{label}</span>
               </button>
             ))}
           </div>
 
           <div className="flex gap-3">
             <button type="submit" disabled={saving}
-              className="flex-1 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.65rem] tracking-[0.18em] uppercase py-3 disabled:opacity-50 hover:shadow-gold transition-all">
+              className="flex-1 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest dark:text-cream-soft font-title text-[0.65rem] tracking-[0.18em] uppercase py-3 disabled:opacity-50 hover:shadow-gold transition-all">
               {saving ? 'Saving...' : initial.id ? 'Update Product' : 'Create Product'}
             </button>
-            <button type="button" onClick={onClose} className="px-6 border border-gold/15 text-cream-soft/40 hover:border-gold/35 hover:text-cream-soft/70 font-title text-[0.62rem] tracking-wider uppercase transition-all">
+            <button type="button" onClick={onClose} className="px-6 border border-gold/15 text-cream-soft hover:border-gold/35 hover:text-cream-soft font-title text-[0.62rem] tracking-wider uppercase transition-all">
               Cancel
             </button>
           </div>
@@ -190,11 +190,11 @@ export default function Products() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-title text-xl text-cream-soft tracking-wide">Products</h1>
-          <p className="font-body text-[0.75rem] text-cream-soft/30 mt-0.5">{filtered.length} products</p>
+          <p className="font-body text-[0.75rem] text-cream-soft mt-0.5">{filtered.length} products</p>
         </div>
         {canWrite('products') && (
           <button onClick={() => setForm({})}
-            className="flex items-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.62rem] tracking-[0.18em] uppercase px-5 py-2.5 hover:shadow-gold transition-all">
+            className="flex items-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest dark:text-cream-soft font-title text-[0.62rem] tracking-[0.18em] uppercase px-5 py-2.5 hover:shadow-gold transition-all">
             <Plus size={13} /> Add Product
           </button>
         )}
@@ -203,15 +203,15 @@ export default function Products() {
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-5">
         <div className="relative">
-          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-cream-soft/25" />
+          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-cream-soft" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search products..."
-            className="bg-charcoal border border-gold/10 pl-8 pr-4 py-2 font-body text-[0.8rem] text-cream-soft/70 placeholder:text-cream-soft/20 focus:outline-none focus:border-gold/35 w-52 transition-colors" />
+            className="bg-charcoal border border-gold/10 pl-8 pr-4 py-2 font-body text-[0.8rem] text-cream-soft placeholder:text-cream-soft focus:outline-none focus:border-gold/35 w-52 transition-colors" />
         </div>
         <div className="flex gap-1.5 flex-wrap">
           {['all', ...CATEGORIES].map(c => (
             <button key={c} onClick={() => setCat(c)}
               className={cn('px-3 py-1.5 font-title text-[0.55rem] tracking-[0.15em] uppercase border transition-all capitalize',
-                cat === c ? 'bg-gold/10 border-gold/30 text-gold' : 'border-gold/8 text-cream-soft/28 hover:border-gold/20')}>
+                cat === c ? 'bg-gold/10 border-gold/30 text-gold' : 'border-gold/8 text-cream-soft hover:border-gold/20')}>
               {c}
             </button>
           ))}
@@ -238,33 +238,33 @@ export default function Products() {
                 ? <img src={p.cover_image} className="w-full h-full object-cover" />
                 : <div className="w-full h-full flex items-center justify-center"><span className="text-4xl opacity-20">📦</span></div>
               }
-              {p.badge && <div className="absolute top-2 left-2 bg-gold text-purple-darkest font-body font-black text-[0.48rem] tracking-widest uppercase px-2 py-0.5">{p.badge}</div>}
+              {p.badge && <div className="absolute top-2 left-2 bg-gold text-purple-darkest dark:text-cream-soft font-body font-black text-[0.48rem] tracking-widest uppercase px-2 py-0.5">{p.badge}</div>}
               {p.stock_qty <= 3 && p.stock_qty > 0 && <div className="absolute top-2 right-2 bg-yellow-500/90 text-white font-body font-black text-[0.45rem] tracking-wider uppercase px-2 py-0.5">Low Stock</div>}
               {p.stock_qty === 0 && <div className="absolute top-2 right-2 bg-red-600/90 text-white font-body font-black text-[0.45rem] tracking-wider uppercase px-2 py-0.5">Out of Stock</div>}
             </div>
             <div className="p-4">
               <div className="flex items-start justify-between gap-2 mb-1">
-                <h3 className="font-editorial text-[0.88rem] text-cream-soft/80 leading-snug flex-1">{p.name}</h3>
+                <h3 className="font-editorial text-[0.88rem] text-cream-soft leading-snug flex-1">{p.name}</h3>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                   {canWrite('products') && <>
-                    <button onClick={() => setForm(p)} className="w-7 h-7 border border-gold/15 text-cream-soft/30 hover:text-gold hover:border-gold flex items-center justify-center transition-all"><Edit2 size={11} /></button>
+                    <button onClick={() => setForm(p)} className="w-7 h-7 border border-gold/15 text-cream-soft hover:text-gold hover:border-gold flex items-center justify-center transition-all"><Edit2 size={11} /></button>
                     <button onClick={() => handleDelete(p.id)} disabled={deleting === p.id} className="w-7 h-7 border border-red-500/20 text-red-500/40 hover:text-red-400 hover:border-red-400 flex items-center justify-center transition-all"><Trash2 size={11} /></button>
                   </>}
                 </div>
               </div>
-              <div className="font-title text-[0.72rem] text-cream-soft/35 mb-3">{p.category}</div>
+              <div className="font-title text-[0.72rem] text-cream-soft mb-3">{p.category}</div>
               <div className="flex items-center justify-between">
                 <div>
                   <span className="font-title text-[0.88rem] text-gold font-semibold">{fmt(p.price)}</span>
-                  {p.compare_price > p.price && <span className="font-body text-[0.7rem] text-cream-soft/25 line-through ml-2">{fmt(p.compare_price)}</span>}
+                  {p.compare_price > p.price && <span className="font-body text-[0.7rem] text-cream-soft line-through ml-2">{fmt(p.compare_price)}</span>}
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-body text-[0.65rem] text-cream-soft/30">Stock: {p.stock_qty}</span>
+                  <span className="font-body text-[0.65rem] text-cream-soft">Stock: {p.stock_qty}</span>
                   {canWrite('products') && (
                     <button onClick={() => toggleStatus(p)} className="transition-colors">
                       {p.status === 'active'
                         ? <ToggleRight size={18} className="text-green-400" />
-                        : <ToggleLeft size={18} className="text-cream-soft/20" />}
+                        : <ToggleLeft size={18} className="text-cream-soft" />}
                     </button>
                   )}
                 </div>

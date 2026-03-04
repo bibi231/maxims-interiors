@@ -30,7 +30,7 @@ export default function Admin() {
                     ].map(m => (
                         <button key={m.id} onClick={() => setTab(m.id)}
                             className={`w-full flex items-center gap-3 px-4 py-3 font-title text-[0.65rem] tracking-[0.15em] uppercase transition-all
-                ${tab === m.id ? 'bg-gold text-purple-darkest' : 'text-cream-soft/50 hover:bg-gold/8 hover:text-gold'}`}>
+                ${tab === m.id ? 'bg-gold text-purple-darkest dark:text-cream-soft' : 'text-cream-soft hover:bg-gold/8 hover:text-gold'}`}>
                             <m.icon size={16} /> {m.label}
                         </button>
                     ))}
@@ -45,7 +45,7 @@ export default function Admin() {
             {/* Main */}
             <main className="flex-1 flex flex-col">
                 {/* Topbar */}
-                <header className="h-16 bg-white border-b border-purple-rich/5 flex items-center justify-between px-8">
+                <header className="h-16 bg-card border-b border-purple-rich/5 flex items-center justify-between px-8">
                     <div className="flex items-center gap-3 bg-cream-soft rounded-full px-4 py-1.5 border border-purple-rich/5">
                         <Search size={14} className="text-charcoal-muted" />
                         <input type="text" placeholder="Search anything..." className="bg-transparent outline-none text-[0.78rem] font-body text-charcoal w-64" />
@@ -58,9 +58,9 @@ export default function Admin() {
 
                 <div className="p-8">
                     <div className="flex items-center justify-between mb-8">
-                        <h1 className="font-title text-xl tracking-[0.12em] uppercase text-purple-rich font-bold">Admin Dashboard</h1>
+                        <h1 className="font-title text-xl tracking-[0.12em] uppercase text-purple-rich dark:text-gold-light font-bold">Admin Dashboard</h1>
                         <div className="flex gap-2">
-                            <button className="bg-white border border-purple-rich/10 px-4 py-2 font-title text-[0.58rem] tracking-[0.15em] uppercase text-charcoal-muted hover:border-gold transition-all">Export Report</button>
+                            <button className="bg-card border border-purple-rich/10 px-4 py-2 font-title text-[0.58rem] tracking-[0.15em] uppercase text-charcoal-muted hover:border-gold transition-all">Export Report</button>
                             <button className="bg-purple-rich text-gold px-4 py-2 font-title text-[0.58rem] tracking-[0.15em] uppercase hover:bg-purple-dark transition-all">+ New Entry</button>
                         </div>
                     </div>
@@ -68,10 +68,10 @@ export default function Admin() {
                     {/* Stats */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                         {STATS.map(s => (
-                            <div key={s.label} className="bg-white p-6 border border-purple-rich/5 shadow-sm">
+                            <div key={s.label} className="bg-card p-6 border border-purple-rich/5 shadow-sm">
                                 <p className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-charcoal-muted mb-1">{s.label}</p>
                                 <div className="flex items-end justify-between">
-                                    <span className="font-editorial text-2xl text-purple-rich">{s.val}</span>
+                                    <span className="font-editorial text-2xl text-purple-rich dark:text-gold-light">{s.val}</span>
                                     <span className={`font-body text-[0.6rem] font-bold ${s.trend.startsWith('+') ? 'text-green-600' : 'text-red-500'}`}>{s.trend}</span>
                                 </div>
                             </div>
@@ -79,9 +79,9 @@ export default function Admin() {
                     </div>
 
                     {/* Table */}
-                    <div className="bg-white border border-purple-rich/5 shadow-sm overflow-hidden">
+                    <div className="bg-card border border-purple-rich/5 shadow-sm overflow-hidden">
                         <div className="px-6 py-4 border-b border-purple-rich/5 flex items-center justify-between">
-                            <h3 className="font-title text-[0.65rem] tracking-[0.2em] uppercase text-purple-rich font-bold">Recent Projects</h3>
+                            <h3 className="font-title text-[0.65rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light font-bold">Recent Projects</h3>
                             <button className="text-charcoal-muted hover:text-gold"><MoreVertical size={16} /></button>
                         </div>
                         <table className="w-full text-left">

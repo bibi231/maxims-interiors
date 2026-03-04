@@ -14,7 +14,7 @@ export default function Activity() {
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="font-title text-xl text-cream-soft tracking-wide">Activity Log</h1>
-                    <p className="font-body text-[0.75rem] text-cream-soft/30 mt-0.5">System audit trail & user actions</p>
+                    <p className="font-body text-[0.75rem] text-cream-soft mt-0.5">System audit trail & user actions</p>
                 </div>
             </div>
 
@@ -33,8 +33,8 @@ export default function Activity() {
                     </div>
                 ) : logs.length === 0 ? (
                     <div className="p-12 text-center">
-                        <ActivityIcon size={32} className="text-cream-soft/10 mx-auto mb-4" />
-                        <p className="font-body text-[0.85rem] text-cream-soft/30">No activity recorded yet.</p>
+                        <ActivityIcon size={32} className="text-cream-soft mx-auto mb-4" />
+                        <p className="font-body text-[0.85rem] text-cream-soft">No activity recorded yet.</p>
                     </div>
                 ) : (
                     <div className="divide-y divide-gold/5">
@@ -48,24 +48,24 @@ export default function Activity() {
                                     )}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="font-body text-[0.82rem] text-cream-soft/80 leading-relaxed">
+                                    <p className="font-body text-[0.82rem] text-cream-soft leading-relaxed">
                                         <span className="font-medium text-cream-soft mr-1">{log.profile?.full_name || 'System'}</span>
-                                        <span className="text-cream-soft/50">{log.description || `${log.action} on ${log.resource_type}`}</span>
+                                        <span className="text-cream-soft">{log.description || `${log.action} on ${log.resource_type}`}</span>
                                     </p>
                                     <div className="flex items-center gap-3 mt-1.5">
                                         <span className="font-title text-[0.6rem] tracking-wider uppercase text-gold/40">
                                             {new Date(log.created_at).toLocaleString('en-NG', { dateStyle: 'medium', timeStyle: 'short' })}
                                         </span>
-                                        <span className="font-body text-[0.65rem] text-cream-soft/20 uppercase tracking-widest px-1.5 border border-cream-soft/5">
+                                        <span className="font-body text-[0.65rem] text-cream-soft uppercase tracking-widest px-1.5 border border-cream-soft/5">
                                             {log.action}
                                         </span>
-                                        <span className="font-body text-[0.65rem] text-cream-soft/20 uppercase tracking-widest px-1.5 border border-cream-soft/5">
+                                        <span className="font-body text-[0.65rem] text-cream-soft uppercase tracking-widest px-1.5 border border-cream-soft/5">
                                             {log.resource_type}
                                         </span>
                                     </div>
 
                                     {(log.old_value || log.new_value) && (
-                                        <div className="mt-3 bg-black/20 rounded p-3 font-mono text-[0.65rem] text-cream-soft/40 overflow-x-auto">
+                                        <div className="mt-3 bg-black/20 rounded p-3 font-mono text-[0.65rem] text-cream-soft overflow-x-auto">
                                             {log.old_value && <div className="text-red-400/50 mb-1">- {log.old_value}</div>}
                                             {log.new_value && <div className="text-green-400/50">+ {log.new_value}</div>}
                                         </div>

@@ -87,7 +87,7 @@ export const InfiniteMovingCards = ({
                                 aria-hidden="true"
                                 className="user-select-none -z-1 pointer-events-none absolute -left-0.5 -top-0.5 h-[calc(100%_+_4px)] w-[calc(100%_+_4px)]"
                             ></div>
-                            <span className=" relative z-20 font-editorial italic text-sm leading-[1.6] text-cream-soft/80 font-normal">
+                            <span className=" relative z-20 font-editorial italic text-sm leading-[1.6] text-cream-soft font-normal">
                                 {item.quote}
                             </span>
                             <div className="relative z-20 mt-6 flex flex-row items-center">
@@ -95,7 +95,7 @@ export const InfiniteMovingCards = ({
                                     <span className=" text-xs leading-[1.6] text-gold font-title tracking-widest uppercase font-bold">
                                         {item.name}
                                     </span>
-                                    <span className=" text-xs leading-[1.6] text-cream-soft/30 font-body font-normal">
+                                    <span className=" text-xs leading-[1.6] text-cream-soft font-body font-normal">
                                         {item.title}
                                     </span>
                                 </span>

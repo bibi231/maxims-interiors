@@ -90,7 +90,7 @@ export default function Home() {
                     </motion.h1>
 
                     <motion.p
-                        className="font-body text-base text-cream-soft/55 leading-relaxed mb-10 max-w-xl mx-auto"
+                        className="font-body text-base text-cream-soft leading-relaxed mb-10 max-w-xl mx-auto"
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 1.1, duration: 0.7 }}
@@ -105,7 +105,7 @@ export default function Home() {
                         transition={{ delay: 1.3, duration: 0.7 }}
                     >
                         <Link to="/gallery">
-                            <ShinyButton className="bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest hover:shadow-gold rounded-none">
+                            <ShinyButton className="bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest dark:text-cream-soft hover:shadow-gold rounded-none">
                                 <span className="flex items-center gap-2">Explore Our Work <ArrowRight size={14} /></span>
                             </ShinyButton>
                         </Link>
@@ -139,7 +139,7 @@ export default function Home() {
                         transition={{ delay, duration: 0.7 }}
                     >
                         <div className="font-title text-xl text-gold font-semibold">{val}</div>
-                        <div className="font-body text-[0.58rem] tracking-[0.2em] uppercase text-cream-soft/40 mt-0.5">{lbl}</div>
+                        <div className="font-body text-[0.58rem] tracking-[0.2em] uppercase text-cream-soft mt-0.5">{lbl}</div>
                     </motion.div>
                 ))}
             </section>
@@ -150,7 +150,7 @@ export default function Home() {
             <section className="section-base bg-cream">
                 <div className="section-header-center">
                     <p className="eyebrow mb-3">What We Do</p>
-                    <h2 className="text-display-md text-purple-rich font-display">Our Services</h2>
+                    <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Our Services</h2>
                     <div className="gold-divider" />
                 </div>
 
@@ -167,7 +167,7 @@ export default function Home() {
                         >
                             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-gold-deep via-gold to-gold-bright scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                             <span className="text-3xl block mb-4">{s.icon}</span>
-                            <h3 className="font-title text-[0.78rem] tracking-[0.18em] uppercase text-purple-rich mb-2.5">{s.label}</h3>
+                            <h3 className="font-title text-[0.78rem] tracking-[0.18em] uppercase text-purple-rich dark:text-gold-light mb-2.5">{s.label}</h3>
                             <p className="font-body text-[0.84rem] text-charcoal-muted leading-relaxed mb-4">{s.desc}</p>
                             <Link to="/interior-decor" className="inline-flex items-center gap-1.5 font-title text-[0.6rem] tracking-[0.15em] uppercase text-gold opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                 Enquire <ArrowRight size={11} />
@@ -182,7 +182,7 @@ export default function Home() {
                 <div className="flex items-end justify-between mb-12 max-w-[1200px] mx-auto">
                     <div>
                         <p className="eyebrow mb-2">Portfolio</p>
-                        <h2 className="text-display-md text-purple-rich font-display">Featured Works</h2>
+                        <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Featured Works</h2>
                         <div className="gold-divider-left" />
                     </div>
                     <Link to="/gallery" className="hidden sm:inline-flex btn-maxims btn-outline-gold">
@@ -236,8 +236,8 @@ export default function Home() {
                         <div className="absolute -bottom-3 -right-3 w-14 h-14 border-r-2 border-b-2 border-gold/50" />
                         {/* Badge */}
                         <div className="absolute -bottom-5 -right-5 bg-gold p-5 text-center">
-                            <span className="font-title text-3xl text-purple-darkest font-bold block leading-none">8</span>
-                            <span className="font-body text-[0.55rem] tracking-widest uppercase text-purple-rich font-bold block mt-1">Years of<br />Excellence</span>
+                            <span className="font-title text-3xl text-purple-darkest dark:text-cream-soft font-bold block leading-none">8</span>
+                            <span className="font-body text-[0.55rem] tracking-widest uppercase text-purple-rich dark:text-gold-light font-bold block mt-1">Years of<br />Excellence</span>
                         </div>
                     </motion.div>
 
@@ -254,7 +254,7 @@ export default function Home() {
                             <em className="text-gold-light italic">Reflect Who You Are</em>
                         </h2>
                         <div className="gold-divider-left mb-6" />
-                        <p className="font-body text-[0.92rem] text-cream-soft/50 leading-[1.9] mb-6">
+                        <p className="font-body text-[0.92rem] text-cream-soft leading-[1.9] mb-6">
                             Maxims Interiors & Home Goods was born from a deep passion for transforming ordinary spaces into extraordinary living experiences. We blend timeless elegance with contemporary sensibility.
                         </p>
                         <blockquote className="border-l-2 border-gold pl-5 mb-8 font-editorial text-[1.05rem] italic text-gold-light leading-relaxed">
@@ -278,7 +278,7 @@ export default function Home() {
                             viewport={{ once: true }}
                         >
                             <div className="font-title text-[clamp(1.8rem,3vw,2.5rem)] text-gold font-semibold mb-1">{n}</div>
-                            <div className="font-body text-[0.65rem] tracking-[0.18em] uppercase text-cream-soft/30">{l}</div>
+                            <div className="font-body text-[0.65rem] tracking-[0.18em] uppercase text-cream-soft">{l}</div>
                         </motion.div>
                     ))}
                 </div>
@@ -314,7 +314,7 @@ export default function Home() {
                 <div className="flex items-end justify-between mb-12 max-w-[1200px] mx-auto">
                     <div>
                         <p className="eyebrow mb-2">Home Goods</p>
-                        <h2 className="text-display-md text-purple-rich font-display">Shop Our Collection</h2>
+                        <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Shop Our Collection</h2>
                         <div className="gold-divider-left" />
                     </div>
                     <Link to="/shop" className="hidden sm:inline-flex btn-maxims btn-outline-gold text-[0.62rem]">
@@ -340,7 +340,7 @@ export default function Home() {
                                     <span className="text-5xl group-hover:scale-110 transition-transform duration-400">🛋️</span>
                                 )}
                                 {p.badge && (
-                                    <div className="absolute top-3 left-3 bg-gold text-purple-darkest font-body font-black text-[0.5rem] tracking-[0.12em] uppercase px-2 py-0.5">
+                                    <div className="absolute top-3 left-3 bg-gold text-purple-darkest dark:text-cream-soft font-body font-black text-[0.5rem] tracking-[0.12em] uppercase px-2 py-0.5">
                                         {p.badge}
                                     </div>
                                 )}
@@ -353,7 +353,7 @@ export default function Home() {
                                 <p className="eyebrow text-[0.52rem] mb-1.5">{p.category}</p>
                                 <h3 className="font-editorial text-[0.88rem] text-charcoal mb-3">{p.name}</h3>
                                 <div className="flex items-center justify-between">
-                                    <span className="font-title text-[0.82rem] text-purple-rich font-semibold">{formatPrice(p.price)}</span>
+                                    <span className="font-title text-[0.82rem] text-purple-rich dark:text-gold-light font-semibold">{formatPrice(p.price)}</span>
                                     <button className="text-charcoal-muted hover:text-gold transition-colors text-base">♡</button>
                                 </div>
                             </div>
@@ -380,7 +380,7 @@ export default function Home() {
                     <h2 className="text-display-lg text-cream-soft font-display mb-4">
                         Transform Your Space<br /><em className="text-gold-light italic">Into a Masterpiece</em>
                     </h2>
-                    <p className="font-body text-[0.92rem] text-cream-soft/45 leading-relaxed mb-10 max-w-[520px] mx-auto">
+                    <p className="font-body text-[0.92rem] text-cream-soft leading-relaxed mb-10 max-w-[520px] mx-auto">
                         Book your complimentary design consultation and take the first step toward your dream space.
                     </p>
                     <div className="flex gap-4 justify-center flex-wrap">

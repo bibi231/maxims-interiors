@@ -38,11 +38,11 @@ function RequestDetailModal({ req, onClose, canWrite }) {
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gold/10">
                     <div>
                         <div className="font-title text-[0.8rem] tracking-[0.15em] text-gold">Req #{req.id.slice(0, 8)}</div>
-                        <div className="font-body text-[0.72rem] text-cream-soft/30 mt-0.5">
+                        <div className="font-body text-[0.72rem] text-cream-soft mt-0.5">
                             {new Date(req.created_at).toLocaleDateString('en-NG', { dateStyle: 'long' })}
                         </div>
                     </div>
-                    <button onClick={onClose} className="text-cream-soft/30 hover:text-gold transition-colors"><X size={18} /></button>
+                    <button onClick={onClose} className="text-cream-soft hover:text-gold transition-colors"><X size={18} /></button>
                 </div>
 
                 <div className="p-6 space-y-5">
@@ -50,23 +50,23 @@ function RequestDetailModal({ req, onClose, canWrite }) {
                         <div className="font-title text-[0.55rem] tracking-[0.25em] uppercase text-gold/50 mb-3">Client</div>
                         <div className="bg-charcoal border border-gold/8 p-4 space-y-2">
                             <div className="flex items-center gap-2.5">
-                                <Package size={12} className="text-cream-soft/25 shrink-0" />
-                                <span className="font-body text-[0.82rem] text-cream-soft/60">{req.name}</span>
+                                <Package size={12} className="text-cream-soft shrink-0" />
+                                <span className="font-body text-[0.82rem] text-cream-soft">{req.name}</span>
                             </div>
                             {req.company && (
                                 <div className="flex items-center gap-2.5">
-                                    <Building2 size={12} className="text-cream-soft/25 shrink-0" />
-                                    <span className="font-body text-[0.82rem] text-cream-soft/60">{req.company}</span>
+                                    <Building2 size={12} className="text-cream-soft shrink-0" />
+                                    <span className="font-body text-[0.82rem] text-cream-soft">{req.company}</span>
                                 </div>
                             )}
                             <div className="flex items-center gap-2.5">
-                                <Mail size={12} className="text-cream-soft/25 shrink-0" />
-                                <span className="font-body text-[0.82rem] text-cream-soft/60">{req.email}</span>
+                                <Mail size={12} className="text-cream-soft shrink-0" />
+                                <span className="font-body text-[0.82rem] text-cream-soft">{req.email}</span>
                             </div>
                             {req.phone && (
                                 <div className="flex items-center gap-2.5">
-                                    <Phone size={12} className="text-cream-soft/25 shrink-0" />
-                                    <span className="font-body text-[0.82rem] text-cream-soft/60">{req.phone}</span>
+                                    <Phone size={12} className="text-cream-soft shrink-0" />
+                                    <span className="font-body text-[0.82rem] text-cream-soft">{req.phone}</span>
                                 </div>
                             )}
                         </div>
@@ -74,7 +74,7 @@ function RequestDetailModal({ req, onClose, canWrite }) {
 
                     <div>
                         <div className="font-title text-[0.55rem] tracking-[0.25em] uppercase text-gold/50 mb-3">Requirements</div>
-                        <p className="font-body text-[0.82rem] text-cream-soft/70 bg-charcoal border border-gold/8 p-4 whitespace-pre-wrap">
+                        <p className="font-body text-[0.82rem] text-cream-soft bg-charcoal border border-gold/8 p-4 whitespace-pre-wrap">
                             {req.requirements}
                         </p>
                     </div>
@@ -86,16 +86,16 @@ function RequestDetailModal({ req, onClose, canWrite }) {
                                 {STATUSES.filter(s => s !== 'all').map(s => (
                                     <button key={s} onClick={() => setStatus(s)}
                                         className={cn('px-3 py-2 font-title text-[0.58rem] tracking-[0.12em] uppercase border transition-all',
-                                            status === s ? STATUS_STYLE[s] : 'border-gold/8 text-cream-soft/30 hover:border-gold/25')}>
+                                            status === s ? STATUS_STYLE[s] : 'border-gold/8 text-cream-soft hover:border-gold/25')}>
                                         {s}
                                     </button>
                                 ))}
                             </div>
                             <textarea placeholder="Internal Notes..." value={notes} onChange={e => setNotes(e.target.value)}
-                                className="w-full bg-charcoal border border-gold/10 p-3 font-body text-[0.82rem] text-cream-soft/70 placeholder:text-cream-soft/20 focus:outline-none focus:border-gold/35 mb-3 resize-none" rows={3} />
+                                className="w-full bg-charcoal border border-gold/10 p-3 font-body text-[0.82rem] text-cream-soft placeholder:text-cream-soft focus:outline-none focus:border-gold/35 mb-3 resize-none" rows={3} />
 
                             <button onClick={save} disabled={saving || (status === req.status && notes === (req.internal_notes || ''))}
-                                className="w-full bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.65rem] tracking-[0.18em] uppercase py-3 hover:shadow-gold transition-all disabled:opacity-40">
+                                className="w-full bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest dark:text-cream-soft font-title text-[0.65rem] tracking-[0.18em] uppercase py-3 hover:shadow-gold transition-all disabled:opacity-40">
                                 {saving ? 'Saving...' : 'Save Changes'}
                             </button>
                         </div>
@@ -120,7 +120,7 @@ export default function BulkRequests() {
             <div className="flex items-center justify-between mb-6">
                 <div>
                     <h1 className="font-title text-xl text-cream-soft tracking-wide">Bulk Requests</h1>
-                    <p className="font-body text-[0.75rem] text-cream-soft/30 mt-0.5">{requests.length} total records</p>
+                    <p className="font-body text-[0.75rem] text-cream-soft mt-0.5">{requests.length} total records</p>
                 </div>
             </div>
 
@@ -131,7 +131,7 @@ export default function BulkRequests() {
                             className={cn('px-3 py-1.5 font-title text-[0.55rem] tracking-[0.15em] uppercase border transition-all',
                                 statusFilter === s
                                     ? s === 'all' ? 'bg-gold/10 border-gold/30 text-gold' : cn(STATUS_STYLE[s], 'border')
-                                    : 'border-gold/8 text-cream-soft/30 hover:border-gold/20')}>
+                                    : 'border-gold/8 text-cream-soft hover:border-gold/20')}>
                             {s}
                         </button>
                     ))}
@@ -144,7 +144,7 @@ export default function BulkRequests() {
                         <thead>
                             <tr className="border-b border-gold/8">
                                 {['Date', 'Client', 'Company', 'Status', ''].map(h => (
-                                    <th key={h} className="px-5 py-3.5 text-left font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/22">{h}</th>
+                                    <th key={h} className="px-5 py-3.5 text-left font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft">{h}</th>
                                 ))}
                             </tr>
                         </thead>
@@ -158,7 +158,7 @@ export default function BulkRequests() {
                                     </tr>
                                 ))
                             ) : requests.length === 0 ? (
-                                <tr><td colSpan={5} className="px-5 py-12 text-center font-body text-[0.8rem] text-cream-soft/20">No requests found</td></tr>
+                                <tr><td colSpan={5} className="px-5 py-12 text-center font-body text-[0.8rem] text-cream-soft">No requests found</td></tr>
                             ) : (
                                 requests.map(req => (
                                     <tr key={req.id} className="border-b border-gold/5 hover:bg-gold/3 transition-colors cursor-pointer" onClick={() => setSelected(req)}>
@@ -166,10 +166,10 @@ export default function BulkRequests() {
                                             <div className="font-title text-[0.7rem] text-gold/75">{new Date(req.created_at).toLocaleDateString('en-NG', { month: 'short', day: 'numeric' })}</div>
                                         </td>
                                         <td className="px-5 py-4">
-                                            <div className="font-body text-[0.82rem] text-cream-soft/65">{req.name}</div>
-                                            <div className="font-body text-[0.68rem] text-cream-soft/28">{req.email}</div>
+                                            <div className="font-body text-[0.82rem] text-cream-soft">{req.name}</div>
+                                            <div className="font-body text-[0.68rem] text-cream-soft">{req.email}</div>
                                         </td>
-                                        <td className="px-5 py-4 font-body text-[0.78rem] text-cream-soft/40">
+                                        <td className="px-5 py-4 font-body text-[0.78rem] text-cream-soft">
                                             {req.company || '-'}
                                         </td>
                                         <td className="px-5 py-4">
@@ -178,7 +178,7 @@ export default function BulkRequests() {
                                             </span>
                                         </td>
                                         <td className="px-5 py-4">
-                                            <button className="text-cream-soft/20 hover:text-gold transition-colors" onClick={e => { e.stopPropagation(); setSelected(req) }}>
+                                            <button className="text-cream-soft hover:text-gold transition-colors" onClick={e => { e.stopPropagation(); setSelected(req) }}>
                                                 <Eye size={14} />
                                             </button>
                                         </td>

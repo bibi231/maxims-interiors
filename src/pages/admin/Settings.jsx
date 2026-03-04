@@ -14,7 +14,7 @@ const ROLE_COLORS = {
   senior_designer: 'text-purple-light bg-purple-light/10',
   project_manager: 'text-blue-400 bg-blue-400/10',
   shop_manager: 'text-green-400 bg-green-400/10',
-  content_editor: 'text-cream-soft/50 bg-cream-soft/8',
+  content_editor: 'text-cream-soft bg-cream-soft/8',
 }
 
 // ── Invite new team member ────────────────────────────────────
@@ -52,20 +52,20 @@ function InviteForm({ onDone }) {
     </div>
   )
 
-  const inputCls = "w-full bg-charcoal border border-gold/10 px-3 py-2.5 font-body text-[0.85rem] text-cream-soft/80 placeholder:text-cream-soft/15 focus:outline-none focus:border-gold/40 transition-colors"
+  const inputCls = "w-full bg-charcoal border border-gold/10 px-3 py-2.5 font-body text-[0.85rem] text-cream-soft placeholder:text-cream-soft focus:outline-none focus:border-gold/40 transition-colors"
 
   return (
     <form onSubmit={send} className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-3">
       <div>
-        <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/30 block mb-1.5">Full Name</label>
+        <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft block mb-1.5">Full Name</label>
         <input className={inputCls} value={name} onChange={e => setName(e.target.value)} placeholder="Chidera Nwosu" required />
       </div>
       <div>
-        <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/30 block mb-1.5">Email Address</label>
+        <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft block mb-1.5">Email Address</label>
         <input className={inputCls} type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="chidera@maximsinteriors.com" required />
       </div>
       <div>
-        <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/30 block mb-1.5">Role</label>
+        <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft block mb-1.5">Role</label>
         <select className={inputCls} value={role} onChange={e => setRole(e.target.value)}>
           {ROLE_OPTS.filter(r => r !== 'owner').map(r => (
             <option key={r} value={r}>{ROLE_PERMISSIONS[r].label}</option>
@@ -75,7 +75,7 @@ function InviteForm({ onDone }) {
       {error && <div className="md:col-span-3 font-body text-[0.75rem] text-yellow-400">{error}</div>}
       <div className="md:col-span-3">
         <button type="submit" disabled={loading}
-          className="bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.62rem] tracking-[0.18em] uppercase px-6 py-2.5 flex items-center gap-2 hover:shadow-gold transition-all disabled:opacity-50">
+          className="bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest dark:text-cream-soft font-title text-[0.62rem] tracking-[0.18em] uppercase px-6 py-2.5 flex items-center gap-2 hover:shadow-gold transition-all disabled:opacity-50">
           <UserPlus size={13} />{loading ? 'Sending...' : 'Invite Team Member'}
         </button>
       </div>
@@ -134,13 +134,13 @@ export default function Settings() {
     { id: 'account', label: 'My Account', visible: true },
   ].filter(t => t.visible)
 
-  const inputCls = "w-full bg-charcoal border border-gold/10 px-3 py-2.5 font-body text-[0.85rem] text-cream-soft/70 placeholder:text-cream-soft/15 focus:outline-none focus:border-gold/40 transition-colors"
+  const inputCls = "w-full bg-charcoal border border-gold/10 px-3 py-2.5 font-body text-[0.85rem] text-cream-soft placeholder:text-cream-soft focus:outline-none focus:border-gold/40 transition-colors"
 
   return (
     <AdminLayout>
       <div className="mb-6">
         <h1 className="font-title text-xl text-cream-soft tracking-wide">Settings</h1>
-        <p className="font-body text-[0.75rem] text-cream-soft/30 mt-0.5">Manage your team, site content, and account</p>
+        <p className="font-body text-[0.75rem] text-cream-soft mt-0.5">Manage your team, site content, and account</p>
       </div>
 
       {/* Tabs */}
@@ -148,7 +148,7 @@ export default function Settings() {
         {TABS.map(t => (
           <button key={t.id} onClick={() => setActiveTab(t.id)}
             className={cn('px-4 py-2.5 font-title text-[0.6rem] tracking-[0.15em] uppercase shrink-0 border-b-2 -mb-px transition-all',
-              activeTab === t.id ? 'border-gold text-gold' : 'border-transparent text-cream-soft/35 hover:text-cream-soft/55')}>
+              activeTab === t.id ? 'border-gold text-gold' : 'border-transparent text-cream-soft hover:text-cream-soft')}>
             {t.label}
           </button>
         ))}
@@ -158,7 +158,7 @@ export default function Settings() {
       {activeTab === 'team' && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-title text-[0.72rem] tracking-[0.2em] uppercase text-cream-soft/50">Team Members ({profiles.length})</h2>
+            <h2 className="font-title text-[0.72rem] tracking-[0.2em] uppercase text-cream-soft">Team Members ({profiles.length})</h2>
             <button onClick={() => setShowInvite(s => !s)}
               className="flex items-center gap-2 border border-gold/20 text-gold font-title text-[0.58rem] tracking-[0.15em] uppercase px-4 py-2 hover:bg-gold/8 transition-all">
               <UserPlus size={12} />{showInvite ? 'Cancel' : 'Invite Member'}
@@ -178,9 +178,9 @@ export default function Settings() {
                   </div>
                   <ul className="space-y-0.5">
                     {ROLE_PERMISSIONS[r].canAccess.slice(0, 5).map(s => (
-                      <li key={s} className="font-body text-[0.62rem] text-cream-soft/30 capitalize">{s.replace('_', ' ')}</li>
+                      <li key={s} className="font-body text-[0.62rem] text-cream-soft capitalize">{s.replace('_', ' ')}</li>
                     ))}
-                    {ROLE_PERMISSIONS[r].canAccess.length > 5 && <li className="font-body text-[0.6rem] text-cream-soft/18">+{ROLE_PERMISSIONS[r].canAccess.length - 5} more</li>}
+                    {ROLE_PERMISSIONS[r].canAccess.length > 5 && <li className="font-body text-[0.6rem] text-cream-soft">+{ROLE_PERMISSIONS[r].canAccess.length - 5} more</li>}
                   </ul>
                 </div>
               ))}
@@ -193,7 +193,7 @@ export default function Settings() {
               <thead>
                 <tr className="border-b border-gold/8">
                   {['Member', 'Email', 'Role', 'Status', 'Last Seen', 'Actions'].map(h => (
-                    <th key={h} className="px-5 py-3 text-left font-title text-[0.5rem] tracking-[0.2em] uppercase text-cream-soft/20">{h}</th>
+                    <th key={h} className="px-5 py-3 text-left font-title text-[0.5rem] tracking-[0.2em] uppercase text-cream-soft">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -205,11 +205,11 @@ export default function Settings() {
                         <div className="w-7 h-7 rounded-full bg-purple-rich border border-gold/15 flex items-center justify-center shrink-0">
                           <span className="font-title text-xs text-gold">{p.full_name?.[0]}</span>
                         </div>
-                        <span className="font-body text-[0.82rem] text-cream-soft/65">{p.full_name}</span>
+                        <span className="font-body text-[0.82rem] text-cream-soft">{p.full_name}</span>
                         {p.id === profile.id && <span className="font-title text-[0.45rem] tracking-wider uppercase text-gold/40 bg-gold/8 px-1.5 py-0.5">you</span>}
                       </div>
                     </td>
-                    <td className="px-5 py-3.5 font-body text-[0.75rem] text-cream-soft/35">{p.email}</td>
+                    <td className="px-5 py-3.5 font-body text-[0.75rem] text-cream-soft">{p.email}</td>
                     <td className="px-5 py-3.5">
                       {isOwner && p.id !== profile.id ? (
                         <select value={p.role} onChange={e => changeRole(p.id, e.target.value)}
@@ -228,12 +228,12 @@ export default function Settings() {
                         {p.is_active ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 font-body text-[0.7rem] text-cream-soft/25">
+                    <td className="px-5 py-3.5 font-body text-[0.7rem] text-cream-soft">
                       {p.last_seen ? new Date(p.last_seen).toLocaleDateString('en-NG', { month: 'short', day: 'numeric' }) : 'Never'}
                     </td>
                     <td className="px-5 py-3.5">
                       {isOwner && p.id !== profile.id && p.role !== 'owner' && (
-                        <button onClick={() => toggleActive(p)} className="font-title text-[0.55rem] tracking-wider uppercase text-cream-soft/25 hover:text-red-400 transition-colors">
+                        <button onClick={() => toggleActive(p)} className="font-title text-[0.55rem] tracking-wider uppercase text-cream-soft hover:text-red-400 transition-colors">
                           {p.is_active ? 'Deactivate' : 'Reactivate'}
                         </button>
                       )}
@@ -252,12 +252,12 @@ export default function Settings() {
           <div className="grid grid-cols-1 gap-4 mb-5">
             {[['Phone Number', 'phone', '+234 800 000 0000'], ['Email Address', 'email', 'hello@maximsinteriors.com'], ['Physical Address', 'address', '123 Design Blvd, Wuse 2, Abuja'], ['Business Hours', 'hours', 'Mon–Sat: 9am–7pm WAT']].map(([label, key, ph]) => (
               <div key={key}>
-                <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-cream-soft/35 block mb-2">{label}</label>
+                <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-cream-soft block mb-2">{label}</label>
                 <input className={inputCls} value={contactForm[key] || ''} onChange={e => setContactForm(f => ({ ...f, [key]: e.target.value }))} placeholder={ph} />
               </div>
             ))}
           </div>
-          <button onClick={saveContact} disabled={saving} className="flex items-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.62rem] tracking-[0.18em] uppercase px-6 py-2.5 hover:shadow-gold transition-all disabled:opacity-50">
+          <button onClick={saveContact} disabled={saving} className="flex items-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest dark:text-cream-soft font-title text-[0.62rem] tracking-[0.18em] uppercase px-6 py-2.5 hover:shadow-gold transition-all disabled:opacity-50">
             <Save size={13} />{saving ? 'Saving...' : 'Save Contact Info'}
           </button>
         </div>
@@ -269,12 +269,12 @@ export default function Settings() {
           <div className="grid grid-cols-1 gap-4 mb-5">
             {[['Instagram', 'instagram'], ['Facebook', 'facebook'], ['LinkedIn', 'linkedin'], ['YouTube', 'youtube'], ['Pinterest', 'pinterest']].map(([label, key]) => (
               <div key={key}>
-                <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-cream-soft/35 block mb-2">{label}</label>
+                <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-cream-soft block mb-2">{label}</label>
                 <input className={inputCls} value={socialForm[key] || ''} onChange={e => setSocialForm(f => ({ ...f, [key]: e.target.value }))} placeholder={`https://${key}.com/maximsinteriors`} />
               </div>
             ))}
           </div>
-          <button onClick={saveSocial} disabled={saving} className="flex items-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.62rem] tracking-[0.18em] uppercase px-6 py-2.5 hover:shadow-gold transition-all disabled:opacity-50">
+          <button onClick={saveSocial} disabled={saving} className="flex items-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest dark:text-cream-soft font-title text-[0.62rem] tracking-[0.18em] uppercase px-6 py-2.5 hover:shadow-gold transition-all disabled:opacity-50">
             <Save size={13} />{saving ? 'Saving...' : 'Save Social Links'}
           </button>
         </div>
@@ -298,15 +298,15 @@ export default function Settings() {
             <div className="space-y-3">
               {[['Email', profile?.email], ['Role', ROLE_PERMISSIONS[profile?.role]?.label], ['Sections Access', ROLE_PERMISSIONS[profile?.role]?.canAccess.join(', ')]].map(([l, v]) => (
                 <div key={l}>
-                  <div className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/28 mb-1">{l}</div>
-                  <div className="font-body text-[0.85rem] text-cream-soft/60 leading-relaxed">{v}</div>
+                  <div className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft mb-1">{l}</div>
+                  <div className="font-body text-[0.85rem] text-cream-soft leading-relaxed">{v}</div>
                 </div>
               ))}
             </div>
           </div>
           <div className="bg-charcoal border border-gold/8 p-5">
-            <div className="font-title text-[0.62rem] tracking-[0.18em] uppercase text-cream-soft/40 mb-3">Change Password</div>
-            <p className="font-body text-[0.8rem] text-cream-soft/30 mb-4">A password reset link will be sent to your email address.</p>
+            <div className="font-title text-[0.62rem] tracking-[0.18em] uppercase text-cream-soft mb-3">Change Password</div>
+            <p className="font-body text-[0.8rem] text-cream-soft mb-4">A password reset link will be sent to your email address.</p>
             <button onClick={async () => {
               const { useAuth: ua } = await import('@/context/AuthContext')
               // trigger reset — call auth context

@@ -63,7 +63,7 @@ function TeamModal({ member, onClose, onSave }) {
                 onClick={e => e.stopPropagation()}>
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gold/10 sticky top-0 bg-charcoal-mid z-10">
                     <h2 className="font-title text-[0.9rem] tracking-[0.15em] text-gold">{member ? 'Edit Member' : 'New Member'}</h2>
-                    <button onClick={onClose} className="text-cream-soft/30 hover:text-gold transition-colors"><X size={18} /></button>
+                    <button onClick={onClose} className="text-cream-soft hover:text-gold transition-colors"><X size={18} /></button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-5">
@@ -118,16 +118,16 @@ function TeamModal({ member, onClose, onSave }) {
                     <div className="flex flex-wrap gap-6 pt-2">
                         <label className="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" checked={formData.is_published} onChange={e => setFormData({ ...formData, is_published: e.target.checked })} className="accent-gold" />
-                            <span className="font-title text-[0.6rem] tracking-wider text-cream-soft/70 uppercase">Published on Website</span>
+                            <span className="font-title text-[0.6rem] tracking-wider text-cream-soft uppercase">Published on Website</span>
                         </label>
                         <div className="flex items-center gap-2 ml-auto">
-                            <span className="font-title text-[0.6rem] tracking-wider text-cream-soft/70 uppercase">Sort Order</span>
+                            <span className="font-title text-[0.6rem] tracking-wider text-cream-soft uppercase">Sort Order</span>
                             <input type="number" value={formData.sort_order} onChange={e => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })} className="w-16 bg-charcoal border border-gold/10 px-2 py-1 font-body text-sm text-cream-soft text-center focus:border-gold/40 outline-none" />
                         </div>
                     </div>
 
                     <button type="submit" disabled={saving}
-                        className="w-full bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.65rem] tracking-[0.18em] uppercase py-3 hover:shadow-gold transition-all mt-4 disabled:opacity-50">
+                        className="w-full bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest dark:text-cream-soft font-title text-[0.65rem] tracking-[0.18em] uppercase py-3 hover:shadow-gold transition-all mt-4 disabled:opacity-50">
                         {saving ? 'Saving...' : 'Save Member'}
                     </button>
                 </form>
@@ -153,7 +153,7 @@ export default function Team() {
             <div className="flex items-center justify-between mb-6">
                 <div>
                     <h1 className="font-title text-xl text-cream-soft tracking-wide">Team</h1>
-                    <p className="font-body text-[0.75rem] text-cream-soft/30 mt-0.5">{team.length} members</p>
+                    <p className="font-body text-[0.75rem] text-cream-soft mt-0.5">{team.length} members</p>
                 </div>
                 {canWrite('team') && (
                     <button onClick={() => setIsAdding(true)} className="flex items-center gap-2 bg-gold/10 text-gold border border-gold/20 px-4 py-2 font-title text-[0.6rem] tracking-widest uppercase hover:bg-gold/20 transition-all">
@@ -180,7 +180,7 @@ export default function Team() {
                 ) : team.map(t => (
                     <div key={t.id} className="bg-charcoal border border-gold/8 p-6 relative group">
                         <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            {!t.is_published && <span className="px-2 py-0.5 border border-cream-soft/10 text-cream-soft/30 font-title text-[0.5rem] tracking-wider uppercase">Draft</span>}
+                            {!t.is_published && <span className="px-2 py-0.5 border border-cream-soft/10 text-cream-soft font-title text-[0.5rem] tracking-wider uppercase">Draft</span>}
                         </div>
 
                         <div className="flex flex-col items-center text-center">
@@ -195,9 +195,9 @@ export default function Team() {
                             </div>
 
                             <h3 className="font-title text-[0.9rem] text-gold/90 mb-1">{t.name}</h3>
-                            <p className="font-title text-[0.6rem] tracking-[0.15em] uppercase text-cream-soft/40 mb-4">{t.role}</p>
+                            <p className="font-title text-[0.6rem] tracking-[0.15em] uppercase text-cream-soft mb-4">{t.role}</p>
 
-                            <p className="font-body text-[0.75rem] text-cream-soft/50 line-clamp-3 mb-6">
+                            <p className="font-body text-[0.75rem] text-cream-soft line-clamp-3 mb-6">
                                 {t.bio || 'No bio provided.'}
                             </p>
 

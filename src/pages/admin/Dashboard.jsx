@@ -32,11 +32,11 @@ function StatCard({ icon: Icon, label, value, sub, color, link, delay }) {
           <div className={cn('p-2', color)}>
             <Icon size={16} />
           </div>
-          <ArrowRight size={12} className="text-cream-soft/15 group-hover:text-gold transition-colors mt-1" />
+          <ArrowRight size={12} className="text-cream-soft group-hover:text-gold transition-colors mt-1" />
         </div>
         <div className="font-title text-2xl text-cream-soft font-semibold mb-1">{value}</div>
-        <div className="font-body text-[0.65rem] tracking-[0.15em] uppercase text-cream-soft/30">{label}</div>
-        {sub && <div className="font-body text-[0.7rem] text-cream-soft/20 mt-1">{sub}</div>}
+        <div className="font-body text-[0.65rem] tracking-[0.15em] uppercase text-cream-soft">{label}</div>
+        {sub && <div className="font-body text-[0.7rem] text-cream-soft mt-1">{sub}</div>}
       </Link>
     </motion.div>
   )
@@ -69,7 +69,7 @@ export default function Dashboard() {
         <h1 className="font-display text-3xl text-cream-soft mb-1">
           {greeting}, <em className="text-gold italic">{profile?.full_name?.split(' ')[0]}</em>
         </h1>
-        <p className="font-body text-[0.8rem] text-cream-soft/30">
+        <p className="font-body text-[0.8rem] text-cream-soft">
           {new Date().toLocaleDateString('en-NG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
         </p>
       </div>
@@ -110,7 +110,7 @@ export default function Dashboard() {
           {can('products') && (
             <StatCard icon={Package} label="Active Products" value={stats?.products?.active ?? 0}
               sub={stats?.products?.lowStock > 0 ? `⚠ ${stats.products.lowStock} low stock` : 'All stock levels good'}
-              color="text-cream-soft/50 bg-cream-soft/5" link="/admin/products" delay={0.28} />
+              color="text-cream-soft bg-cream-soft/5" link="/admin/products" delay={0.28} />
           )}
         </div>
       )}
@@ -122,7 +122,7 @@ export default function Dashboard() {
         {can('orders') && (
           <div className="bg-charcoal border border-gold/8">
             <div className="flex items-center justify-between px-5 py-4 border-b border-gold/8">
-              <h2 className="font-title text-[0.68rem] tracking-[0.2em] uppercase text-cream-soft/50">Recent Orders</h2>
+              <h2 className="font-title text-[0.68rem] tracking-[0.2em] uppercase text-cream-soft">Recent Orders</h2>
               <Link to="/admin/orders" className="font-title text-[0.58rem] tracking-[0.15em] uppercase text-gold/50 hover:text-gold transition-colors">
                 View All
               </Link>
@@ -132,18 +132,18 @@ export default function Dashboard() {
                 <div key={order.id} className="flex items-center justify-between px-5 py-3 hover:bg-gold/3 transition-colors">
                   <div>
                     <div className="font-title text-[0.68rem] text-gold/70">{order.order_number}</div>
-                    <div className="font-body text-[0.78rem] text-cream-soft/55">{order.customer_name}</div>
+                    <div className="font-body text-[0.78rem] text-cream-soft">{order.customer_name}</div>
                   </div>
                   <div className="text-right">
-                    <div className="font-title text-[0.75rem] text-cream-soft/60 mb-1">{fmt(order.total)}</div>
-                    <span className={cn('font-body text-[0.55rem] tracking-wide uppercase px-2 py-0.5', STATUS_COLORS[order.status] || 'text-cream-soft/30')}>
+                    <div className="font-title text-[0.75rem] text-cream-soft mb-1">{fmt(order.total)}</div>
+                    <span className={cn('font-body text-[0.55rem] tracking-wide uppercase px-2 py-0.5', STATUS_COLORS[order.status] || 'text-cream-soft')}>
                       {order.status}
                     </span>
                   </div>
                 </div>
               ))}
               {recentOrders.length === 0 && (
-                <div className="px-5 py-8 text-center font-body text-[0.78rem] text-cream-soft/20">No orders yet</div>
+                <div className="px-5 py-8 text-center font-body text-[0.78rem] text-cream-soft">No orders yet</div>
               )}
             </div>
           </div>
@@ -153,7 +153,7 @@ export default function Dashboard() {
         {can('appointments') && (
           <div className="bg-charcoal border border-gold/8">
             <div className="flex items-center justify-between px-5 py-4 border-b border-gold/8">
-              <h2 className="font-title text-[0.68rem] tracking-[0.2em] uppercase text-cream-soft/50">Upcoming Appointments</h2>
+              <h2 className="font-title text-[0.68rem] tracking-[0.2em] uppercase text-cream-soft">Upcoming Appointments</h2>
               <Link to="/admin/appointments" className="font-title text-[0.58rem] tracking-[0.15em] uppercase text-gold/50 hover:text-gold transition-colors">
                 View All
               </Link>
@@ -162,21 +162,21 @@ export default function Dashboard() {
               {recentAppts.slice(0, 5).map(appt => (
                 <div key={appt.id} className="flex items-center justify-between px-5 py-3 hover:bg-gold/3 transition-colors">
                   <div>
-                    <div className="font-body text-[0.8rem] text-cream-soft/65">{appt.client_name}</div>
+                    <div className="font-body text-[0.8rem] text-cream-soft">{appt.client_name}</div>
                     <div className="flex items-center gap-1.5 mt-0.5">
-                      <Clock size={10} className="text-cream-soft/20" />
-                      <span className="font-body text-[0.68rem] text-cream-soft/30">
+                      <Clock size={10} className="text-cream-soft" />
+                      <span className="font-body text-[0.68rem] text-cream-soft">
                         {new Date(appt.preferred_date).toLocaleDateString('en-NG', { month: 'short', day: 'numeric' })} · {appt.preferred_time?.slice(0, 5)}
                       </span>
                     </div>
                   </div>
-                  <span className={cn('font-body text-[0.55rem] tracking-wide uppercase px-2 py-0.5', STATUS_COLORS[appt.status] || 'text-cream-soft/30')}>
+                  <span className={cn('font-body text-[0.55rem] tracking-wide uppercase px-2 py-0.5', STATUS_COLORS[appt.status] || 'text-cream-soft')}>
                     {appt.status}
                   </span>
                 </div>
               ))}
               {recentAppts.length === 0 && (
-                <div className="px-5 py-8 text-center font-body text-[0.78rem] text-cream-soft/20">No appointments scheduled</div>
+                <div className="px-5 py-8 text-center font-body text-[0.78rem] text-cream-soft">No appointments scheduled</div>
               )}
             </div>
           </div>
@@ -186,9 +186,9 @@ export default function Dashboard() {
         {can('messages') && recentMessages.length > 0 && (
           <div className="bg-charcoal border border-gold/8">
             <div className="flex items-center justify-between px-5 py-4 border-b border-gold/8">
-              <h2 className="font-title text-[0.68rem] tracking-[0.2em] uppercase text-cream-soft/50">
+              <h2 className="font-title text-[0.68rem] tracking-[0.2em] uppercase text-cream-soft">
                 Unread Messages
-                <span className="ml-2 bg-gold text-purple-darkest font-black text-[0.48rem] px-1.5 py-0.5">{recentMessages.length}</span>
+                <span className="ml-2 bg-gold text-purple-darkest dark:text-cream-soft font-black text-[0.48rem] px-1.5 py-0.5">{recentMessages.length}</span>
               </h2>
               <Link to="/admin/messages" className="font-title text-[0.58rem] tracking-[0.15em] uppercase text-gold/50 hover:text-gold transition-colors">
                 View All
@@ -199,10 +199,10 @@ export default function Dashboard() {
                 <div key={msg.id} className="px-5 py-3 hover:bg-gold/3 transition-colors">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <div className="font-body text-[0.8rem] text-cream-soft/65">{msg.name}</div>
-                      <div className="font-body text-[0.72rem] text-cream-soft/30 truncate mt-0.5">{msg.message}</div>
+                      <div className="font-body text-[0.8rem] text-cream-soft">{msg.name}</div>
+                      <div className="font-body text-[0.72rem] text-cream-soft truncate mt-0.5">{msg.message}</div>
                     </div>
-                    <div className="font-body text-[0.6rem] text-cream-soft/20 shrink-0">
+                    <div className="font-body text-[0.6rem] text-cream-soft shrink-0">
                       {new Date(msg.created_at).toLocaleDateString('en-NG', { month: 'short', day: 'numeric' })}
                     </div>
                   </div>
@@ -215,7 +215,7 @@ export default function Dashboard() {
         {/* Quick Actions — role-aware */}
         <div className="bg-charcoal border border-gold/8">
           <div className="px-5 py-4 border-b border-gold/8">
-            <h2 className="font-title text-[0.68rem] tracking-[0.2em] uppercase text-cream-soft/50">Quick Actions</h2>
+            <h2 className="font-title text-[0.68rem] tracking-[0.2em] uppercase text-cream-soft">Quick Actions</h2>
           </div>
           <div className="p-4 grid grid-cols-2 gap-2">
             {[
@@ -229,7 +229,7 @@ export default function Dashboard() {
               <Link key={action.label} to={action.path}
                 className="flex items-center gap-2.5 px-4 py-3 border border-gold/8 hover:border-gold/28 hover:bg-gold/5 transition-all group">
                 <span className="text-base">{action.icon}</span>
-                <span className="font-title text-[0.62rem] tracking-[0.12em] uppercase text-cream-soft/40 group-hover:text-gold transition-colors">
+                <span className="font-title text-[0.62rem] tracking-[0.12em] uppercase text-cream-soft group-hover:text-gold transition-colors">
                   {action.label}
                 </span>
               </Link>

@@ -56,7 +56,7 @@ export default function BulkOrders() {
                         <div className="h-px w-16" style={{ background: 'linear-gradient(to right, transparent, #C9A84C)' }} /><span className="text-gold text-xs">✦</span>
                         <div className="h-px w-16" style={{ background: 'linear-gradient(to left, transparent, #C9A84C)' }} />
                     </div>
-                    <p className="font-body text-cream-soft/45 text-sm mt-2">Bespoke procurement and volume pricing for developers & professionals</p>
+                    <p className="font-body text-cream-soft text-sm mt-2">Bespoke procurement and volume pricing for developers & professionals</p>
                 </motion.div>
             </section>
 
@@ -64,14 +64,14 @@ export default function BulkOrders() {
             <section className="section-base bg-cream">
                 <div className="section-header-center">
                     <p className="eyebrow mb-3">Partnerships</p>
-                    <h2 className="text-display-md text-purple-rich font-display">Who We Serve</h2>
+                    <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Who We Serve</h2>
                     <div className="gold-divider" />
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-[1200px] mx-auto">
                     {SERVE.map(s => (
-                        <div key={s.label} className="bg-white border border-purple-rich/5 p-6 text-center hover:border-gold transition-all group">
+                        <div key={s.label} className="bg-card border border-purple-rich/5 p-6 text-center hover:border-gold transition-all group">
                             <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{s.icon}</div>
-                            <h3 className="font-title text-[0.62rem] tracking-[0.2em] uppercase text-purple-rich">{s.label}</h3>
+                            <h3 className="font-title text-[0.62rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light">{s.label}</h3>
                         </div>
                     ))}
                 </div>
@@ -94,7 +94,7 @@ export default function BulkOrders() {
                         <div key={s.n} className="flex-1 relative z-10">
                             <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold text-gold font-title text-xl flex items-center justify-center mx-auto mb-6">{s.n}</div>
                             <h4 className="font-title text-[0.75rem] tracking-[0.2em] uppercase text-cream-soft mb-3">{s.t}</h4>
-                            <p className="font-body text-[0.82rem] text-cream-soft/40 leading-relaxed">{s.d}</p>
+                            <p className="font-body text-[0.82rem] text-cream-soft leading-relaxed">{s.d}</p>
                         </div>
                     ))}
                 </div>
@@ -104,7 +104,7 @@ export default function BulkOrders() {
             <section className="section-base bg-cream-soft">
                 <div className="section-header-center">
                     <p className="eyebrow mb-3">Trade Values</p>
-                    <h2 className="text-display-md text-purple-rich font-display">Trade Benefits</h2>
+                    <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Trade Benefits</h2>
                     <div className="gold-divider" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-[1100px] mx-auto">
@@ -112,7 +112,7 @@ export default function BulkOrders() {
                         <div key={b.title} className="card-luxury p-10 text-center relative group overflow-hidden">
                             <div className="absolute inset-0 bg-gold/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                             <b.icon size={28} className="text-gold mx-auto mb-5 relative z-10" />
-                            <h3 className="font-title text-[0.7rem] tracking-[0.2em] uppercase text-purple-rich mb-3 relative z-10">{b.title}</h3>
+                            <h3 className="font-title text-[0.7rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light mb-3 relative z-10">{b.title}</h3>
                             <p className="font-body text-[0.8rem] text-charcoal-muted leading-relaxed relative z-10">{b.desc}</p>
                         </div>
                     ))}
@@ -121,10 +121,10 @@ export default function BulkOrders() {
 
             {/* Form */}
             <section className="section-base bg-cream">
-                <div className="max-w-[800px] mx-auto bg-white border border-purple-rich/5 p-12 lg:p-16">
+                <div className="max-w-[800px] mx-auto bg-card border border-purple-rich/5 p-12 lg:p-16">
                     <div className="text-center mb-12">
                         <p className="eyebrow mb-3">Get Started</p>
-                        <h2 className="text-display-md text-purple-rich font-display">Submit a Bulk Request</h2>
+                        <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Submit a Bulk Request</h2>
                         <div className="gold-divider" />
                     </div>
                     <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
@@ -160,13 +160,13 @@ export default function BulkOrders() {
                 <div className="max-w-[800px] mx-auto">
                     <div className="section-header-center">
                         <p className="eyebrow mb-3">Questions</p>
-                        <h2 className="text-display-md text-purple-rich font-display">Common Inquiries</h2>
+                        <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Common Inquiries</h2>
                         <div className="gold-divider" />
                     </div>
                     <div className="space-y-4">
                         {FAQS.map(q => (
                             <div key={q.q} className="border-b border-purple-rich/10 pb-6 group cursor-pointer">
-                                <h4 className="font-title text-[0.75rem] tracking-[0.1em] text-purple-rich mb-3 group-hover:text-gold transition-colors">{q.q}</h4>
+                                <h4 className="font-title text-[0.75rem] tracking-[0.1em] text-purple-rich dark:text-gold-light mb-3 group-hover:text-gold transition-colors">{q.q}</h4>
                                 <p className="font-body text-[0.82rem] text-charcoal-muted leading-relaxed">{q.a}</p>
                             </div>
                         ))}
