@@ -89,20 +89,20 @@ export default function Shop() {
                         {uniqueCats.map(c => (
                             <button key={c} onClick={() => setCat(c)}
                                 className={`font-title text-[0.58rem] tracking-[0.15em] uppercase px-4 py-2 border transition-all duration-200
-                  ${cat === c ? 'bg-purple-rich text-gold-light border-purple-rich' : 'border-purple-rich/15 text-charcoal-muted/55 hover:border-gold hover:text-gold'}`}
+                  ${cat === c ? 'bg-purple-rich text-gold-light border-purple-rich' : 'border-purple-rich/15 text-charcoal-muted hover:border-gold hover:text-gold'}`}
                             >{c}</button>
                         ))}
                     </div>
                     <div className="flex items-center gap-2 border border-purple-rich/12 px-3 py-2 bg-white">
-                        <Filter size={12} className="text-charcoal-muted/40" />
-                        <select value={sort} onChange={e => setSort(e.target.value)} className="font-body text-[0.72rem] text-charcoal-muted/60 bg-transparent outline-none cursor-pointer">
+                        <Filter size={12} className="text-charcoal-muted" />
+                        <select value={sort} onChange={e => setSort(e.target.value)} className="font-body text-[0.72rem] text-charcoal-muted bg-transparent outline-none cursor-pointer">
                             <option value="featured">Featured</option>
                             <option value="price-asc">Price: Low to High</option>
                             <option value="price-desc">Price: High to Low</option>
                         </select>
                     </div>
                 </div>
-                <p className="font-body text-[0.72rem] text-charcoal-muted/35 mb-8 max-w-[1200px] mx-auto">{shown.length} products</p>
+                <p className="font-body text-[0.72rem] text-charcoal-muted mb-8 max-w-[1200px] mx-auto">{shown.length} products</p>
 
                 {loading ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-[1200px] mx-auto">

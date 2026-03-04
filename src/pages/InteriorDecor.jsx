@@ -65,7 +65,7 @@ export default function InteriorDecor() {
                             <div className="absolute top-0 left-0 w-full h-[2px] bg-gold scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
                             <div className="text-4xl mb-5">{s.icon}</div>
                             <h3 className="font-title text-[0.8rem] tracking-[0.2em] uppercase text-purple-rich mb-3">{s.title}</h3>
-                            <p className="font-body text-[0.85rem] text-charcoal-muted/60 leading-relaxed mb-6">{s.desc}</p>
+                            <p className="font-body text-[0.85rem] text-charcoal-muted leading-relaxed mb-6">{s.desc}</p>
                             <Link to="/contact" className="font-title text-[0.6rem] tracking-[0.2em] text-gold opacity-0 group-hover:opacity-100 transition-opacity">Enquire <ArrowRight size={10} className="inline ml-1" /></Link>
                         </motion.div>
                     ))}
@@ -103,7 +103,7 @@ export default function InteriorDecor() {
                     {STYLES.map(s => (
                         <div key={s.name} className="p-6 border border-purple-rich/10 hover:border-gold hover:bg-gold/5 transition-all text-center group cursor-default">
                             <h3 className="font-editorial text-xl text-purple-rich mb-2 group-hover:text-gold transition-colors">{s.name}</h3>
-                            <p className="font-body text-[0.8rem] text-charcoal-muted/50">{s.desc}</p>
+                            <p className="font-body text-[0.8rem] text-charcoal-muted">{s.desc}</p>
                         </div>
                     ))}
                 </div>
@@ -125,7 +125,7 @@ export default function InteriorDecor() {
                             <div className={`font-editorial text-4xl mb-8 ${p.featured ? 'text-cream-soft' : 'text-charcoal'}`}>{p.price}</div>
                             <ul className="space-y-4 mb-10">
                                 {p.features.map(f => (
-                                    <li key={f} className={`flex gap-3 items-center font-body text-[0.82rem] ${p.featured ? 'text-cream-soft/60' : 'text-charcoal-muted/60'}`}>
+                                    <li key={f} className={`flex gap-3 items-center font-body text-[0.82rem] ${p.featured ? 'text-cream-soft/60' : 'text-charcoal-muted'}`}>
                                         <Check size={14} className="text-gold shrink-0" /> {f}
                                     </li>
                                 ))}

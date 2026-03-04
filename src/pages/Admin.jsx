@@ -47,7 +47,7 @@ export default function Admin() {
                 {/* Topbar */}
                 <header className="h-16 bg-white border-b border-purple-rich/5 flex items-center justify-between px-8">
                     <div className="flex items-center gap-3 bg-cream-soft rounded-full px-4 py-1.5 border border-purple-rich/5">
-                        <Search size={14} className="text-charcoal-muted/40" />
+                        <Search size={14} className="text-charcoal-muted" />
                         <input type="text" placeholder="Search anything..." className="bg-transparent outline-none text-[0.78rem] font-body text-charcoal w-64" />
                     </div>
                     <div className="flex items-center gap-4">
@@ -60,7 +60,7 @@ export default function Admin() {
                     <div className="flex items-center justify-between mb-8">
                         <h1 className="font-title text-xl tracking-[0.12em] uppercase text-purple-rich font-bold">Admin Dashboard</h1>
                         <div className="flex gap-2">
-                            <button className="bg-white border border-purple-rich/10 px-4 py-2 font-title text-[0.58rem] tracking-[0.15em] uppercase text-charcoal-muted/60 hover:border-gold transition-all">Export Report</button>
+                            <button className="bg-white border border-purple-rich/10 px-4 py-2 font-title text-[0.58rem] tracking-[0.15em] uppercase text-charcoal-muted hover:border-gold transition-all">Export Report</button>
                             <button className="bg-purple-rich text-gold px-4 py-2 font-title text-[0.58rem] tracking-[0.15em] uppercase hover:bg-purple-dark transition-all">+ New Entry</button>
                         </div>
                     </div>
@@ -69,7 +69,7 @@ export default function Admin() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                         {STATS.map(s => (
                             <div key={s.label} className="bg-white p-6 border border-purple-rich/5 shadow-sm">
-                                <p className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-charcoal-muted/40 mb-1">{s.label}</p>
+                                <p className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-charcoal-muted mb-1">{s.label}</p>
                                 <div className="flex items-end justify-between">
                                     <span className="font-editorial text-2xl text-purple-rich">{s.val}</span>
                                     <span className={`font-body text-[0.6rem] font-bold ${s.trend.startsWith('+') ? 'text-green-600' : 'text-red-500'}`}>{s.trend}</span>
@@ -82,7 +82,7 @@ export default function Admin() {
                     <div className="bg-white border border-purple-rich/5 shadow-sm overflow-hidden">
                         <div className="px-6 py-4 border-b border-purple-rich/5 flex items-center justify-between">
                             <h3 className="font-title text-[0.65rem] tracking-[0.2em] uppercase text-purple-rich font-bold">Recent Projects</h3>
-                            <button className="text-charcoal-muted/40 hover:text-gold"><MoreVertical size={16} /></button>
+                            <button className="text-charcoal-muted hover:text-gold"><MoreVertical size={16} /></button>
                         </div>
                         <table className="w-full text-left">
                             <thead className="bg-[#FAF7F2] border-b border-purple-rich/5">
@@ -92,7 +92,7 @@ export default function Admin() {
                                     ))}
                                 </tr>
                             </thead>
-                            <tbody className="font-body text-[0.8rem] text-charcoal-muted/70">
+                            <tbody className="font-body text-[0.8rem] text-charcoal-muted">
                                 {[
                                     { name: 'The Laurent Residence', client: 'Adaeze Nwosu', status: 'In Progress', date: '24 Feb 2024' },
                                     { name: 'Casa Elegante', client: 'Dr. Adeyemi', status: 'Completed', date: '18 Jan 2024' },

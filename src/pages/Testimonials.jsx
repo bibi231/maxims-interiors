@@ -42,10 +42,10 @@ export default function Testimonials() {
                                 </div>
                             </div>
                             <Quote className="text-gold opacity-10 mb-4" size={32} />
-                            <p className="font-editorial text-[0.95rem] italic text-charcoal/80 leading-relaxed mb-8">"{r.quote}"</p>
+                            <p className="font-editorial text-[0.95rem] italic text-charcoal leading-relaxed mb-8">"{r.quote}"</p>
                             <div className="flex flex-col">
                                 <span className="font-title text-[0.65rem] tracking-[0.2em] uppercase text-purple-rich">{r.client_name}</span>
-                                <span className="font-body text-[0.65rem] text-charcoal-muted/40 mt-1">{r.client_role}</span>
+                                <span className="font-body text-[0.65rem] text-charcoal-muted mt-1">{r.client_role}</span>
                             </div>
                         </motion.div>
                     ))}

@@ -82,7 +82,7 @@ export default function Contact() {
                         <motion.div key={m.title} className="card-luxury p-10 text-center group" whileHover={{ y: -5 }}>
                             <m.icon size={28} className="text-gold mx-auto mb-6" />
                             <h3 className="font-title text-[0.75rem] tracking-[0.2em] uppercase text-purple-rich mb-3">{m.title}</h3>
-                            <p className="font-body text-xs text-charcoal-muted/50 leading-relaxed mb-6">{m.desc}</p>
+                            <p className="font-body text-xs text-charcoal-muted leading-relaxed mb-6">{m.desc}</p>
                             <button className="btn-maxims btn-outline-gold text-[0.55rem] px-5 py-2.5">{m.cta}</button>
                         </motion.div>
                     ))}

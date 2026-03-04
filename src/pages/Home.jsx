@@ -168,7 +168,7 @@ export default function Home() {
                             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-gold-deep via-gold to-gold-bright scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                             <span className="text-3xl block mb-4">{s.icon}</span>
                             <h3 className="font-title text-[0.78rem] tracking-[0.18em] uppercase text-purple-rich mb-2.5">{s.label}</h3>
-                            <p className="font-body text-[0.84rem] text-charcoal-muted/65 leading-relaxed mb-4">{s.desc}</p>
+                            <p className="font-body text-[0.84rem] text-charcoal-muted leading-relaxed mb-4">{s.desc}</p>
                             <Link to="/interior-decor" className="inline-flex items-center gap-1.5 font-title text-[0.6rem] tracking-[0.15em] uppercase text-gold opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                                 Enquire <ArrowRight size={11} />
                             </Link>
@@ -354,7 +354,7 @@ export default function Home() {
                                 <h3 className="font-editorial text-[0.88rem] text-charcoal mb-3">{p.name}</h3>
                                 <div className="flex items-center justify-between">
                                     <span className="font-title text-[0.82rem] text-purple-rich font-semibold">{formatPrice(p.price)}</span>
-                                    <button className="text-charcoal-muted/40 hover:text-gold transition-colors text-base">♡</button>
+                                    <button className="text-charcoal-muted hover:text-gold transition-colors text-base">♡</button>
                                 </div>
                             </div>
                         </motion.div>
