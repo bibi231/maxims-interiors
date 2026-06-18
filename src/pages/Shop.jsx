@@ -1,151 +1,206 @@
-// src/pages/Shop.jsx
-import { useMemo, useState } from 'react'
-import { ShoppingBag, Check } from 'lucide-react'
-import Meta from '@/components/Meta'
-import PageHero from '@/components/ui/PageHero'
-import Reveal from '@/components/ui/Reveal'
-import SmartImage from '@/components/ui/SmartImage'
-import { useProducts } from '@/hooks/useData'
-import { getStorageUrl, BUCKETS } from '@/lib/supabase'
-import { formatNaira, cn } from '@/lib/utils'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Heart, ShoppingBag, Filter, CreditCard, X } from 'lucide-react'
+import { useProducts, placeOrder } from '@/hooks/useData'
+import { getStorageUrl, BUCKETS } from '@/lib/storage'
 
-const SORTS = [
-  { key: 'featured', label: 'Featured' },
-  { key: 'price-asc', label: 'Price: Low → High' },
-  { key: 'price-desc', label: 'Price: High → Low' },
-  { key: 'name', label: 'Name A–Z' },
-]
+const fmt = n => '₦' + Number(n).toLocaleString()
+const badgeClass = (b) => b === 'New' || b === 'New Arrival' ? 'bg-gold text-purple-darkest' : b === 'Staff Pick' ? 'bg-purple-rich text-gold-light' : b === 'Sale' ? 'bg-red-700 text-white' : 'bg-charcoal text-white'
 
 export default function Shop() {
-  const { data: products, loading } = useProducts({ status: 'active' })
-  const [category, setCategory] = useState('All')
-  const [sort, setSort] = useState('featured')
-  const [added, setAdded] = useState(null)
+    const { data: products, loading } = useProducts({ status: 'active' })
+    const [cat, setCat] = useState('All')
+    const [sort, setSort] = useState('featured')
+    const [wished, setWished] = useState([])
+    const [added, setAdded] = useState(null)
+    const [cart, setCart] = useState([])
+    const [checkoutState, setCheckoutState] = useState('idle')
 
-  const categories = useMemo(
-    () => ['All', ...Array.from(new Set(products.map((p) => p.category).filter(Boolean)))],
-    [products],
-  )
+    const uniqueCats = ['All', ...new Set((products || []).map(p => p.category).filter(Boolean))]
 
-  const visible = useMemo(() => {
-    let list = category === 'All' ? products : products.filter((p) => p.category === category)
-    list = [...list]
-    switch (sort) {
-      case 'price-asc': list.sort((a, b) => a.price - b.price); break
-      case 'price-desc': list.sort((a, b) => b.price - a.price); break
-      case 'name': list.sort((a, b) => a.name.localeCompare(b.name)); break
-      default: list.sort((a, b) => Number(b.is_featured) - Number(a.is_featured)); break
+    const shown = (products || [])
+        .filter(p => cat === 'All' || p.category === cat)
+        .sort((a, b) => sort === 'price-asc' ? a.price - b.price : sort === 'price-desc' ? b.price - a.price : sort === 'featured' ? (b.is_featured ? 1 : -1) : 0)
+
+    const addCart = p => {
+        setCart([...cart, p]);
+        setAdded(p.id);
+        setTimeout(() => setAdded(null), 2000)
     }
-    return list
-  }, [products, category, sort])
 
-  function addToCart(p) {
-    // TODO: Cart + Squad/Paystack checkout — cart is a future feature
-    setAdded(p.id)
-    setTimeout(() => setAdded(null), 1800)
-  }
+    const handleCheckout = async () => {
+        if (cart.length === 0) return
+        setCheckoutState('processing')
 
-  return (
-    <>
-      <Meta title="Shop Luxury Home Goods — Maxims Interiors" description="Curated furniture, décor, lighting, and art. Luxury home goods delivered across Nigeria." />
-      <PageHero
-        eyebrow="The Collection"
-        title="Shop Luxury Home Goods"
-        lead="Curated furniture, décor, lighting, and art — each piece chosen for craft, character, and longevity."
-      />
+        // STUB: Simulate Paystack Modal Delay
+        await new Promise(r => setTimeout(r, 1500))
+        const subtotal = cart.reduce((sum, item) => sum + item.price, 0)
 
-      <section className="section-base bg-charcoal pt-10">
-        <div className="container-lux">
-          {/* Filters */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 mb-10">
-            <div className="flex flex-wrap gap-2">
-              {categories.map((c) => (
-                <button
-                  key={c}
-                  onClick={() => setCategory(c)}
-                  className={cn(
-                    'font-title text-[0.62rem] tracking-[0.18em] uppercase px-4 py-2 border transition-colors',
-                    category === c
-                      ? 'border-gold bg-gold/10 text-gold'
-                      : 'border-cream-soft/15 text-cream-soft/55 hover:border-gold/50 hover:text-gold',
-                  )}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              className="bg-charcoal-mid border border-cream-soft/15 text-cream-soft/70 font-body text-sm px-4 py-2.5 outline-none focus:border-gold"
-            >
-              {SORTS.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
-            </select>
-          </div>
+        try {
+            await placeOrder({
+                customer_name: 'Guest User',
+                customer_email: 'guest@example.com',
+                customer_phone: '08000000000',
+                delivery_address: '123 Victoria Island',
+                city: 'Lagos',
+                state: 'Lagos',
+                subtotal: subtotal,
+                delivery_fee: 10000,
+                total: subtotal + 10000,
+                payment_status: 'paid', // stubbed as paid
+                status: 'pending',
+                notes: 'Order placed via stubbed checkout',
+                items: cart.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    price: item.price,
+                    qty: 1
+                }))
+            })
+            setCheckoutState('success')
+            setCart([])
+            setTimeout(() => setCheckoutState('idle'), 3000)
+        } catch (err) {
+            console.error(err)
+            setCheckoutState('error')
+        }
+    }
 
-          {/* Grid */}
-          {loading ? (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i}>
-                  <div className="skeleton aspect-square" />
-                  <div className="skeleton h-4 w-3/4 mt-3" />
-                  <div className="skeleton h-3 w-1/3 mt-2" />
+    return (
+        <div>
+            <section className="page-hero min-h-[380px]">
+                <div className="page-hero-overlay" /><div className="page-hero-pattern" />
+                <motion.div className="relative z-10 px-6 py-24 text-center" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75 }}>
+                    <p className="eyebrow mb-4" style={{ color: 'rgba(201,168,76,0.65)' }}>Home Goods</p>
+                    <h1 className="text-display-lg text-cream-soft font-display mb-4">Shop Collection</h1>
+                    <div className="flex items-center justify-center gap-4 my-3">
+                        <div className="h-px w-16" style={{ background: 'linear-gradient(to right, transparent, #C9A84C)' }} />
+                        <span className="text-gold text-xs">✦</span>
+                        <div className="h-px w-16" style={{ background: 'linear-gradient(to left, transparent, #C9A84C)' }} />
+                    </div>
+                    <p className="font-body text-cream-soft text-sm mt-2">Curated luxury for every corner of your home</p>
+                </motion.div>
+            </section>
+
+            <section className="section-base bg-cream-soft">
+                {/* Controls */}
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-6 max-w-[1200px] mx-auto">
+                    <div className="flex flex-wrap gap-2">
+                        {uniqueCats.map(c => (
+                            <button key={c} onClick={() => setCat(c)}
+                                className={`font-title text-[0.58rem] tracking-[0.15em] uppercase px-4 py-2 border transition-all duration-200
+                  ${cat === c ? 'bg-purple-rich text-gold-light border-purple-rich' : 'border-purple-rich/15 text-charcoal-muted hover:border-gold hover:text-gold'}`}
+                            >{c}</button>
+                        ))}
+                    </div>
+                    <div className="flex items-center gap-2 border border-purple-rich/12 px-3 py-2 bg-card">
+                        <Filter size={12} className="text-charcoal-muted" />
+                        <select value={sort} onChange={e => setSort(e.target.value)} className="font-body text-[0.72rem] text-charcoal-muted bg-transparent outline-none cursor-pointer">
+                            <option value="featured">Featured</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                        </select>
+                    </div>
                 </div>
-              ))}
-            </div>
-          ) : visible.length === 0 ? (
-            <p className="text-center font-body text-cream-soft/40 py-20">No products in this category yet. Check back soon.</p>
-          ) : (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {visible.map((p, i) => (
-                <Reveal key={p.id} delay={(i % 4) * 0.05}>
-                  <article className="group">
-                    <div className="relative overflow-hidden">
-                      <SmartImage
-                        src={getStorageUrl(BUCKETS.products, p.cover_image)}
-                        alt={p.name} fallback="🕯" ratio="1/1"
-                        className="transition-transform duration-700 ease-luxe group-hover:scale-105"
-                      />
-                      {p.badge && (
-                        <span className="absolute top-3 left-3 bg-gold text-purple-darkest font-title text-[0.55rem] tracking-[0.15em] uppercase px-2 py-1">{p.badge}</span>
-                      )}
-                      {p.compare_price && p.compare_price > p.price && (
-                        <span className="absolute top-3 right-3 bg-red-500/90 text-cream-soft font-title text-[0.55rem] tracking-[0.1em] uppercase px-2 py-1">Sale</span>
-                      )}
-                      <button
-                        onClick={() => addToCart(p)}
-                        className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-purple-darkest/95 text-cream-soft font-title text-[0.6rem] tracking-[0.18em] uppercase py-3 flex items-center justify-center gap-2"
-                      >
-                        {added === p.id
-                          ? <><Check size={14} className="text-gold" /> Added</>
-                          : <><ShoppingBag size={14} /> Add to Cart</>}
-                      </button>
-                    </div>
-                    <div className="mt-3 flex items-start justify-between gap-2">
-                      <div>
-                        <h3 className="font-editorial text-base text-cream-soft group-hover:text-gold transition-colors leading-tight">{p.name}</h3>
-                        <p className="font-body text-[0.7rem] text-cream-soft/40 mt-0.5">{p.category}</p>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <p className="font-body text-sm text-gold/90">{formatNaira(p.price)}</p>
-                        {p.compare_price && p.compare_price > p.price && (
-                          <p className="font-body text-[0.7rem] text-cream-soft/30 line-through">{formatNaira(p.compare_price)}</p>
-                        )}
-                      </div>
-                    </div>
-                  </article>
-                </Reveal>
-              ))}
-            </div>
-          )}
+                <p className="font-body text-[0.72rem] text-charcoal-muted mb-8 max-w-[1200px] mx-auto">{shown.length} products</p>
 
-          <p className="mt-12 text-center font-body text-xs text-cream-soft/35">
-            Online checkout is launching soon. To purchase today, {' '}
-            <a href="/contact" className="text-gold hover:underline">contact our team</a>.
-          </p>
+                {loading ? (
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-[1200px] mx-auto">
+                        {Array.from({ length: 8 }).map((_, i) => (
+                            <div key={i} className="card-luxury animate-pulse p-4">
+                                <div className="aspect-square bg-purple-rich/10 mb-4" />
+                                <div className="space-y-3">
+                                    <div className="h-2 w-1/4 bg-purple-rich/10 rounded" />
+                                    <div className="h-4 w-3/4 bg-purple-rich/10 rounded" />
+                                    <div className="flex justify-between items-center">
+                                        <div className="h-3 w-1/3 bg-purple-rich/10 rounded" />
+                                        <div className="h-8 w-8 bg-purple-rich/10 rounded-full" />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <motion.div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-[1200px] mx-auto" layout>
+                        <AnimatePresence mode='popLayout'>
+                            {shown.map((p, i) => (
+                                <motion.div key={p.id} className="card-luxury group" layout
+                                    initial={{ opacity: 0, scale: 0.93 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.93 }}
+                                    transition={{ delay: i * 0.04, duration: 0.38 }} whileHover={{ y: -5 }}>
+                                    <div className="relative aspect-square bg-gradient-to-br from-cream to-cream-dark flex items-center justify-center overflow-hidden">
+                                        {p.cover_image ? (
+                                            <img src={getStorageUrl(BUCKETS.products, p.cover_image)} alt={p.name} loading="lazy" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                        ) : (
+                                            <span className="text-5xl group-hover:scale-110 transition-transform duration-400">🛋️</span>
+                                        )}
+                                        {p.badge && <div className={`absolute top-2.5 left-2.5 font-body font-black text-[0.5rem] tracking-[0.12em] uppercase px-2 py-0.5 ${badgeClass(p.badge)}`}>{p.badge}</div>}
+                                        <button onClick={() => setWished(w => w.includes(p.id) ? w.filter(x => x !== p.id) : [...w, p.id])}
+                                            className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-card/85 flex items-center justify-center shadow">
+                                            <Heart size={13} fill={wished.includes(p.id) ? '#C9A84C' : 'none'} color={wished.includes(p.id) ? '#C9A84C' : '#7A7890'} />
+                                        </button>
+                                        <div className="absolute inset-0 bg-purple-rich/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            <button onClick={() => addCart(p)} className="btn-maxims btn-gold-solid text-[0.55rem] px-4 py-2">
+                                                {added === p.id ? '✓ Added!' : 'Add to Cart'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="p-4">
+                                        <p className="eyebrow text-[0.52rem] mb-1">{p.category}</p>
+                                        <h3 className="font-editorial text-[0.88rem] text-charcoal mb-2">{p.name}</h3>
+                                        <div className="flex items-center justify-between">
+                                            <span className="font-title text-[0.82rem] text-purple-rich dark:text-gold-light font-semibold">{fmt(p.price)}</span>
+                                            <button onClick={() => addCart(p)} className="w-8 h-8 bg-purple-rich hover:bg-gold hover:text-purple-darkest dark:text-cream-soft text-gold-light flex items-center justify-center transition-colors">
+                                                <ShoppingBag size={13} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </motion.div>
+                )}
+
+                {/* Feature Banner */}
+                <motion.div className="max-w-[1200px] mx-auto mt-16 bg-charcoal-mid border border-gold/12 grid grid-cols-1 md:grid-cols-[1fr_auto] items-center gap-8 p-12 relative overflow-hidden"
+                    initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+                    <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 50%, rgba(59,31,107,0.4), transparent 60%)' }} />
+                    <div className="relative z-10">
+                        <p className="eyebrow mb-3" style={{ color: 'rgba(201,168,76,0.65)' }}>Staff Pick of the Season</p>
+                        <h2 className="text-display-md text-cream-soft font-display mb-3">The Elara Collection</h2>
+                        <p className="font-body text-[0.88rem] text-cream-soft leading-relaxed mb-5 max-w-md">
+                            Our bestselling living room series — handcrafted velvet chairs, sculptural side tables, and curated accent pieces.
+                        </p>
+                        <button className="btn-maxims btn-gold-solid">Shop the Collection</button>
+                    </div>
+                    <div className="text-8xl opacity-25 hidden md:block">🛋️</div>
+                </motion.div>
+            </section>
+
+            {/* Floating Cart Stub */}
+            <AnimatePresence>
+                {cart.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }}
+                        className="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 bg-purple-rich border border-gold/20 p-5 shadow-2xl z-50 flex items-center gap-6"
+                    >
+                        <div className="text-white">
+                            <div className="font-title text-[0.6rem] tracking-widest uppercase text-gold mb-1">Your Cart</div>
+                            <div className="font-body text-sm font-semibold">{cart.length} item{cart.length !== 1 ? 's' : ''} <span className="text-white/50 mx-2">|</span> {fmt(cart.reduce((s, p) => s + p.price, 0))}</div>
+                        </div>
+                        <button
+                            onClick={handleCheckout}
+                            disabled={checkoutState === 'processing'}
+                            className="btn-maxims btn-gold-solid flex items-center gap-2 disabled:opacity-50"
+                        >
+                            <CreditCard size={14} />
+                            {checkoutState === 'processing' ? 'Processing...' : checkoutState === 'success' ? 'Order Placed!' : 'Paystack Checkout'}
+                        </button>
+                        <button onClick={() => setCart([])} className="absolute -top-3 -right-3 w-6 h-6 bg-charcoal rounded-full border border-gold/20 text-cream-soft flex items-center justify-center hover:text-gold hover:border-gold transition-colors">
+                            <X size={12} />
+                        </button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
-      </section>
-    </>
-  )
+    )
 }

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Edit2, Trash2, X, Upload, ToggleLeft, ToggleRight } from 'lucide-react'
 import AdminLayout from '@/components/admin/AdminLayout'
 import { useTeamMembers, upsertTeamMember, deleteTeamMember, useProfiles, logActivity } from '@/hooks/useData'
-import { uploadFile, getStorageUrl, BUCKETS } from '@/lib/supabase'
+import { uploadFile, getStorageUrl, BUCKETS } from '@/lib/storage'
 import { useAuth } from '@/context/AuthContext'
 
 const BLANK = { full_name: '', title: '', bio: '', photo_url: '', instagram: '', linkedin: '', sort_order: 0, is_published: true, profile_id: '' }

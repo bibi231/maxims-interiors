@@ -1,203 +1,174 @@
-// src/pages/Contact.jsx
-import { useState, useMemo } from 'react'
-import { MapPin, Phone, Mail, Clock, Check, Calendar } from 'lucide-react'
-import Meta from '@/components/Meta'
-import PageHero from '@/components/ui/PageHero'
-import Reveal from '@/components/ui/Reveal'
-import { submitContactForm, bookAppointment, checkSlotAvailability, useSiteSettings } from '@/hooks/useData'
-import { CONTACT_FALLBACK } from '@/data/site'
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
+import { MapPin, Phone, Mail, Clock, Calendar, Instagram, Facebook, Linkedin } from 'lucide-react'
+import { submitContactForm, bookAppointment, checkSlotAvailability } from '@/hooks/useData'
 
-const SERVICES = ['Residential Design', 'Commercial / Hospitality', 'Home Goods / Shop', 'Bulk / Trade Supply', 'General Enquiry']
-const TIME_SLOTS = ['10:00', '12:00', '14:00', '16:00']
-const EMPTY = { name: '', email: '', phone: '', service: '', message: '' }
-
-function nextDays(n = 7) {
-  const out = []
-  const d = new Date()
-  while (out.length < n) {
-    d.setDate(d.getDate() + 1)
-    if (d.getDay() !== 0) out.push(new Date(d)) // skip Sundays
-  }
-  return out
-}
+const METHODS = [
+    { icon: Calendar, title: 'Book Consultation', desc: 'Schedule a 1-on-1 session with our lead designers.', cta: 'Book Now' },
+    { icon: Phone, title: 'Call or WhatsApp', desc: 'Available for quick questions and project updates.', cta: 'Contact' },
+    { icon: MapPin, title: 'Visit Showroom', desc: 'Experience our collection in person at our Abuja flagship.', cta: 'Get Directions' },
+]
 
 export default function Contact() {
-  const { settings } = useSiteSettings()
-  const contact = settings.contact_info ?? CONTACT_FALLBACK
+    const [msgData, setMsgData] = useState({ name: '', email: '', phone: '', service: 'Full Room Design', message: '' })
+    const [msgStatus, setMsgStatus] = useState('idle')
 
-  // Contact form state
-  const [form, setForm] = useState(EMPTY)
-  const [sending, setSending] = useState(false)
-  const [sent, setSent] = useState(false)
-  const [formErr, setFormErr] = useState('')
-  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
+    const handleMsgSubmit = async (e) => {
+        e.preventDefault()
+        setMsgStatus('submitting')
+        try {
+            await submitContactForm(msgData)
+            setMsgStatus('success')
+            setMsgData({ name: '', email: '', phone: '', service: 'Full Room Design', message: '' })
+            setTimeout(() => setMsgStatus('idle'), 3000)
+        } catch (err) {
+            console.error(err)
+            setMsgStatus('error')
+        }
+    }
 
-  async function handleContact(e) {
-    e.preventDefault()
-    setFormErr('')
-    if (!form.name || !form.email || !form.message) { setFormErr('Please add your name, email, and a message.'); return }
-    setSending(true)
-    try {
-      await submitContactForm({ full_name: form.name, email: form.email, phone: form.phone, service: form.service, message: form.message })
-      setSent(true); setForm(EMPTY)
-    } catch { setFormErr('Failed to send. Please try again or call us directly.') }
-    setSending(false)
-  }
+    const [apptDate, setApptDate] = useState(() => {
+        const d = new Date()
+        d.setDate(d.getDate() + 1)
+        return d.toISOString().split('T')[0]
+    })
+    const TIMES = ['09:00 AM', '11:00 AM', '02:00 PM', '04:00 PM']
+    const [apptTime, setApptTime] = useState(TIMES[0])
+    const [avail, setAvail] = useState(true)
+    const [apptStatus, setApptStatus] = useState('idle')
+    const [apptName, setApptName] = useState('')
+    const [apptEmail, setApptEmail] = useState('')
 
-  // Booking widget state
-  const days = useMemo(() => nextDays(7), [])
-  const [date, setDate] = useState(null)
-  const [time, setTime] = useState(null)
-  const [slotErr, setSlotErr] = useState('')
-  const [booking, setBooking] = useState({ name: '', email: '', phone: '', notes: '' })
-  const [booked, setBooked] = useState(false)
-  const [bookingBusy, setBookingBusy] = useState(false)
-  const setB = (k) => (e) => setBooking((b) => ({ ...b, [k]: e.target.value }))
+    useEffect(() => {
+        checkSlotAvailability(apptDate, apptTime).then(setAvail)
+    }, [apptDate, apptTime])
 
-  async function selectSlot(d, t) {
-    setSlotErr('')
-    const iso = d.toISOString().slice(0, 10)
-    const available = await checkSlotAvailability(iso, t)
-    if (!available) { setSlotErr('That slot was just taken — please choose another.'); return }
-    setDate(iso); setTime(t)
-  }
+    const handleApptSubmit = async (e) => {
+        e.preventDefault()
+        if (!avail) return
+        setApptStatus('submitting')
+        try {
+            await bookAppointment({
+                client_name: apptName,
+                client_email: apptEmail,
+                preferred_date: apptDate,
+                preferred_time: apptTime,
+                service_type: 'Consultation'
+            })
+            setApptStatus('success')
+            setTimeout(() => setApptStatus('idle'), 3000)
+            setApptName('')
+            setApptEmail('')
+        } catch (err) {
+            console.error(err)
+            setApptStatus('error')
+        }
+    }
 
-  async function confirmBooking(e) {
-    e.preventDefault()
-    setSlotErr('')
-    if (!date || !time) { setSlotErr('Please pick a date and time.'); return }
-    if (!booking.name || !booking.email) { setSlotErr('Please add your name and email.'); return }
-    setBookingBusy(true)
-    try {
-      const stillFree = await checkSlotAvailability(date, time)
-      if (!stillFree) { setSlotErr('That slot was just taken — please choose another.'); setBookingBusy(false); return }
-      await bookAppointment({
-        client_name: booking.name, client_email: booking.email, client_phone: booking.phone,
-        type: 'design_consultation', service: form.service || 'Design Consultation',
-        preferred_date: date, preferred_time: time, notes: booking.notes,
-      })
-      setBooked(true)
-    } catch { setSlotErr('Booking failed. Please try again or call us.') }
-    setBookingBusy(false)
-  }
+    return (
+        <div>
+            <section className="page-hero min-h-[420px]">
+                <div className="page-hero-overlay" /><div className="page-hero-pattern" />
+                <motion.div className="relative z-10 px-6 py-24 text-center" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75 }}>
+                    <p className="eyebrow mb-4" style={{ color: 'rgba(201,168,76,0.65)' }}>Get In Touch</p>
+                    <h1 className="text-display-lg text-cream-soft font-display mb-4">Let's Create<br /><em className="text-gold-light italic">Something Beautiful</em></h1>
+                    <div className="gold-divider" />
+                </motion.div>
+            </section>
 
-  return (
-    <>
-      <Meta title="Book a Design Consultation — Maxims Interiors" description="Get in touch or book a design consultation with Maxims Interiors & Home Goods in Abuja." />
-      <PageHero eyebrow="Get in Touch" title="Let's Start a Conversation" lead="Whether it's a single room or an entire property, we'd love to hear about your project." />
-
-      <section className="section-base bg-charcoal pt-10">
-        <div className="container-lux grid lg:grid-cols-2 gap-12">
-          {/* Contact form */}
-          <Reveal>
-            <h2 className="text-display-md">Send a Message</h2>
-            <div className="gold-divider !justify-start" />
-            {sent ? (
-              <div className="notice-success flex items-center gap-2 mt-4"><Check size={18} /> Thank you! We'll be in touch within 24 hours.</div>
-            ) : (
-              <form onSubmit={handleContact} className="mt-6 space-y-5">
-                {formErr && <div className="notice-error">{formErr}</div>}
-                <div className="grid sm:grid-cols-2 gap-5">
-                  <input className="lux-input" placeholder="Full name *" value={form.name} onChange={set('name')} />
-                  <input type="email" className="lux-input" placeholder="Email *" value={form.email} onChange={set('email')} />
+            <section className="section-base bg-cream-soft">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-[1000px] mx-auto mb-20">
+                    {METHODS.map(m => (
+                        <motion.div key={m.title} className="card-luxury p-10 text-center group" whileHover={{ y: -5 }}>
+                            <m.icon size={28} className="text-gold mx-auto mb-6" />
+                            <h3 className="font-title text-[0.75rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light mb-3">{m.title}</h3>
+                            <p className="font-body text-xs text-charcoal-muted leading-relaxed mb-6">{m.desc}</p>
+                            <button className="btn-maxims btn-outline-gold text-[0.55rem] px-5 py-2.5">{m.cta}</button>
+                        </motion.div>
+                    ))}
                 </div>
-                <div className="grid sm:grid-cols-2 gap-5">
-                  <input className="lux-input" placeholder="Phone" value={form.phone} onChange={set('phone')} />
-                  <select className="lux-input" value={form.service} onChange={set('service')}>
-                    <option value="">Service of interest</option>
-                    {SERVICES.map((s) => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                </div>
-                <textarea rows={5} className="lux-input resize-none" placeholder="Tell us about your project *" value={form.message} onChange={set('message')} />
-                <button type="submit" disabled={sending} className="btn-gold-solid w-full disabled:opacity-60">{sending ? 'Sending…' : 'Send Message'}</button>
-              </form>
-            )}
 
-            {/* Contact details */}
-            <div className="mt-10 space-y-4">
-              <Detail icon={MapPin} text={contact.address} />
-              <Detail icon={Phone} text={contact.phone} href={`tel:${(contact.phone || '').replace(/\s/g, '')}`} />
-              <Detail icon={Mail} text={contact.email} href={`mailto:${contact.email}`} />
-              {contact.hours && <Detail icon={Clock} text={contact.hours} />}
-            </div>
-          </Reveal>
-
-          {/* Booking widget */}
-          <Reveal delay={0.12}>
-            <div className="card-glass p-7 sm:p-9">
-              <div className="flex items-center gap-2 text-gold mb-1"><Calendar size={18} /><span className="eyebrow !text-gold">Book a Consultation</span></div>
-              <h2 className="text-display-md">Reserve Your Slot</h2>
-
-              {booked ? (
-                <div className="mt-6 text-center py-8">
-                  <div className="grid place-items-center w-16 h-16 mx-auto rounded-full bg-gold/15 text-gold mb-5"><Check size={30} /></div>
-                  <h3 className="font-editorial text-2xl text-cream-soft">You're booked!</h3>
-                  <p className="mt-3 font-body text-cream-soft/60">
-                    We've reserved <span className="text-gold">{date}</span> at <span className="text-gold">{time}</span>.
-                    A confirmation email is on its way once our team approves it.
-                  </p>
-                </div>
-              ) : (
-                <>
-                  {/* Date picker */}
-                  <p className="font-title text-[0.62rem] tracking-[0.15em] uppercase text-cream-soft/50 mt-6 mb-3">Choose a day</p>
-                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                    {days.map((d) => {
-                      const iso = d.toISOString().slice(0, 10)
-                      const isSel = date === iso
-                      return (
-                        <button key={iso} onClick={() => { setDate(iso); setTime(null) }}
-                          className={`p-2 border text-center transition-colors ${isSel ? 'border-gold bg-gold/10 text-gold' : 'border-cream-soft/15 text-cream-soft/60 hover:border-gold/50'}`}>
-                          <div className="font-body text-[0.6rem] uppercase tracking-wide">{d.toLocaleDateString('en-NG', { weekday: 'short' })}</div>
-                          <div className="font-display text-lg leading-tight">{d.getDate()}</div>
-                          <div className="font-body text-[0.55rem] text-cream-soft/40">{d.toLocaleDateString('en-NG', { month: 'short' })}</div>
-                        </button>
-                      )
-                    })}
-                  </div>
-
-                  {/* Time picker */}
-                  {date && (
-                    <>
-                      <p className="font-title text-[0.62rem] tracking-[0.15em] uppercase text-cream-soft/50 mt-6 mb-3">Choose a time</p>
-                      <div className="grid grid-cols-4 gap-2">
-                        {TIME_SLOTS.map((t) => (
-                          <button key={t} onClick={() => selectSlot(days.find(d => d.toISOString().slice(0,10) === date), t)}
-                            className={`py-2 border font-body text-sm transition-colors ${time === t ? 'border-gold bg-gold/10 text-gold' : 'border-cream-soft/15 text-cream-soft/60 hover:border-gold/50'}`}>
-                            {t}
-                          </button>
-                        ))}
-                      </div>
-                    </>
-                  )}
-
-                  {/* Details */}
-                  <form onSubmit={confirmBooking} className="mt-6 space-y-4">
-                    {slotErr && <div className="notice-error">{slotErr}</div>}
-                    <input className="lux-input" placeholder="Full name *" value={booking.name} onChange={setB('name')} />
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <input type="email" className="lux-input" placeholder="Email *" value={booking.email} onChange={setB('email')} />
-                      <input className="lux-input" placeholder="Phone" value={booking.phone} onChange={setB('phone')} />
+                <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-12 bg-card border border-purple-rich/5 overflow-hidden">
+                    {/* Form */}
+                    <div className="p-12 lg:p-16">
+                        <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display mb-8">Send a Message</h2>
+                        <form className="grid grid-cols-1 sm:grid-cols-2 gap-6" onSubmit={handleMsgSubmit}>
+                            <div className="sm:col-span-2 flex flex-col gap-2">
+                                <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-gold">Full Name</label>
+                                <input type="text" required value={msgData.name} onChange={e => setMsgData({ ...msgData, name: e.target.value })} className="bg-cream-soft/30 border border-purple-rich/10 px-4 py-3 font-body text-sm focus:border-gold outline-none disabled:opacity-50" disabled={msgStatus === 'submitting'} />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-gold">Email</label>
+                                <input type="email" required value={msgData.email} onChange={e => setMsgData({ ...msgData, email: e.target.value })} className="bg-cream-soft/30 border border-purple-rich/10 px-4 py-3 font-body text-sm focus:border-gold outline-none disabled:opacity-50" disabled={msgStatus === 'submitting'} />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-gold">Phone</label>
+                                <input type="tel" value={msgData.phone} onChange={e => setMsgData({ ...msgData, phone: e.target.value })} className="bg-cream-soft/30 border border-purple-rich/10 px-4 py-3 font-body text-sm focus:border-gold outline-none disabled:opacity-50" disabled={msgStatus === 'submitting'} />
+                            </div>
+                            <div className="sm:col-span-2 flex flex-col gap-2">
+                                <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-gold">Service Interest</label>
+                                <select value={msgData.service} onChange={e => setMsgData({ ...msgData, service: e.target.value })} className="bg-cream-soft/30 border border-purple-rich/10 px-4 py-3 font-body text-sm focus:border-gold outline-none cursor-pointer disabled:opacity-50" disabled={msgStatus === 'submitting'}>
+                                    <option>Full Room Design</option>
+                                    <option>Bulk & Trade Order</option>
+                                    <option>Home Staging</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div className="sm:col-span-2 flex flex-col gap-2">
+                                <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-gold">Message</label>
+                                <textarea required rows="4" value={msgData.message} onChange={e => setMsgData({ ...msgData, message: e.target.value })} className="bg-cream-soft/30 border border-purple-rich/10 px-4 py-3 font-body text-sm focus:border-gold outline-none resize-none disabled:opacity-50" disabled={msgStatus === 'submitting'} />
+                            </div>
+                            <button type="submit" disabled={msgStatus === 'submitting'} className="sm:col-span-2 btn-maxims btn-gold-solid w-full justify-center mt-4">
+                                {msgStatus === 'submitting' ? 'Sending...' : msgStatus === 'success' ? '✓ Sent Successfully' : 'Submit Inquiry'}
+                            </button>
+                        </form>
                     </div>
-                    <textarea rows={2} className="lux-input resize-none" placeholder="Anything we should know?" value={booking.notes} onChange={setB('notes')} />
-                    <button type="submit" disabled={bookingBusy} className="btn-gold-solid w-full disabled:opacity-60">{bookingBusy ? 'Reserving…' : 'Confirm Booking'}</button>
-                  </form>
-                </>
-              )}
-            </div>
-          </Reveal>
-        </div>
-      </section>
-    </>
-  )
-}
 
-function Detail({ icon: Icon, text, href }) {
-  const inner = <span className="font-body text-sm text-cream-soft/65">{text}</span>
-  return (
-    <div className="flex items-center gap-3">
-      <span className="grid place-items-center w-9 h-9 border border-gold/25 text-gold/70 shrink-0"><Icon size={15} /></span>
-      {href ? <a href={href} className="hover:text-gold transition-colors">{inner}</a> : inner}
-    </div>
-  )
+                    {/* Info Panel */}
+                    <div className="bg-charcoal flex flex-col">
+                        <div className="flex-1 p-12 lg:p-16 border-b border-gold/10">
+                            <p className="eyebrow mb-6">Schedule</p>
+                            <h3 className="font-editorial text-2xl text-cream-soft mb-8">Book a Meeting</h3>
+                            <form onSubmit={handleApptSubmit}>
+                                <div className="mb-6 flex gap-3">
+                                    <input type="text" required placeholder="Name" value={apptName} onChange={e => setApptName(e.target.value)} className="w-1/2 bg-transparent border-b border-gold/30 px-2 py-2 text-sm text-cream-soft focus:border-gold outline-none placeholder:text-cream-soft" disabled={apptStatus === 'submitting'} />
+                                    <input type="email" required placeholder="Email" value={apptEmail} onChange={e => setApptEmail(e.target.value)} className="w-1/2 bg-transparent border-b border-gold/30 px-2 py-2 text-sm text-cream-soft focus:border-gold outline-none placeholder:text-cream-soft" disabled={apptStatus === 'submitting'} />
+                                </div>
+                                <div className="mb-8">
+                                    <input type="date" required value={apptDate} onChange={e => setApptDate(e.target.value)} min={new Date().toISOString().split('T')[0]} className="w-full bg-transparent border-b border-gold/30 px-2 py-2 text-sm text-cream-soft focus:border-gold outline-none placeholder:text-cream-soft" disabled={apptStatus === 'submitting'} />
+                                </div>
+                                <div className="grid grid-cols-2 gap-3 mb-10">
+                                    {TIMES.map(t => (
+                                        <button type="button" key={t} onClick={() => setApptTime(t)} className={`border py-2.5 text-[0.7rem] font-title transition-all ${t === apptTime ? 'border-gold text-gold bg-gold/5' : 'border-gold/20 text-gold/60 hover:border-gold hover:text-gold hover:bg-gold/5'}`} disabled={apptStatus === 'submitting'}>{t}</button>
+                                    ))}
+                                </div>
+                                {!avail && <p className="text-red-400 text-xs mb-4 -mt-6">This slot is not available. Please pick another time.</p>}
+                                <button type="submit" disabled={!avail || apptStatus === 'submitting'} className="btn-maxims btn-gold-solid w-full justify-center disabled:opacity-50">
+                                    {apptStatus === 'submitting' ? 'Booking...' : apptStatus === 'success' ? '✓ Booked Successfully' : 'Confirm Booking'}
+                                </button>
+                            </form>
+                        </div>
+                        <div className="p-12 lg:p-16 bg-purple-darkest">
+                            <p className="eyebrow mb-6 text-gold/40">Our Showroom</p>
+                            <div className="space-y-4 mb-10">
+                                <div className="flex gap-4 items-start">
+                                    <MapPin className="text-gold shrink-0 mt-1" size={16} />
+                                    <p className="font-body text-sm text-cream-soft leading-relaxed">123 Design Boulevard, Wuse 2, Abuja, FCT, Nigeria</p>
+                                </div>
+                                <div className="flex gap-4 items-center">
+                                    <Phone className="text-gold shrink-0" size={16} />
+                                    <p className="font-body text-sm text-cream-soft">+234 800 000 0000</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-3">
+                                {[Instagram, Facebook, Linkedin].map((Icon, i) => (
+                                    <a key={i} href="#" className="w-10 h-10 border border-gold/15 flex items-center justify-center text-gold/40 hover:text-gold hover:border-gold transition-all"><Icon size={16} /></a>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    )
 }

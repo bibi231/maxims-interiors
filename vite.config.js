@@ -10,6 +10,9 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  optimizeDeps: {
+    include: ['three'],
+  },
   build: {
     target: 'es2019',
     cssCodeSplit: true,
@@ -20,7 +23,7 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes('node_modules')) {
             if (id.includes('framer-motion')) return 'motion'
-            if (id.includes('@supabase')) return 'supabase'
+            if (id.includes('three')) return 'three'
             if (id.includes('react-router')) return 'router'
             if (id.includes('lucide-react')) return 'icons'
             if (id.includes('react') || id.includes('scheduler')) return 'vendor'

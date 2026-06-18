@@ -1,102 +1,119 @@
-// src/components/layout/Footer.jsx
 import { Link } from 'react-router-dom'
-import { Instagram, Facebook, Linkedin, Youtube, MapPin, Phone, Mail } from 'lucide-react'
-import { NAV_LINKS, CONTACT_FALLBACK, BRAND, TRUEWEB } from '@/data/site'
-import { useSiteSettings } from '@/hooks/useData'
+import { Instagram, Facebook, Linkedin, Youtube, MapPin, Phone, Mail, Clock } from 'lucide-react'
 import NewsletterSignup from '@/components/NewsletterSignup'
 
+const NAV_LINKS = ['/', '/about', '/interior-decor', '/shop', '/gallery', '/team', '/testimonials']
+const NAV_NAMES = ['Home', 'About Us', 'Interior Décor', 'Shop', 'Gallery', 'Our Team', 'Reviews']
+
+const SERVICES = ['Full Room Design', 'Space Planning', 'Color Consultation', 'Furniture Sourcing', 'Bulk & Trade Orders', 'Virtual Design', 'Home Staging']
+
+const CONTACT = [
+    { icon: MapPin, text: '123 Design Boulevard, Wuse 2, Abuja, FCT, Nigeria' },
+    { icon: Phone, text: '+234 800 000 0000' },
+    { icon: Mail, text: 'hello@maximsinteriors.com' },
+    { icon: Clock, text: 'Mon–Sat: 9am – 7pm WAT' },
+]
+
 export default function Footer() {
-  const { settings } = useSiteSettings()
-  const contact = settings.contact_info ?? CONTACT_FALLBACK
-  const social = settings.social_links ?? {}
-  const year = new Date().getFullYear()
+    return (
+        <footer className="bg-charcoal relative">
+            {/* Gold top line */}
+            <div className="h-px w-full" style={{ background: 'linear-gradient(to right, transparent, #C9A84C, transparent)' }} />
 
-  const socials = [
-    { icon: Instagram, url: social.instagram, label: 'Instagram' },
-    { icon: Facebook, url: social.facebook, label: 'Facebook' },
-    { icon: Linkedin, url: social.linkedin, label: 'LinkedIn' },
-    { icon: Youtube, url: social.youtube, label: 'YouTube' },
-  ].filter((s) => s.url)
+            <div className="max-w-screen-xl mx-auto px-8 md:px-16 pt-20 pb-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
 
-  return (
-    <footer className="bg-purple-darkest border-t border-gold/15">
-      <div className="container-lux px-5 sm:px-8 lg:px-16 py-16 lg:py-20">
-        <div className="grid gap-12 lg:gap-8 lg:grid-cols-12">
-          {/* Brand + newsletter */}
-          <div className="lg:col-span-5">
-            <Link to="/" className="flex items-center gap-3">
-              <span className="grid place-items-center w-10 h-10 rounded-full border border-gold/50 text-gold font-display text-2xl leading-none">M</span>
-              <span>
-                <span className="block font-title text-cream-soft tracking-[0.28em]">MAXIMS</span>
-                <span className="block font-body text-gold/60 text-[0.55rem] tracking-[0.2em] uppercase mt-0.5">Interiors &amp; Home Goods</span>
-              </span>
-            </Link>
-            <p className="mt-5 font-editorial italic text-cream-soft/55 text-lg max-w-sm">“{BRAND.tagline}.”</p>
-            <div className="mt-7 max-w-sm">
-              <p className="eyebrow mb-3">Join the List</p>
-              <p className="font-body text-cream-soft/50 text-sm mb-3">
-                New collections, design notes, and private previews.
-              </p>
-              <NewsletterSignup variant="dark" source="footer" />
+                {/* Brand */}
+                <div className="lg:col-span-1">
+                    <Link to="/" className="flex items-center gap-3 mb-5">
+                        <div className="w-11 h-11 rounded-full border border-gold/40 flex items-center justify-center shrink-0">
+                            <span className="font-title text-xl font-bold text-gold">M</span>
+                        </div>
+                        <div>
+                            <div className="font-title text-sm font-bold tracking-[0.3em] text-gold leading-none">MAXIMS</div>
+                            <div className="font-body text-[0.46rem] tracking-[0.2em] uppercase text-gold/40 mt-1">Interiors & Home Goods</div>
+                        </div>
+                    </Link>
+                    <p className="font-body text-[0.82rem] text-cream-soft leading-relaxed mb-6">
+                        Where luxury meets living. Transforming spaces into timeless experiences through refined design, curated home goods, and uncompromising craftsmanship.
+                    </p>
+                    <div className="flex gap-2">
+                        {[Instagram, Facebook, Linkedin, Youtube].map((Icon, i) => (
+                            <a key={i} href="#"
+                                className="w-9 h-9 border border-gold/20 flex items-center justify-center text-gold/50 hover:text-gold hover:border-gold hover:bg-gold/8 transition-all duration-300 -translate-y-0 hover:-translate-y-0.5">
+                                <Icon size={14} />
+                            </a>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Navigate */}
+                <div>
+                    <h4 className="font-title text-[0.62rem] tracking-[0.3em] uppercase text-gold pb-4 mb-5 border-b border-gold/12">Navigate</h4>
+                    <ul className="space-y-2.5">
+                        {NAV_LINKS.map((path, i) => (
+                            <li key={path}>
+                                <Link to={path} className="font-body text-[0.8rem] text-cream-soft hover:text-gold hover:pl-1 transition-all duration-200 block">
+                                    {NAV_NAMES[i]}
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                {/* Services */}
+                <div>
+                    <h4 className="font-title text-[0.62rem] tracking-[0.3em] uppercase text-gold pb-4 mb-5 border-b border-gold/12">Services</h4>
+                    <ul className="space-y-2.5">
+                        {SERVICES.map((s) => (
+                            <li key={s}>
+                                <Link to="/interior-decor" className="font-body text-[0.8rem] text-cream-soft hover:text-gold hover:pl-1 transition-all duration-200 block">
+                                    {s}
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                {/* Contact */}
+                <div>
+                    <h4 className="font-title text-[0.62rem] tracking-[0.3em] uppercase text-gold pb-4 mb-5 border-b border-gold/12">Contact</h4>
+                    <div className="space-y-4 mb-6">
+                        {CONTACT.map(({ icon: Icon, text }) => (
+                            <div key={text} className="flex gap-3 items-start">
+                                <Icon size={13} className="text-gold mt-0.5 shrink-0" />
+                                <span className="font-body text-[0.79rem] text-cream-soft leading-relaxed">{text}</span>
+                            </div>
+                        ))}
+                    </div>
+                    <h4 className="font-title text-[0.55rem] tracking-[0.25em] uppercase text-gold/70 mb-3">Stay Inspired</h4>
+                    <NewsletterSignup variant="dark" source="footer" />
+                </div>
             </div>
-          </div>
 
-          {/* Explore */}
-          <div className="lg:col-span-3">
-            <p className="eyebrow mb-5">Explore</p>
-            <ul className="space-y-2.5">
-              {NAV_LINKS.map((l) => (
-                <li key={l.path}>
-                  <Link to={l.path} className="font-body text-sm text-cream-soft/55 hover:text-gold transition-colors">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+            {/* Bottom bar */}
+            <div className="border-t border-gold/8 mx-8 md:mx-16">
+                <div className="max-w-screen-xl mx-auto py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <p className="font-body text-[0.7rem] text-cream-soft tracking-wide">
+                        © {new Date().getFullYear()} Maxims Interiors & Home Goods. All Rights Reserved.
+                    </p>
+                    <div className="flex items-center gap-4 text-[0.7rem] text-cream-soft">
+                        <a href="#" className="hover:text-gold transition-colors">Privacy</a>
+                        <span>·</span>
+                        <a href="#" className="hover:text-gold transition-colors">Terms</a>
+                        <span>·</span>
+                        <Link to="/admin" className="hover:text-gold transition-colors">Admin</Link>
+                    </div>
+                </div>
+                <div className="max-w-screen-xl mx-auto pb-5 text-center">
+                    <a href="https://trueweb.com.ng" target="_blank" rel="noopener noreferrer"
+                        className="font-body text-[0.62rem] tracking-wide text-cream-soft/40 hover:text-gold transition-colors">
+                        Crafted by TrueWeb Network
+                    </a>
+                </div>
+            </div>
 
-          {/* Contact */}
-          <div className="lg:col-span-4">
-            <p className="eyebrow mb-5">Visit &amp; Contact</p>
-            <ul className="space-y-3.5 font-body text-sm text-cream-soft/55">
-              <li className="flex gap-3"><MapPin size={16} className="text-gold/60 shrink-0 mt-0.5" /><span>{contact.address}</span></li>
-              <li className="flex gap-3"><Phone size={16} className="text-gold/60 shrink-0 mt-0.5" /><a href={`tel:${(contact.phone || '').replace(/\s/g, '')}`} className="hover:text-gold transition-colors">{contact.phone}</a></li>
-              <li className="flex gap-3"><Mail size={16} className="text-gold/60 shrink-0 mt-0.5" /><a href={`mailto:${contact.email}`} className="hover:text-gold transition-colors">{contact.email}</a></li>
-            </ul>
-            {contact.hours && <p className="mt-4 font-body text-xs text-cream-soft/35">{contact.hours}</p>}
-            {socials.length > 0 && (
-              <div className="mt-6 flex gap-3">
-                {socials.map((s) => (
-                  <a key={s.label} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.label}
-                    className="grid place-items-center w-9 h-9 border border-gold/25 text-gold/70 hover:text-gold hover:border-gold transition-colors">
-                    <s.icon size={15} />
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="gold-divider mt-14 mb-7" />
-
-        {/* Bottom bar + TrueWeb signature */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-          <p className="font-body text-xs text-cream-soft/35">
-            © {year} {BRAND.legalName}. All rights reserved.
-          </p>
-          <p className="font-body text-xs text-cream-soft/30">
-            Crafted by{' '}
-            <a
-              href={TRUEWEB.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-title tracking-[0.15em] uppercase text-gold/70 hover:text-gold transition-colors"
-            >
-              {TRUEWEB.label}
-            </a>
-          </p>
-        </div>
-      </div>
-    </footer>
-  )
+            {/* Bottom gold bar */}
+            <div className="h-[3px]" style={{ background: 'linear-gradient(to right, #2E1660, #C9A84C, #2E1660)' }} />
+        </footer>
+    )
 }

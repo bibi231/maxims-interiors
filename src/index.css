@@ -2,197 +2,324 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ════════════════════════════════════════════════════════════════
-   MAXIMS INTERIORS — GLOBAL DESIGN SYSTEM
-   Brand tokens live in tailwind.config.js. These utility classes are
-   referenced across both public and admin code — keep names stable.
-   Design rule: SHARP corners (no rounded-lg/xl on cards/buttons);
-   rounded-full only for circular elements.
-   ════════════════════════════════════════════════════════════════ */
+/* ============================================================
+   MAXIMS INTERIORS — GLOBAL STYLES
+   Tailwind + shadcn/ui tokens + Brand System
+============================================================ */
 
 @layer base {
   :root {
-    color-scheme: dark;
+    /* shadcn/ui tokens — mapped to brand */
+    --background: 30 33% 97%;
+    /* cream-soft */
+    --foreground: 246 22% 15%;
+    /* charcoal */
+    --card: 0 0% 100%;
+    --card-foreground: 246 22% 15%;
+    --popover: 246 30% 10%;
+    --popover-foreground: 35 50% 95%;
+    --primary: 270 54% 27%;
+    /* purple-rich */
+    --primary-foreground: 43 56% 55%;
+    /* gold */
+    --secondary: 43 45% 54%;
+    /* gold */
+    --secondary-foreground: 270 54% 14%;
+    --muted: 30 20% 91%;
+    --muted-foreground: 246 15% 50%;
+    --accent: 43 56% 55%;
+    --accent-foreground: 270 54% 14%;
+    --destructive: 0 62% 38%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 270 20% 88%;
+    --input: 270 20% 88%;
+    --ring: 43 56% 55%;
+    --radius: 0rem;
+
+    /* Semantic Brand Colors for Light Mode (R G B triplets so Tailwind
+       can apply opacity modifiers, e.g. text-cream-soft/40) */
+    --color-cream: 240 235 230;
+    --color-cream-dark: 225 217 212;
+    --color-cream-soft: 247 245 248;
+    --color-charcoal: 18 17 26;
+    --color-charcoal-mid: 30 28 44;
+    --color-charcoal-soft: 42 40 64;
+    --color-charcoal-muted: 61 59 80;
+  }
+
+  .dark {
+    --background: 246 30% 8%;
+    --foreground: 35 50% 95%;
+    --card: 246 30% 10%;
+    --card-foreground: 35 50% 95%;
+    --popover: 246 30% 10%;
+    --popover-foreground: 35 50% 95%;
+    --primary: 43 56% 55%;
+    --primary-foreground: 270 54% 14%;
+    --secondary: 270 54% 27%;
+    --secondary-foreground: 43 56% 55%;
+    --muted: 246 22% 18%;
+    --muted-foreground: 246 15% 55%;
+    --accent: 270 54% 27%;
+    --accent-foreground: 43 56% 55%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 246 22% 20%;
+    --input: 246 22% 20%;
+    --ring: 43 56% 55%;
+
+    /* Semantic Brand Colors for Dark Mode (Inverted Light/Dark pairs) */
+    --color-cream: 30 28 44;
+    /* Maps light cream to charcoal-mid */
+    --color-cream-dark: 42 40 64;
+    /* Maps cream-dark to charcoal-soft */
+    --color-cream-soft: 18 17 26;
+    /* Maps light cream-soft to deep charcoal */
+
+    --color-charcoal: 247 245 248;
+    /* Maps dark charcoal to cream-soft */
+    --color-charcoal-mid: 240 235 230;
+    /* Maps charcoal-mid to cream */
+    --color-charcoal-soft: 225 217 212;
+    /* Maps charcoal-soft to cream-dark */
+    --color-charcoal-muted: 225 217 212;
+    /* Maps muted charcoal to cream-dark */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
   }
 
   html {
     scroll-behavior: smooth;
-    -webkit-text-size-adjust: 100%;
   }
 
   body {
-    @apply bg-charcoal text-cream-soft font-body antialiased;
-    text-rendering: optimizeLegibility;
-  }
-
-  h1, h2, h3, h4, h5 {
-    @apply font-display text-cream-soft;
+    @apply bg-cream-soft text-charcoal-muted font-body antialiased overflow-x-hidden;
   }
 
   ::selection {
-    @apply bg-gold/30 text-cream-soft;
+    background: #C9A84C;
+    color: #1C0D35;
   }
 
-  /* Custom scrollbar — subtle gold on dark */
-  ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-track { background: #12111A; }
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #12111A;
+  }
+
   ::-webkit-scrollbar-thumb {
-    background: rgba(201, 168, 76, 0.25);
-    border: 2px solid #12111A;
-  }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(201, 168, 76, 0.5); }
-
-  /* Respect reduced-motion preferences */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.001ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.001ms !important;
-      scroll-behavior: auto !important;
-    }
+    background: #C9A84C;
+    border-radius: 3px;
   }
 }
 
+/* ============================================================
+   TYPOGRAPHY UTILITIES
+============================================================ */
 @layer components {
+  .font-display {
+    font-family: 'Cormorant Garamond', serif;
+  }
 
-  /* ── Typographic labels ──────────────────────────────────────── */
+  .font-title {
+    font-family: 'Cinzel', serif;
+  }
+
+  .font-editorial {
+    font-family: 'Playfair Display', serif;
+  }
+
   .eyebrow {
-    @apply font-title uppercase text-gold;
-    font-size: 0.7rem;
-    letter-spacing: 0.3em;
+    @apply font-body text-[0.65rem] font-bold tracking-[0.4em] uppercase text-gold;
   }
 
   .text-display-xl {
-    @apply font-display font-semibold text-cream-soft;
-    font-size: clamp(2.6rem, 7vw, 5.6rem);
-    line-height: 0.98;
-    letter-spacing: -0.01em;
-  }
-  .text-display-lg {
-    @apply font-display font-semibold text-cream-soft;
-    font-size: clamp(2.1rem, 5vw, 4rem);
-    line-height: 1.02;
-  }
-  .text-display-md {
-    @apply font-display font-semibold text-cream-soft;
-    font-size: clamp(1.7rem, 3.6vw, 2.9rem);
-    line-height: 1.08;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    line-height: 1.05;
+    font-weight: 300;
   }
 
-  /* ── Buttons ─────────────────────────────────────────────────── */
+  .text-display-lg {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 1.1;
+    font-weight: 300;
+  }
+
+  .text-display-md {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
+    line-height: 1.2;
+    font-weight: 400;
+  }
+
+  /* ============ BRAND BUTTONS ============ */
   .btn-maxims {
-    @apply inline-flex items-center justify-center gap-2 font-title uppercase
-           px-7 py-3.5 text-[0.72rem] tracking-[0.2em] transition-all duration-300
-           ease-luxe cursor-pointer select-none whitespace-nowrap;
+    @apply inline-flex items-center gap-2 font-title text-[0.68rem] font-semibold tracking-[0.2em] uppercase transition-all duration-300 cursor-pointer border-none outline-none;
   }
 
   .btn-gold-solid {
-    @apply btn-maxims text-purple-darkest;
-    background-image: linear-gradient(135deg, #E4C56A 0%, #C9A84C 55%, #A67C2B 100%);
-    box-shadow: 0 8px 26px -12px rgba(201, 168, 76, 0.6);
+    @apply btn-maxims px-8 py-3.5 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest;
+    box-shadow: 0 4px 20px rgba(201, 168, 76, 0.3);
   }
+
   .btn-gold-solid:hover {
-    box-shadow: 0 12px 34px -10px rgba(201, 168, 76, 0.8);
-    transform: translateY(-1px);
+    @apply -translate-y-0.5;
+    box-shadow: 0 8px 30px rgba(201, 168, 76, 0.5);
   }
 
   .btn-outline-gold {
-    @apply btn-maxims text-gold border border-gold/50 bg-transparent;
+    @apply btn-maxims px-8 py-3.5 bg-transparent text-gold border border-gold/60;
   }
+
   .btn-outline-gold:hover {
-    @apply bg-gold/10 border-gold;
+    @apply bg-gold text-purple-darkest border-gold -translate-y-0.5;
   }
 
   .btn-outline-light {
-    @apply btn-maxims text-cream-soft border border-cream-soft/40 bg-transparent;
+    @apply btn-maxims px-8 py-3.5 bg-transparent text-cream-soft border;
+    border-color: rgba(247, 245, 248, 0.3);
   }
+
   .btn-outline-light:hover {
-    @apply bg-cream-soft/10 border-cream-soft;
+    @apply border-cream-soft -translate-y-0.5;
+    background-color: rgba(247, 245, 248, 0.1);
   }
 
   .btn-purple-solid {
-    @apply btn-maxims text-cream-soft bg-purple-rich;
+    @apply btn-maxims px-8 py-3.5 bg-purple-rich text-gold-light border border-gold/15;
   }
+
   .btn-purple-solid:hover {
-    @apply bg-purple-mid;
+    @apply bg-purple-mid -translate-y-0.5 shadow-gold;
   }
 
-  /* ── Cards ───────────────────────────────────────────────────── */
-  .card-luxury {
-    @apply bg-cream-soft text-charcoal border border-cream-dark transition-all duration-500 ease-luxe;
-  }
-  .card-luxury:hover {
-    @apply shadow-lux-card;
-    transform: translateY(-4px);
-  }
-
-  .card-glass {
-    @apply bg-charcoal-mid/80 border border-gold/15 backdrop-blur-md transition-all duration-500 ease-luxe;
-  }
-  .card-glass:hover {
-    @apply border-gold/35;
-  }
-
-  /* ── Layout helpers ──────────────────────────────────────────── */
+  /* ============ SECTION PATTERNS ============ */
   .section-base {
-    @apply px-5 sm:px-8 lg:px-16 py-16 sm:py-20 lg:py-28;
+    @apply px-6 py-24 md:px-16 lg:px-24;
   }
 
-  .page-hero {
-    @apply relative flex flex-col items-center justify-center text-center
-           px-5 sm:px-8 pt-36 pb-20 lg:pt-44 lg:pb-28 overflow-hidden;
+  .section-header-center {
+    @apply text-center mb-16;
   }
 
-  /* ── Ornaments ───────────────────────────────────────────────── */
   .gold-divider {
-    @apply flex items-center justify-center gap-3 my-6;
-  }
-  .gold-divider::before,
-  .gold-divider::after {
-    content: '';
-    @apply h-px w-12 sm:w-16;
-    background-image: linear-gradient(to right, transparent, rgba(201,168,76,0.6));
-  }
-  .gold-divider::after {
-    background-image: linear-gradient(to left, transparent, rgba(201,168,76,0.6));
+    @apply w-16 h-px mx-auto mt-5;
+    background: linear-gradient(to right, transparent, #C9A84C, transparent);
   }
 
-  .ornament-line {
-    @apply relative flex items-center justify-center;
+  .gold-divider-left {
+    @apply w-16 h-px mt-4;
+    background: linear-gradient(to right, #C9A84C, transparent);
   }
+
+  /* ============ ORNAMENTAL ============ */
+  .ornament-line {
+    @apply flex items-center gap-4 my-5;
+  }
+
   .ornament-line::before,
   .ornament-line::after {
     content: '';
-    @apply h-px flex-1 max-w-[120px];
-    background-image: linear-gradient(to right, transparent, rgba(201,168,76,0.5), transparent);
-  }
-  .ornament-line > span,
-  .ornament-line .diamond {
-    @apply mx-3 text-gold;
+    @apply flex-1 h-px;
+    background: linear-gradient(to right, transparent, #C9A84C);
   }
 
-  /* ── Loading skeleton (branded shimmer) ─────────────────────── */
-  .skeleton {
-    @apply bg-charcoal-mid relative overflow-hidden;
-    background-image: linear-gradient(
-      90deg,
-      rgba(201,168,76,0) 0%,
-      rgba(201,168,76,0.08) 50%,
-      rgba(201,168,76,0) 100%
-    );
-    background-size: 700px 100%;
-    @apply animate-shimmer;
+  .ornament-line::after {
+    background: linear-gradient(to left, transparent, #C9A84C);
   }
 
-  /* ── Form inputs ─────────────────────────────────────────────── */
+  /* ============ CARDS ============ */
+  .card-glass {
+    @apply bg-white/5 border border-gold/15 backdrop-blur-sm transition-all duration-300;
+  }
+
+  .card-glass:hover {
+    @apply border-gold/40 shadow-gold -translate-y-1;
+  }
+
+  .card-luxury {
+    @apply bg-card border border-purple-rich/10 transition-all duration-300 cursor-pointer;
+  }
+
+  .card-luxury:hover {
+    @apply border-gold/30 shadow-card-hover -translate-y-1.5;
+  }
+
+  /* ============ 21st.dev OVERRIDE TARGETS ============ */
+  /* These classes let 21st.dev components inherit brand colors */
+  .maxims-nav {
+    --nav-bg: rgba(12, 11, 20, 0.95);
+    --nav-border: rgba(201, 168, 76, 0.15);
+    --nav-text: rgba(250, 247, 242, 0.75);
+    --nav-text-active: #C9A84C;
+  }
+
+  .maxims-card {
+    --card-bg: #1E1C2C;
+    --card-border: rgba(201, 168, 76, 0.15);
+    --card-text: rgba(250, 247, 242, 0.8);
+  }
+
+  /* ============ PAGE HERO ============ */
+  .page-hero {
+    @apply relative flex items-center justify-center text-center overflow-hidden;
+    padding-top: 80px;
+    min-height: 400px;
+    background: #1E1C2C;
+  }
+
+  .page-hero-overlay {
+    @apply absolute inset-0;
+    background: radial-gradient(ellipse at center, rgba(59, 31, 107, 0.5) 0%, transparent 70%);
+  }
+
+  .page-hero-pattern {
+    @apply absolute inset-0;
+    background-image: repeating-linear-gradient(-45deg,
+        rgba(201, 168, 76, 0.03) 0px, rgba(201, 168, 76, 0.03) 1px,
+        transparent 1px, transparent 30px);
+  }
+
+  /* ============ ANIMATIONS ============ */
+  .animate-fade-up {
+    animation: fadeUp 0.7s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Grain texture overlay */
+  .grain::after {
+    content: '';
+    @apply absolute inset-0 pointer-events-none opacity-[0.04];
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  }
+
+  /* ── Form inputs (admin: Transactions payment-link modal, etc.) ──── */
   .lux-input {
-    @apply w-full bg-charcoal-mid border border-cream-soft/15 text-cream-soft
+    @apply w-full bg-charcoal border border-gold/10 text-cream-soft
            font-body text-sm px-4 py-3 outline-none transition-colors
-           placeholder:text-cream-soft/30 focus:border-gold;
+           placeholder:text-cream-soft/40 focus:border-gold/40;
   }
-  .lux-input::-webkit-calendar-picker-indicator { filter: invert(0.7) sepia(1) saturate(3) hue-rotate(5deg); }
 
-  /* ── Error/notice tints ─────────────────────────────────────── */
+  /* ── Notice tints (forms, payment callback) ──────────────────── */
   .notice-error {
     @apply bg-red-500/10 border border-red-500/30 text-red-300 px-4 py-3 text-sm font-body;
   }
@@ -202,16 +329,22 @@
   .notice-success {
     @apply bg-green-500/10 border border-green-500/30 text-green-300 px-4 py-3 text-sm font-body;
   }
+
+  /* ── Loading skeleton (admin tables) ───────────────────────────── */
+  .skeleton {
+    @apply bg-charcoal-mid relative overflow-hidden animate-shimmer;
+    background-image: linear-gradient(90deg, rgba(201,168,76,0) 0%, rgba(201,168,76,0.08) 50%, rgba(201,168,76,0) 100%);
+    background-size: 700px 100%;
+  }
 }
 
 @layer utilities {
-  /* Container width used by public sections */
   .container-lux {
     @apply mx-auto w-full max-w-[1320px];
   }
   .text-balance { text-wrap: balance; }
 
-  /* Subtle radial purple glow background for dark sections */
+  /* Subtle radial glow background for dark sections (404, payment callback) */
   .bg-lux-radial {
     background-image:
       radial-gradient(circle at 20% 10%, rgba(91,53,160,0.25), transparent 45%),

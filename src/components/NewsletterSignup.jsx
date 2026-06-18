@@ -5,8 +5,8 @@ import { subscribeNewsletter } from '@/hooks/useData'
 import { cn } from '@/lib/utils'
 
 /**
- * Newsletter capture. Stores the subscriber in Supabase; a DB webhook
- * (Edge Function send-newsletter-welcome) sends the welcome email.
+ * Newsletter capture. Stores the subscriber via the API; the server
+ * sends the welcome email after the insert.
  */
 export default function NewsletterSignup({ variant = 'dark', source = 'footer' }) {
   const [email, setEmail] = useState('')

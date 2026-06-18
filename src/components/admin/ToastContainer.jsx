@@ -19,7 +19,7 @@ export default function ToastContainer() {
             exit={{ opacity: 0, x: 60 }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             onClick={() => { if (t.to) navigate(t.to); removeToast(t.id) }}
-            className="bg-charcoal border border-gold/40 shadow-gold-glow p-4 flex items-start gap-3 cursor-pointer group"
+            className="bg-charcoal border border-gold/40 shadow-glow-gold p-4 flex items-start gap-3 cursor-pointer group"
           >
             {t.icon && <span className="text-lg leading-none mt-0.5">{t.icon}</span>}
             <div className="flex-1 min-w-0">
