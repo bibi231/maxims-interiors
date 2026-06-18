@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /payment/
+
+Sitemap: https://maximsinteriors.com/sitemap.xml
