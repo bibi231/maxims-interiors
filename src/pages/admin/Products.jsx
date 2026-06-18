@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Edit2, Trash2, X, Upload, ToggleLeft, ToggleRight, Search } from 'lucide-react'
 import AdminLayout from '@/components/admin/AdminLayout'
 import { useProducts, upsertProduct, deleteProduct, updateProductStatus } from '@/hooks/useData'
-import { uploadFile, getStorageUrl, BUCKETS } from '@/lib/supabase'
+import { uploadFile, getStorageUrl, BUCKETS } from '@/lib/storage'
 import { useAuth } from '@/context/AuthContext'
 import { cn } from '@/lib/utils'
 

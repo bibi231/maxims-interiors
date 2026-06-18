@@ -95,7 +95,7 @@ function StatCard({ icon: Icon, label, value, tone = 'gold' }) {
       <div className="flex items-center justify-between">
         <span className={cn('grid place-items-center w-9 h-9', tone === 'green' ? 'text-green-400 bg-green-400/10' : tone === 'yellow' ? 'text-yellow-400 bg-yellow-400/10' : 'text-gold bg-gold/10')}><Icon size={16} /></span>
       </div>
-      <div className="font-display text-3xl text-cream-soft mt-3">{value}</div>
+      <div className="font-title text-2xl text-cream-soft mt-3">{value}</div>
       <div className="font-body text-[0.65rem] tracking-[0.12em] uppercase text-cream-soft/35 mt-1">{label}</div>
     </div>
   )

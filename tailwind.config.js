@@ -1,62 +1,160 @@
+import tailwindcssAnimate from 'tailwindcss-animate';
+
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,jsx}'],
+  darkMode: ['class'],
+  content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        // ── Brand tokens (DO NOT CHANGE) ──
-        'purple-darkest': '#1C0D35',
-        'purple-dark':    '#2E1660',
-        'purple-rich':    '#3B1F6B',
-        'purple-mid':     '#5B35A0',
-        'purple-light':   '#7B52C0',
-        'gold':           '#C9A84C',
-        'gold-deep':      '#A67C2B',
-        'gold-bright':    '#E4C56A',
-        'gold-light':     '#F0D080',
-        'cream-soft':     '#FAF7F2',
-        'cream':          '#F5ECD7',
-        'cream-dark':     '#EDE0C4',
-        'charcoal':       '#12111A',
-        'charcoal-mid':   '#1E1C2C',
+        // Brand palette — Maxims Interiors
+        "purple-darkest": '#1C0D35',
+        "purple-dark": '#2E1660',
+        "purple-rich": '#3B1F6B',
+        "purple-mid": '#5B35A0',
+        "purple-light": '#7B52C0',
+        "purple-pale": '#A98FD0',
+        "gold-deep": '#A67C2B',
+        "gold": '#C9A84C',
+        "gold-bright": '#E4C56A',
+        "gold-light": '#F0D080',
+        "gold-shimmer": '#FFF0C0',
+        "cream": 'rgb(var(--color-cream) / <alpha-value>)',
+        "cream-dark": 'rgb(var(--color-cream-dark) / <alpha-value>)',
+        "cream-soft": 'rgb(var(--color-cream-soft) / <alpha-value>)',
+        "charcoal": 'rgb(var(--color-charcoal) / <alpha-value>)',
+        "charcoal-mid": 'rgb(var(--color-charcoal-mid) / <alpha-value>)',
+        "charcoal-soft": 'rgb(var(--color-charcoal-soft) / <alpha-value>)',
+        "charcoal-muted": 'rgb(var(--color-charcoal-muted) / <alpha-value>)',
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
       },
       fontFamily: {
-        display:   ['"Cormorant Garamond"', 'Georgia', 'serif'],
-        title:     ['"Cinzel"', 'Georgia', 'serif'],
-        editorial: ['"Playfair Display"', 'Georgia', 'serif'],
-        body:      ['"Lato"', '"Helvetica Neue"', 'Arial', 'sans-serif'],
+        display: ['Cormorant Garamond', 'serif'],
+        title: ['Cinzel', 'serif'],
+        editorial: ['Playfair Display', 'serif'],
+        body: ['Lato', 'sans-serif'],
+        sans: ['Lato', 'sans-serif'],
       },
-      letterSpacing: {
-        luxe: '0.28em',
+      fontSize: {
+        'display-xl': ['clamp(3.5rem,8vw,7rem)', { lineHeight: '1.05' }],
+        'display-lg': ['clamp(2.5rem,5vw,4.5rem)', { lineHeight: '1.1' }],
+        'display-md': ['clamp(1.8rem,3.5vw,3rem)', { lineHeight: '1.2' }],
       },
-      transitionTimingFunction: {
-        luxe: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      backgroundImage: {
+        'gold-gradient': 'linear-gradient(135deg, #A67C2B, #C9A84C, #E4C56A)',
+        'purple-gradient': 'linear-gradient(135deg, #1C0D35, #3B1F6B)',
+        'dark-gradient': 'linear-gradient(135deg, #12111A, #1E1C2C)',
+        'radial-gold': 'radial-gradient(ellipse at center, rgba(201,168,76,0.15) 0%, transparent 65%)',
+        'radial-purple': 'radial-gradient(ellipse at center, rgba(59,31,107,0.5) 0%, transparent 70%)',
+        'hero-overlay': 'radial-gradient(ellipse at 50% 50%, rgba(59,31,107,0.45), rgba(18,17,26,0.7))',
       },
       boxShadow: {
-        'gold':      '0 8px 30px -10px rgba(201,168,76,0.5)',
-        'gold-glow': '0 10px 40px -12px rgba(201,168,76,0.45)',
-        'lux-card':  '0 24px 60px -28px rgba(28,13,53,0.45)',
-      },
-      keyframes: {
-        shimmer: {
-          '0%':   { backgroundPosition: '-700px 0' },
-          '100%': { backgroundPosition: '700px 0' },
-        },
-        'fade-up': {
-          '0%':   { opacity: '0', transform: 'translateY(16px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        'marquee-x': {
-          '0%':   { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(-50%)' },
-        },
+        'gold': '0 0 40px rgba(201,168,76,0.15)',
+        'gold-lg': '0 0 60px rgba(201,168,76,0.25)',
+        'glow-gold': '0 0 20px rgba(201,168,76,0.3), 0 0 60px rgba(201,168,76,0.1)',
+        'deep': '0 20px 60px rgba(18,17,26,0.4)',
+        'card': '0 4px 20px rgba(18,17,26,0.08)',
+        'card-hover': '0 12px 40px rgba(59,31,107,0.15)',
       },
       animation: {
-        shimmer: 'shimmer 1.6s linear infinite',
-        'fade-up': 'fade-up 0.6s cubic-bezier(0.4,0,0.2,1) both',
-        'marquee-x': 'marquee-x 28s linear infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'float-slow': 'float 9s ease-in-out infinite',
+        'marquee': 'marquee 30s linear infinite',
+        'marquee-reverse': 'marqueeReverse 30s linear infinite',
+        'shimmer': 'shimmer 3s linear infinite',
+        'pulse-gold': 'pulseGold 2.5s ease-in-out infinite',
+        'scroll-pulse': 'scrollPulse 2.5s ease infinite',
+        'spin-slow': 'spin 20s linear infinite',
+        'orbit': 'orbit 15s linear infinite',
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+        scroll:
+          "scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite",
+      },
+      keyframes: {
+        scroll: {
+          to: {
+            transform: "translate(calc(-50% - 0.5rem))",
+          },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-16px)' },
+        },
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        marqueeReverse: {
+          '0%': { transform: 'translateX(-50%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% center' },
+          '100%': { backgroundPosition: '200% center' },
+        },
+        pulseGold: {
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(201,168,76,0)' },
+          '50%': { boxShadow: '0 0 0 8px rgba(201,168,76,0.15)' },
+        },
+        scrollPulse: {
+          '0%, 100%': { opacity: '0.3', transform: 'scaleY(0.7) translateY(0)' },
+          '50%': { opacity: '1', transform: 'scaleY(1.1) translateY(4px)' },
+        },
+        orbit: {
+          '0%': { transform: 'rotate(0deg) translateX(120px) rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg) translateX(120px) rotate(-360deg)' },
+        },
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+      },
+      transitionTimingFunction: {
+        'luxury': 'cubic-bezier(0.4, 0, 0.2, 1)',
       },
     },
   },
-  plugins: [],
+  plugins: [tailwindcssAnimate],
 }

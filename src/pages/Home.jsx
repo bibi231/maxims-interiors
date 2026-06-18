@@ -1,286 +1,398 @@
-// src/pages/Home.jsx
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import {
-  ArrowRight, ArrowUpRight, Sofa, Building2, Lightbulb, Palette, Ruler, Truck,
-} from 'lucide-react'
-import Meta from '@/components/Meta'
-import Reveal from '@/components/ui/Reveal'
-import SmartImage from '@/components/ui/SmartImage'
-import Stars from '@/components/ui/Stars'
-import { SERVICES, BRAND } from '@/data/site'
-import { useGallery, useProducts, useTestimonials } from '@/hooks/useData'
-import { getStorageUrl, BUCKETS } from '@/lib/supabase'
-import { formatNaira } from '@/lib/utils'
+import { useGallery, useTestimonials, useProducts } from '@/hooks/useData'
+import { getStorageUrl, BUCKETS } from '@/lib/storage'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { ArrowRight, Star } from 'lucide-react'
+import Hero3D from '@/components/sections/Hero3D'
+import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid'
+import { InfiniteMovingCards } from '@/components/ui/infinite-moving-cards'
+import { VelocityScroll } from '@/components/ui/velocity-scroll'
+import { AnimatedGradientText } from '@/components/ui/animated-gradient-text'
+import { ShinyButton } from '@/components/ui/shiny-button'
 
-const ICONS = { Sofa, Building2, Lightbulb, Palette, Ruler, Truck }
-
-const MARQUEE = [
-  'Residential Design', 'Hospitality', 'Bespoke Furniture', 'Home Goods',
-  'Trade Supply', 'Space Planning', 'Lighting Design', 'Styling',
+/* ────────── DATA ────────────────────────────────────── */
+const SERVICES = [
+    { icon: '🏛', label: 'Interior Design', desc: 'Full-service from concept to completion' },
+    { icon: '🛋', label: 'Home Goods', desc: 'Curated luxury furniture & décor' },
+    { icon: '📦', label: 'Bulk & Trade', desc: 'Volume pricing for hotels & developers' },
+    { icon: '✦', label: 'Custom Décor', desc: 'Bespoke pieces crafted to your vision' },
+    { icon: '📅', label: 'Consultations', desc: 'Expert design advice on your schedule' },
+    { icon: '💻', label: 'Virtual Design', desc: 'Remote services, delivered nationwide' },
 ]
 
-const STATS = [
-  { value: '200+', label: 'Spaces Transformed' },
-  { value: '8', label: 'Years of Craft' },
-  { value: '40+', label: 'Trade Partners' },
-  { value: '4.9★', label: 'Client Rating' },
-]
+const formatPrice = (price) => {
+    return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', minimumFractionDigits: 0 }).format(price);
+};
 
+const STATS = [['200+', 'Projects Completed'], ['150+', 'Happy Clients'], ['8', 'Years Experience'], ['4.9★', 'Avg. Rating']]
+
+/* ────────── MARQUEE STRIP ───────────────────────────── */
+function MarqueeStrip() {
+    return (
+        <div className="bg-purple-darkest overflow-hidden border-y border-gold/10 py-8">
+            <VelocityScroll
+                text="✦ MAXIMS INTERIORS ✦ LUXURY LIVING ✦ CUSTOM DÉCOR ✦ SPACE PLANNING ✦ "
+                default_velocity={3}
+                className="font-title text-2xl md:text-4xl tracking-[0.2em] uppercase text-gold/30"
+            />
+        </div>
+    )
+}
+
+/* ────────── PAGE ────────────────────────────────────── */
 export default function Home() {
-  const { data: works } = useGallery({ published: true, featured: true })
-  const { data: products } = useProducts({ status: 'active', featured: true })
-  const { data: testimonials } = useTestimonials({ published: true, featured: true })
+    const { data: worksData } = useGallery({ published: true, featured: true })
+    const { data: testimonialsData } = useTestimonials({ published: true, featured: true })
+    const { data: productsData } = useProducts({ status: 'active', featured: true })
 
-  const featuredWorks = works.slice(0, 5)
-  const featuredProducts = products.slice(0, 4)
-  const featuredTestis = testimonials.slice(0, 3)
+    const works = worksData?.slice(0, 5) || []
+    const testimonials = testimonialsData?.slice(0, 3) || []
+    const products = productsData?.slice(0, 4) || []
 
-  return (
-    <>
-      <Meta
-        title="Maxims Interiors — Premium Interior Design in Nigeria"
-        description="Luxury interior design, home goods, and trade supply in Abuja. Where Luxury Meets Living."
-      />
+    return (
+        <div className="bg-cream-soft">
 
-      {/* ── HERO ─────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-charcoal">
-        <div className="absolute inset-0 bg-lux-radial" />
-        <div
-          className="absolute inset-0 opacity-[0.07]"
-          style={{
-            backgroundImage:
-              'radial-gradient(circle at 1px 1px, rgba(201,168,76,0.6) 1px, transparent 0)',
-            backgroundSize: '40px 40px',
-          }}
-        />
-        <div className="container-lux relative z-10 px-5 sm:px-8 lg:px-16 pt-32 pb-16 grid lg:grid-cols-12 gap-10 items-center">
-          <div className="lg:col-span-7">
-            <motion.p className="eyebrow" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-              {BRAND.legalName} · {BRAND.city}
-            </motion.p>
-            <motion.h1
-              className="text-display-xl mt-5 text-balance"
-              initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}
-            >
-              Where Luxury<br />Meets <span className="italic font-editorial text-gold">Living</span>
-            </motion.h1>
-            <motion.p
-              className="mt-7 max-w-xl font-body text-cream-soft/60 text-base sm:text-lg leading-relaxed"
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.3 }}
-            >
-              We design and furnish Nigeria's most refined homes, hotels, and spaces —
-              transforming the everyday into something timeless.
-            </motion.p>
-            <motion.div
-              className="mt-9 flex flex-wrap gap-4"
-              initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.45 }}
-            >
-              <Link to="/gallery" className="btn-gold-solid">Explore Our Work <ArrowRight size={15} /></Link>
-              <Link to="/contact" className="btn-outline-light">Book Consultation</Link>
-            </motion.div>
-          </div>
+            {/* ===== HERO ===== */}
+            <section className="relative w-full min-h-screen bg-charcoal flex items-center justify-center overflow-hidden">
+                <Hero3D />
+                {/* Dark overlay */}
+                <div className="absolute inset-0 z-[2]" style={{ background: 'radial-gradient(ellipse at 50% 50%, rgba(59,31,107,0.4), rgba(18,17,26,0.72))' }} />
+                {/* Bottom fade to page */}
+                <div className="absolute bottom-0 left-0 right-0 h-48 z-[3]" style={{ background: 'linear-gradient(to bottom, transparent, #FAF7F2)' }} />
 
-          <motion.div
-            className="lg:col-span-5"
-            initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.9, delay: 0.4 }}
-          >
-            <div className="relative">
-              <div className="absolute -inset-3 border border-gold/20" />
-              <SmartImage
-                src={featuredWorks[0] ? getStorageUrl(BUCKETS.gallery, featuredWorks[0].cover_image) : null}
-                alt={featuredWorks[0]?.title || 'Featured interior'}
-                fallback="🛋"
-                ratio="4/5"
-                eager
-                className="relative"
-              />
-            </div>
-          </motion.div>
-        </div>
-      </section>
+                {/* Content */}
+                <div className="relative z-[10] text-center max-w-[820px] px-6 pt-20">
+                    <motion.div
+                        className="w-[78px] h-[78px] rounded-full border border-gold/60 flex items-center justify-center mx-auto mb-8"
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ duration: 1, delay: 0.3, type: 'spring', stiffness: 75 }}
+                        style={{ boxShadow: '0 0 30px rgba(201,168,76,0.25)' }}
+                    >
+                        <span className="font-title text-2xl font-bold text-gold">M</span>
+                    </motion.div>
 
-      {/* ── MARQUEE STRIP ────────────────────────────────────── */}
-      <div className="bg-purple-darkest border-y border-gold/15 py-4 overflow-hidden">
-        <div className="flex w-max animate-marquee-x">
-          {[...MARQUEE, ...MARQUEE].map((m, i) => (
-            <span key={i} className="flex items-center gap-6 px-6 font-title text-[0.7rem] tracking-[0.25em] uppercase text-cream-soft/40">
-              {m} <span className="text-gold/50">✦</span>
-            </span>
-          ))}
-        </div>
-      </div>
+                    <motion.p className="eyebrow mb-4" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.7 }}>
+                        ✦ &nbsp; Maxims Interiors & Home Goods &nbsp; ✦
+                    </motion.p>
 
-      {/* ── SERVICES ─────────────────────────────────────────── */}
-      <section className="section-base bg-charcoal">
-        <div className="container-lux">
-          <Reveal>
-            <p className="eyebrow text-center">What We Do</p>
-            <h2 className="text-display-md text-center mt-3">A Complete Design House</h2>
-            <div className="gold-divider" />
-          </Reveal>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gold/10 mt-10">
-            {SERVICES.map((s, i) => {
-              const Icon = ICONS[s.icon] ?? Sofa
-              return (
-                <Reveal key={s.title} delay={i * 0.05}>
-                  <div className="card-glass h-full p-8 group">
-                    <Icon size={26} className="text-gold mb-5" />
-                    <h3 className="font-editorial text-xl text-cream-soft mb-3 group-hover:text-gold transition-colors">{s.title}</h3>
-                    <p className="font-body text-sm text-cream-soft/55 leading-relaxed">{s.blurb}</p>
-                  </div>
-                </Reveal>
-              )
-            })}
-          </div>
-        </div>
-      </section>
+                    <motion.h1
+                        className="text-display-xl text-cream-soft mb-6"
+                        initial={{ opacity: 0, y: 28 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.9, duration: 0.85 }}
+                    >
+                        Where Luxury<br />
+                        <em className="italic">
+                            <AnimatedGradientText className="text-display-xl" speed={1.5}>Meets Living</AnimatedGradientText>
+                        </em>
+                    </motion.h1>
 
-      {/* ── FEATURED WORKS ───────────────────────────────────── */}
-      <section className="section-base bg-charcoal-mid">
-        <div className="container-lux">
-          <Reveal>
-            <div className="flex items-end justify-between flex-wrap gap-4">
-              <div>
-                <p className="eyebrow">Selected Work</p>
-                <h2 className="text-display-md mt-3">Recent Transformations</h2>
-              </div>
-              <Link to="/gallery" className="btn-outline-gold">View Full Gallery <ArrowUpRight size={15} /></Link>
-            </div>
-          </Reveal>
+                    <motion.p
+                        className="font-body text-base text-cream-soft leading-relaxed mb-10 max-w-xl mx-auto"
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 1.1, duration: 0.7 }}
+                    >
+                        Transforming spaces into timeless experiences through refined design,<br className="hidden md:block" /> curated home goods, and artisan craftsmanship.
+                    </motion.p>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-10">
-            {(featuredWorks.length ? featuredWorks : Array.from({ length: 3 })).map((w, i) => (
-              <Reveal key={w?.id || i} delay={i * 0.06} className={i === 0 ? 'sm:col-span-2 lg:row-span-2' : ''}>
-                <Link to="/gallery" className="group block relative overflow-hidden">
-                  <SmartImage
-                    src={w ? getStorageUrl(BUCKETS.gallery, w.cover_image) : null}
-                    alt={w?.title || 'Project'}
-                    fallback="🏛"
-                    ratio={i === 0 ? '4/3' : '4/3'}
-                    className="transition-transform duration-700 ease-luxe group-hover:scale-[1.03]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-transparent to-transparent opacity-80" />
-                  <div className="absolute bottom-0 left-0 right-0 p-5">
-                    <p className="eyebrow text-gold/80">{w?.category || 'Interior'}</p>
-                    <h3 className="font-editorial text-xl text-cream-soft mt-1">{w?.title || 'A Maxims Project'}</h3>
-                    {w?.location && <p className="font-body text-xs text-cream-soft/50 mt-0.5">{w.location}</p>}
-                  </div>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
+                    <motion.div
+                        className="flex gap-4 justify-center flex-wrap mb-16"
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 1.3, duration: 0.7 }}
+                    >
+                        <Link to="/gallery">
+                            <ShinyButton className="bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest dark:text-cream-soft hover:shadow-gold rounded-none">
+                                <span className="flex items-center gap-2">Explore Our Work <ArrowRight size={14} /></span>
+                            </ShinyButton>
+                        </Link>
+                        <Link to="/contact" className="btn-maxims btn-outline-light">
+                            Book Consultation
+                        </Link>
+                    </motion.div>
 
-      {/* ── ABOUT + STATS ────────────────────────────────────── */}
-      <section className="section-base bg-charcoal bg-lux-radial">
-        <div className="container-lux grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <Reveal>
-            <p className="eyebrow">The Maxims Difference</p>
-            <h2 className="text-display-md mt-3 text-balance">Design that feels as good as it looks</h2>
-            <p className="mt-6 font-body text-cream-soft/60 leading-relaxed">
-              For nearly a decade, Maxims has been Nigeria's address for considered luxury —
-              spaces that marry world-class craft with the warmth of home. From a single room
-              to an entire hotel, every project carries the same obsession with detail.
-            </p>
-            <Link to="/about" className="inline-flex items-center gap-2 mt-7 font-title text-xs tracking-[0.2em] uppercase text-gold hover:gap-3 transition-all">
-              Our Story <ArrowRight size={14} />
-            </Link>
-          </Reveal>
-          <Reveal delay={0.15}>
-            <div className="grid grid-cols-2 gap-px bg-gold/10">
-              {STATS.map((s) => (
-                <div key={s.label} className="bg-charcoal-mid p-8 text-center">
-                  <div className="font-display text-4xl sm:text-5xl text-gold">{s.value}</div>
-                  <div className="mt-2 font-body text-[0.7rem] tracking-[0.15em] uppercase text-cream-soft/45">{s.label}</div>
+                    {/* Scroll indicator */}
+                    <motion.div
+                        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 2.2, duration: 1 }}
+                    >
+                        <span className="font-body text-[0.52rem] tracking-[0.4em] uppercase text-gold/40">Scroll</span>
+                        <div className="w-px h-12 animate-scroll-pulse" style={{ background: 'linear-gradient(to bottom, #C9A84C, transparent)' }} />
+                    </motion.div>
                 </div>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-      </section>
 
-      {/* ── SHOP PREVIEW ─────────────────────────────────────── */}
-      <section className="section-base bg-charcoal-mid">
-        <div className="container-lux">
-          <Reveal>
-            <div className="flex items-end justify-between flex-wrap gap-4">
-              <div>
-                <p className="eyebrow">The Collection</p>
-                <h2 className="text-display-md mt-3">Shop Luxury Home Goods</h2>
-              </div>
-              <Link to="/shop" className="btn-outline-gold">Browse Shop <ArrowUpRight size={15} /></Link>
-            </div>
-          </Reveal>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
-            {(featuredProducts.length ? featuredProducts : Array.from({ length: 4 })).map((p, i) => (
-              <Reveal key={p?.id || i} delay={i * 0.05}>
-                <Link to="/shop" className="group block">
-                  <div className="relative overflow-hidden">
-                    <SmartImage
-                      src={p ? getStorageUrl(BUCKETS.products, p.cover_image) : null}
-                      alt={p?.name || 'Product'} fallback="🕯" ratio="1/1"
-                      className="transition-transform duration-700 ease-luxe group-hover:scale-105"
+                {/* Floating stat badges */}
+                {[
+                    { val: '200+', lbl: 'Projects', cls: 'bottom-[22%] left-[6%]', delay: 1.8 },
+                    { val: '4.9★', lbl: 'Rating', cls: 'bottom-[28%] right-[6%]', delay: 2.0 },
+                ].map(({ val, lbl, cls, delay }) => (
+                    <motion.div
+                        key={lbl}
+                        className={`absolute z-[10] hidden md:block ${cls} bg-charcoal/70 border border-gold/25 backdrop-blur-sm px-5 py-3.5 text-center`}
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay, duration: 0.7 }}
+                    >
+                        <div className="font-title text-xl text-gold font-semibold">{val}</div>
+                        <div className="font-body text-[0.58rem] tracking-[0.2em] uppercase text-cream-soft mt-0.5">{lbl}</div>
+                    </motion.div>
+                ))}
+            </section>
+
+            <MarqueeStrip />
+
+            {/* ===== SERVICES ===== */}
+            <section className="section-base bg-cream">
+                <div className="section-header-center">
+                    <p className="eyebrow mb-3">What We Do</p>
+                    <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Our Services</h2>
+                    <div className="gold-divider" />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
+                    {SERVICES.map((s, i) => (
+                        <motion.div
+                            key={s.label}
+                            className="card-luxury p-8 relative group"
+                            initial={{ opacity: 0, y: 24 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.08, duration: 0.55 }}
+                            viewport={{ once: true, amount: 0.15 }}
+                            whileHover={{ y: -5 }}
+                        >
+                            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-gold-deep via-gold to-gold-bright scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                            <span className="text-3xl block mb-4">{s.icon}</span>
+                            <h3 className="font-title text-[0.78rem] tracking-[0.18em] uppercase text-purple-rich dark:text-gold-light mb-2.5">{s.label}</h3>
+                            <p className="font-body text-[0.84rem] text-charcoal-muted leading-relaxed mb-4">{s.desc}</p>
+                            <Link to="/interior-decor" className="inline-flex items-center gap-1.5 font-title text-[0.6rem] tracking-[0.15em] uppercase text-gold opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                Enquire <ArrowRight size={11} />
+                            </Link>
+                        </motion.div>
+                    ))}
+                </div>
+            </section>
+
+            {/* ===== FEATURED WORKS ===== */}
+            <section className="section-base bg-cream-soft">
+                <div className="flex items-end justify-between mb-12 max-w-[1200px] mx-auto">
+                    <div>
+                        <p className="eyebrow mb-2">Portfolio</p>
+                        <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Featured Works</h2>
+                        <div className="gold-divider-left" />
+                    </div>
+                    <Link to="/gallery" className="hidden sm:inline-flex btn-maxims btn-outline-gold">
+                        View All <ArrowRight size={13} />
+                    </Link>
+                </div>
+
+                <div className="max-w-[1200px] mx-auto">
+                    <BentoGrid>
+                        {works.map((w, i) => (
+                            <BentoGridItem
+                                key={w.id}
+                                title={w.title}
+                                description={w.category}
+                                location={w.location}
+                                className={w.grid_size === 'large' ? "md:col-span-1 md:row-span-2" : "md:col-span-1"}
+                                badge={w.category}
+                                header={
+                                    <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-purple-dark to-purple-darkest overflow-hidden relative group-hover/bento:scale-[1.02] transition duration-200">
+                                        {w.cover_image ? (
+                                            <img src={getStorageUrl(BUCKETS.gallery, w.cover_image)} alt={w.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-80" />
+                                        ) : (
+                                            <div className="absolute inset-0 flex items-center justify-center opacity-10">
+                                                <span className="text-4xl text-gold">🏛</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                }
+                            />
+                        ))}
+                    </BentoGrid>
+                </div>
+            </section>
+
+            {/* ===== ABOUT TEASER ===== */}
+            <section className="section-base bg-charcoal-mid">
+                <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-20">
+                    {/* Visual */}
+                    <motion.div
+                        className="relative"
+                        initial={{ opacity: 0, x: -40 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8 }}
+                        viewport={{ once: true }}
+                    >
+                        <div className="aspect-[4/5] bg-gradient-to-br from-purple-rich to-purple-darkest flex items-center justify-center">
+                            <span className="text-8xl opacity-20">🏛</span>
+                        </div>
+                        {/* Accent corners */}
+                        <div className="absolute -top-3 -left-3 w-14 h-14 border-l-2 border-t-2 border-gold/50" />
+                        <div className="absolute -bottom-3 -right-3 w-14 h-14 border-r-2 border-b-2 border-gold/50" />
+                        {/* Badge */}
+                        <div className="absolute -bottom-5 -right-5 bg-gold p-5 text-center">
+                            <span className="font-title text-3xl text-purple-darkest dark:text-cream-soft font-bold block leading-none">8</span>
+                            <span className="font-body text-[0.55rem] tracking-widest uppercase text-purple-rich dark:text-gold-light font-bold block mt-1">Years of<br />Excellence</span>
+                        </div>
+                    </motion.div>
+
+                    {/* Text */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 40 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8 }}
+                        viewport={{ once: true }}
+                    >
+                        <p className="eyebrow mb-4">Our Story</p>
+                        <h2 className="text-display-md text-cream-soft font-display mb-1">
+                            Crafting Spaces That<br />
+                            <em className="text-gold-light italic">Reflect Who You Are</em>
+                        </h2>
+                        <div className="gold-divider-left mb-6" />
+                        <p className="font-body text-[0.92rem] text-cream-soft leading-[1.9] mb-6">
+                            Maxims Interiors & Home Goods was born from a deep passion for transforming ordinary spaces into extraordinary living experiences. We blend timeless elegance with contemporary sensibility.
+                        </p>
+                        <blockquote className="border-l-2 border-gold pl-5 mb-8 font-editorial text-[1.05rem] italic text-gold-light leading-relaxed">
+                            "Every room tells a story. We help you tell yours with beauty, intention, and lasting quality."
+                        </blockquote>
+                        <Link to="/about" className="btn-maxims btn-gold-solid">
+                            Discover Our Story <ArrowRight size={14} />
+                        </Link>
+                    </motion.div>
+                </div>
+
+                {/* Stats row */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 border-t border-gold/12 pt-12 max-w-[900px] mx-auto">
+                    {STATS.map(([n, l], i) => (
+                        <motion.div
+                            key={l}
+                            className="text-center px-4 py-5 border-r border-gold/8 last:border-r-0"
+                            initial={{ opacity: 0, y: 16 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.1 }}
+                            viewport={{ once: true }}
+                        >
+                            <div className="font-title text-[clamp(1.8rem,3vw,2.5rem)] text-gold font-semibold mb-1">{n}</div>
+                            <div className="font-body text-[0.65rem] tracking-[0.18em] uppercase text-cream-soft">{l}</div>
+                        </motion.div>
+                    ))}
+                </div>
+            </section>
+
+            {/* ===== TESTIMONIALS ===== */}
+            <section className="section-base bg-purple-rich relative overflow-hidden">
+                <div className="absolute inset-0 pointer-events-none" style={{
+                    backgroundImage: 'repeating-linear-gradient(45deg, rgba(201,168,76,0.03) 0px, rgba(201,168,76,0.03) 1px, transparent 1px, transparent 20px)'
+                }} />
+
+                <div className="section-header-center relative z-10">
+                    <p className="eyebrow mb-3" style={{ color: 'rgba(201,168,76,0.65)' }}>Client Words</p>
+                    <h2 className="text-display-md text-gold-light font-display">What Our Clients Say</h2>
+                    <div className="gold-divider" />
+                </div>
+
+                <div className="relative z-10 max-w-[1200px] mx-auto overflow-hidden">
+                    <InfiniteMovingCards
+                        items={testimonials.map(t => ({
+                            quote: t.quote,
+                            name: t.client_name,
+                            title: t.client_role,
+                        }))}
+                        direction="right"
+                        speed="slow"
                     />
-                    {p?.badge && (
-                      <span className="absolute top-3 left-3 bg-gold text-purple-darkest font-title text-[0.55rem] tracking-[0.15em] uppercase px-2 py-1">
-                        {p.badge}
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="mt-3 font-editorial text-base text-cream-soft group-hover:text-gold transition-colors">{p?.name || 'Maxims Piece'}</h3>
-                  <p className="font-body text-sm text-gold/80">{p ? formatNaira(p.price) : '—'}</p>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
+                </div>
+            </section>
 
-      {/* ── TESTIMONIALS ─────────────────────────────────────── */}
-      {featuredTestis.length > 0 && (
-        <section className="section-base bg-purple-darkest">
-          <div className="container-lux">
-            <Reveal>
-              <p className="eyebrow text-center">Kind Words</p>
-              <h2 className="text-display-md text-center mt-3">Loved by Our Clients</h2>
-              <div className="gold-divider" />
-            </Reveal>
-            <div className="grid md:grid-cols-3 gap-6 mt-10">
-              {featuredTestis.map((t, i) => (
-                <Reveal key={t.id} delay={i * 0.08}>
-                  <figure className="card-glass h-full p-8 flex flex-col">
-                    <Stars rating={t.rating} className="mb-4" />
-                    <blockquote className="font-editorial italic text-lg text-cream-soft/85 leading-relaxed flex-1">“{t.quote}”</blockquote>
-                    <figcaption className="mt-6 pt-5 border-t border-gold/10">
-                      <div className="font-title text-sm tracking-wide text-gold">{t.client_name}</div>
-                      <div className="font-body text-xs text-cream-soft/45 mt-0.5">{t.client_role}</div>
-                    </figcaption>
-                  </figure>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+            {/* ===== SHOP PREVIEW ===== */}
+            <section className="section-base bg-cream">
+                <div className="flex items-end justify-between mb-12 max-w-[1200px] mx-auto">
+                    <div>
+                        <p className="eyebrow mb-2">Home Goods</p>
+                        <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Shop Our Collection</h2>
+                        <div className="gold-divider-left" />
+                    </div>
+                    <Link to="/shop" className="hidden sm:inline-flex btn-maxims btn-outline-gold text-[0.62rem]">
+                        Full Shop <ArrowRight size={13} />
+                    </Link>
+                </div>
 
-      {/* ── CTA ──────────────────────────────────────────────── */}
-      <section className="section-base bg-charcoal text-center bg-lux-radial">
-        <div className="container-lux max-w-3xl">
-          <Reveal>
-            <p className="eyebrow">Let's Begin</p>
-            <h2 className="text-display-lg mt-4 text-balance">Ready to transform your space?</h2>
-            <p className="mt-5 font-body text-cream-soft/60 leading-relaxed">
-              Book a consultation with our design team and let's craft something extraordinary together.
-            </p>
-            <div className="mt-9 flex flex-wrap gap-4 justify-center">
-              <Link to="/contact" className="btn-gold-solid">Book a Consultation <ArrowRight size={15} /></Link>
-              <Link to="/bulk-orders" className="btn-outline-gold">Trade &amp; Bulk Enquiries</Link>
-            </div>
-          </Reveal>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-[1200px] mx-auto">
+                    {products.map((p, i) => (
+                        <motion.div
+                            key={p.id}
+                            className="card-luxury group"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.09, duration: 0.55 }}
+                            viewport={{ once: true }}
+                            whileHover={{ y: -6 }}
+                        >
+                            <div className="relative aspect-square bg-gradient-to-br from-cream to-cream-dark flex items-center justify-center overflow-hidden">
+                                {p.cover_image ? (
+                                    <img src={getStorageUrl(BUCKETS.products, p.cover_image)} alt={p.name} loading="lazy" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                ) : (
+                                    <span className="text-5xl group-hover:scale-110 transition-transform duration-400">🛋️</span>
+                                )}
+                                {p.badge && (
+                                    <div className="absolute top-3 left-3 bg-gold text-purple-darkest dark:text-cream-soft font-body font-black text-[0.5rem] tracking-[0.12em] uppercase px-2 py-0.5">
+                                        {p.badge}
+                                    </div>
+                                )}
+                                <div className="absolute inset-0 bg-purple-rich/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    {/* TODO: Cart + Paystack checkout */}
+                                    <button className="btn-maxims btn-gold-solid text-[0.58rem] px-4 py-2">Add to Cart</button>
+                                </div>
+                            </div>
+                            <div className="p-4">
+                                <p className="eyebrow text-[0.52rem] mb-1.5">{p.category}</p>
+                                <h3 className="font-editorial text-[0.88rem] text-charcoal mb-3">{p.name}</h3>
+                                <div className="flex items-center justify-between">
+                                    <span className="font-title text-[0.82rem] text-purple-rich dark:text-gold-light font-semibold">{formatPrice(p.price)}</span>
+                                    <button className="text-charcoal-muted hover:text-gold transition-colors text-base">♡</button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+            </section>
+
+            {/* ===== CTA BANNER ===== */}
+            <section className="relative overflow-hidden py-36 px-8 text-center bg-charcoal-mid">
+                <div className="absolute top-[-200px] left-[-100px] w-[600px] h-[600px] rounded-full opacity-30 pointer-events-none"
+                    style={{ background: 'radial-gradient(circle, rgba(59,31,107,0.6), transparent 65%)' }} />
+                <div className="absolute bottom-[-150px] right-[-100px] w-[500px] h-[500px] rounded-full opacity-20 pointer-events-none"
+                    style={{ background: 'radial-gradient(circle, rgba(201,168,76,0.25), transparent 65%)' }} />
+
+                <motion.div
+                    className="relative z-10 max-w-[720px] mx-auto"
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                    viewport={{ once: true }}
+                >
+                    <p className="eyebrow mb-6" style={{ color: 'rgba(201,168,76,0.6)' }}>Ready to Begin?</p>
+                    <h2 className="text-display-lg text-cream-soft font-display mb-4">
+                        Transform Your Space<br /><em className="text-gold-light italic">Into a Masterpiece</em>
+                    </h2>
+                    <p className="font-body text-[0.92rem] text-cream-soft leading-relaxed mb-10 max-w-[520px] mx-auto">
+                        Book your complimentary design consultation and take the first step toward your dream space.
+                    </p>
+                    <div className="flex gap-4 justify-center flex-wrap">
+                        <Link to="/contact" className="btn-maxims btn-gold-solid">
+                            Book Free Consultation <ArrowRight size={14} />
+                        </Link>
+                        <Link to="/gallery" className="btn-maxims btn-outline-light">
+                            View Portfolio
+                        </Link>
+                    </div>
+                </motion.div>
+            </section>
         </div>
-      </section>
-    </>
-  )
+    )
 }
