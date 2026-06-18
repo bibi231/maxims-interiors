@@ -1,0 +1,220 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ════════════════════════════════════════════════════════════════
+   MAXIMS INTERIORS — GLOBAL DESIGN SYSTEM
+   Brand tokens live in tailwind.config.js. These utility classes are
+   referenced across both public and admin code — keep names stable.
+   Design rule: SHARP corners (no rounded-lg/xl on cards/buttons);
+   rounded-full only for circular elements.
+   ════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-charcoal text-cream-soft font-body antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4, h5 {
+    @apply font-display text-cream-soft;
+  }
+
+  ::selection {
+    @apply bg-gold/30 text-cream-soft;
+  }
+
+  /* Custom scrollbar — subtle gold on dark */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: #12111A; }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(201, 168, 76, 0.25);
+    border: 2px solid #12111A;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(201, 168, 76, 0.5); }
+
+  /* Respect reduced-motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+
+  /* ── Typographic labels ──────────────────────────────────────── */
+  .eyebrow {
+    @apply font-title uppercase text-gold;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+  }
+
+  .text-display-xl {
+    @apply font-display font-semibold text-cream-soft;
+    font-size: clamp(2.6rem, 7vw, 5.6rem);
+    line-height: 0.98;
+    letter-spacing: -0.01em;
+  }
+  .text-display-lg {
+    @apply font-display font-semibold text-cream-soft;
+    font-size: clamp(2.1rem, 5vw, 4rem);
+    line-height: 1.02;
+  }
+  .text-display-md {
+    @apply font-display font-semibold text-cream-soft;
+    font-size: clamp(1.7rem, 3.6vw, 2.9rem);
+    line-height: 1.08;
+  }
+
+  /* ── Buttons ─────────────────────────────────────────────────── */
+  .btn-maxims {
+    @apply inline-flex items-center justify-center gap-2 font-title uppercase
+           px-7 py-3.5 text-[0.72rem] tracking-[0.2em] transition-all duration-300
+           ease-luxe cursor-pointer select-none whitespace-nowrap;
+  }
+
+  .btn-gold-solid {
+    @apply btn-maxims text-purple-darkest;
+    background-image: linear-gradient(135deg, #E4C56A 0%, #C9A84C 55%, #A67C2B 100%);
+    box-shadow: 0 8px 26px -12px rgba(201, 168, 76, 0.6);
+  }
+  .btn-gold-solid:hover {
+    box-shadow: 0 12px 34px -10px rgba(201, 168, 76, 0.8);
+    transform: translateY(-1px);
+  }
+
+  .btn-outline-gold {
+    @apply btn-maxims text-gold border border-gold/50 bg-transparent;
+  }
+  .btn-outline-gold:hover {
+    @apply bg-gold/10 border-gold;
+  }
+
+  .btn-outline-light {
+    @apply btn-maxims text-cream-soft border border-cream-soft/40 bg-transparent;
+  }
+  .btn-outline-light:hover {
+    @apply bg-cream-soft/10 border-cream-soft;
+  }
+
+  .btn-purple-solid {
+    @apply btn-maxims text-cream-soft bg-purple-rich;
+  }
+  .btn-purple-solid:hover {
+    @apply bg-purple-mid;
+  }
+
+  /* ── Cards ───────────────────────────────────────────────────── */
+  .card-luxury {
+    @apply bg-cream-soft text-charcoal border border-cream-dark transition-all duration-500 ease-luxe;
+  }
+  .card-luxury:hover {
+    @apply shadow-lux-card;
+    transform: translateY(-4px);
+  }
+
+  .card-glass {
+    @apply bg-charcoal-mid/80 border border-gold/15 backdrop-blur-md transition-all duration-500 ease-luxe;
+  }
+  .card-glass:hover {
+    @apply border-gold/35;
+  }
+
+  /* ── Layout helpers ──────────────────────────────────────────── */
+  .section-base {
+    @apply px-5 sm:px-8 lg:px-16 py-16 sm:py-20 lg:py-28;
+  }
+
+  .page-hero {
+    @apply relative flex flex-col items-center justify-center text-center
+           px-5 sm:px-8 pt-36 pb-20 lg:pt-44 lg:pb-28 overflow-hidden;
+  }
+
+  /* ── Ornaments ───────────────────────────────────────────────── */
+  .gold-divider {
+    @apply flex items-center justify-center gap-3 my-6;
+  }
+  .gold-divider::before,
+  .gold-divider::after {
+    content: '';
+    @apply h-px w-12 sm:w-16;
+    background-image: linear-gradient(to right, transparent, rgba(201,168,76,0.6));
+  }
+  .gold-divider::after {
+    background-image: linear-gradient(to left, transparent, rgba(201,168,76,0.6));
+  }
+
+  .ornament-line {
+    @apply relative flex items-center justify-center;
+  }
+  .ornament-line::before,
+  .ornament-line::after {
+    content: '';
+    @apply h-px flex-1 max-w-[120px];
+    background-image: linear-gradient(to right, transparent, rgba(201,168,76,0.5), transparent);
+  }
+  .ornament-line > span,
+  .ornament-line .diamond {
+    @apply mx-3 text-gold;
+  }
+
+  /* ── Loading skeleton (branded shimmer) ─────────────────────── */
+  .skeleton {
+    @apply bg-charcoal-mid relative overflow-hidden;
+    background-image: linear-gradient(
+      90deg,
+      rgba(201,168,76,0) 0%,
+      rgba(201,168,76,0.08) 50%,
+      rgba(201,168,76,0) 100%
+    );
+    background-size: 700px 100%;
+    @apply animate-shimmer;
+  }
+
+  /* ── Form inputs ─────────────────────────────────────────────── */
+  .lux-input {
+    @apply w-full bg-charcoal-mid border border-cream-soft/15 text-cream-soft
+           font-body text-sm px-4 py-3 outline-none transition-colors
+           placeholder:text-cream-soft/30 focus:border-gold;
+  }
+  .lux-input::-webkit-calendar-picker-indicator { filter: invert(0.7) sepia(1) saturate(3) hue-rotate(5deg); }
+
+  /* ── Error/notice tints ─────────────────────────────────────── */
+  .notice-error {
+    @apply bg-red-500/10 border border-red-500/30 text-red-300 px-4 py-3 text-sm font-body;
+  }
+  .notice-gold {
+    @apply bg-gold/10 border border-gold/30 text-gold px-4 py-3 text-sm font-body;
+  }
+  .notice-success {
+    @apply bg-green-500/10 border border-green-500/30 text-green-300 px-4 py-3 text-sm font-body;
+  }
+}
+
+@layer utilities {
+  /* Container width used by public sections */
+  .container-lux {
+    @apply mx-auto w-full max-w-[1320px];
+  }
+  .text-balance { text-wrap: balance; }
+
+  /* Subtle radial purple glow background for dark sections */
+  .bg-lux-radial {
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(91,53,160,0.25), transparent 45%),
+      radial-gradient(circle at 85% 90%, rgba(201,168,76,0.08), transparent 40%);
+  }
+}
