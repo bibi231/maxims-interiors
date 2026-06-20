@@ -1,7 +1,12 @@
 // src/lib/api.js
 // Thin REST client for the Maxims Express API. Attaches the JWT (if any),
 // parses JSON, and throws on non-2xx so callers can try/catch.
-const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:4000').replace(/\/$/, '')
+// In production (Vercel) the API is served from the same origin, so no
+// VITE_API_URL is needed — it defaults to same-origin in the browser.
+// For local dev set VITE_API_URL=http://localhost:4000 in .env.
+const BASE = (
+  import.meta.env.VITE_API_URL ?? (typeof window !== 'undefined' ? '' : 'http://localhost:4000')
+).replace(/\/$/, '')
 
 let token = (typeof localStorage !== 'undefined' && localStorage.getItem('maxims_token')) || null
 

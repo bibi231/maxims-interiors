@@ -4,4 +4,4 @@ Disallow: /admin
 Disallow: /admin/
 Disallow: /payment/
 
-Sitemap: https://maximsinteriors.com/sitemap.xml
+Sitemap: https://maximsinterior.com.ng/sitemap.xml

@@ -74,11 +74,10 @@ async function run() {
   // ── Sample testimonials ──
   if (await Testimonial.countDocuments() === 0) {
     await Testimonial.insertMany([
-      { client_name: 'Adaeze Nwosu', client_role: 'Homeowner · Lekki Phase 1', quote: 'Working with Maxims was extraordinary. They transformed our home into a palace of refined elegance.', rating: 5, project_type: 'Full Home Design', is_featured: true, is_published: true },
-      { client_name: 'Chief Emmanuel Okafor', client_role: 'Hotel Owner · Meridian Abuja', quote: 'Their design sensibility is unmatched in Nigeria. Occupancy is up 40% after the redesign.', rating: 5, project_type: 'Commercial Design', is_featured: true, is_published: true },
-      { client_name: 'Dr. Ngozi Adeyemi', client_role: 'Homeowner · Asokoro', quote: 'From consultation to reveal, Maxims exceeded every expectation.', rating: 5, project_type: 'Living Room & Master Suite', is_featured: true, is_published: true },
+      { client_name: 'Ms Christine Miner', client_role: 'Private Client · Abuja', quote: 'Maxims understood exactly the feeling I wanted for my home — warm, elegant, and completely my own. Every detail was considered, the team was a joy to work with, and the final reveal genuinely took my breath away.', rating: 5, project_type: 'Full Home Design', is_featured: true, is_published: true, sort_order: 0 },
+      { client_name: 'Adaeze Nwosu', client_role: 'Homeowner · Lekki Phase 1', quote: 'Working with Maxims was extraordinary. They transformed our home into a space of refined, liveable elegance.', rating: 5, project_type: 'Living Room & Master Suite', is_featured: true, is_published: true, sort_order: 1 },
     ])
-    console.log('✓ Sample testimonials seeded')
+    console.log('✓ Testimonials seeded')
   }
 
   console.log('\n✅ Seed complete.')

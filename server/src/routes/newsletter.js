@@ -17,11 +17,32 @@ router.post('/', subLimiter, async (req, res) => {
   if (existing) return res.json({ ok: true, already: true })
 
   const sub = await Newsletter.create({ email, source: req.body.source || 'website' })
+
+  // 1) Welcome the subscriber
   await sendMail({
     to: email,
     subject: 'Welcome to Maxims Interiors',
     html: emailShell({ heading: 'Welcome to the List', body: `<p>Thank you for subscribing. You'll be first to know about new collections, design inspiration, and private previews.</p>`, ctaLabel: 'Explore the Collection', ctaUrl: `${process.env.APP_URL || ''}/shop` }),
   })
+
+  // 2) Alert the Maxims team (their Gmail) so they see every signup
+  if (process.env.NOTIFICATION_EMAIL) {
+    await sendMail({
+      to: process.env.NOTIFICATION_EMAIL,
+      subject: 'New newsletter subscriber — Maxims Interiors',
+      html: emailShell({ heading: 'New Subscriber', body: `<p><strong>${email}</strong> just joined your newsletter (source: ${sub.source}).</p><p>See all subscribers in your admin dashboard under Newsletter.</p>`, ctaLabel: 'Open Admin', ctaUrl: `${process.env.APP_URL || ''}/admin/newsletter` }),
+    })
+  }
+
+  // 3) Mirror to TrueWeb so it also shows in Bitrus's TrueWeb admin (fire-and-forget)
+  if (process.env.TRUEWEB_NEWSLETTER_URL) {
+    fetch(process.env.TRUEWEB_NEWSLETTER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, source: 'maxims-interior' }),
+    }).catch(() => { /* never block the signup on mirror failure */ })
+  }
+
   sub.welcomed_at = new Date(); await sub.save()
   res.status(201).json({ ok: true })
 })
