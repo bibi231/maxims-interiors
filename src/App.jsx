@@ -6,6 +6,7 @@ import { AuthProvider, RequireAuth } from '@/context/AuthContext'
 import { ToastProvider } from '@/context/ToastContext'
 import ToastContainer from '@/components/admin/ToastContainer'
 import ScrollToTop from '@/components/ScrollToTop'
+import SupportChat from '@/components/SupportChat'
 
 // Public Layout
 import Navbar from '@/components/layout/Navbar'
@@ -95,6 +96,7 @@ export default function App() {
       <AuthProvider>
         <ToastProvider>
           <ScrollToTop />
+          <SupportChat />
           <Routes>
             {/* Admin Routes — no public layout, protected */}
             <Route path="/admin/login" element={<Suspense fallback={<AdminLoader />}><AdminLogin /></Suspense>} />
