@@ -23,6 +23,20 @@ router.post('/login', loginLimiter, async (req, res) => {
 
 router.get('/me', requireAuth, (req, res) => res.json({ user: req.user.toJSON() }))
 
+// Update own profile (name, title, avatar, and optionally password).
+router.put('/me', requireAuth, async (req, res) => {
+  const { full_name, title, avatar_url, password } = req.body
+  if (full_name !== undefined) req.user.full_name = full_name
+  if (title !== undefined) req.user.title = title
+  if (avatar_url !== undefined) req.user.avatar_url = avatar_url
+  if (password) {
+    if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' })
+    req.user.password_hash = await bcrypt.hash(password, 12)
+  }
+  await req.user.save()
+  res.json({ user: req.user.toJSON() })
+})
+
 // Owner invites a staff member.
 router.post('/register', requireAuth, requireOwner, async (req, res) => {
   const { email, password, full_name, role, title } = req.body

@@ -10,6 +10,7 @@ import { InfiniteMovingCards } from '@/components/ui/infinite-moving-cards'
 import { VelocityScroll } from '@/components/ui/velocity-scroll'
 import { AnimatedGradientText } from '@/components/ui/animated-gradient-text'
 import { ShinyButton } from '@/components/ui/shiny-button'
+import VideoShowcase from '@/components/VideoShowcase'
 
 /* ────────── DATA ────────────────────────────────────── */
 const SERVICES = [
@@ -216,6 +217,14 @@ export default function Home() {
                     </BentoGrid>
                 </div>
             </section>
+
+            {/* ===== VIDEO SHOWCASE ===== */}
+            <VideoShowcase
+                eyebrow="In Motion"
+                title="See Our Work Come Alive"
+                subtitle="A walk-through of a Maxims space — design, texture and light in motion."
+                className="bg-purple-darkest"
+            />
 
             {/* ===== ABOUT TEASER ===== */}
             <section className="section-base bg-charcoal-mid">

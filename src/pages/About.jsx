@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Award, Heart, Star, Users } from 'lucide-react'
-import { useTeamMembers } from '@/hooks/useData'
-import { getStorageUrl, BUCKETS } from '@/lib/storage'
 import { AnimatedGradientText } from '@/components/ui/animated-gradient-text'
+import VideoShowcase from '@/components/VideoShowcase'
+import TeamGalleryBand from '@/components/TeamGalleryBand'
+import { FOUNDER_PHOTO } from '@/lib/media'
 
 const VALUES = [
     { icon: Award, title: 'Excellence', desc: 'We hold every project to an uncompromising standard — from concept to installation.' },
@@ -21,8 +22,6 @@ const TIMELINE = [
 ]
 
 export default function About() {
-    const { data: teamRaw, loading } = useTeamMembers(true)
-    const team = (teamRaw || []).slice(0, 3)
     return (
         <div>
             {/* Hero */}
@@ -54,8 +53,8 @@ export default function About() {
             <section className="section-base bg-cream-soft">
                 <div className="max-w-[1150px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-24 items-center">
                     <motion.div className="relative" initial={{ opacity: 0, x: -36 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
-                        <div className="aspect-[3/4] bg-gradient-to-br from-purple-rich to-purple-darkest flex items-center justify-center">
-                            <span className="text-9xl opacity-20">👩🎨</span>
+                        <div className="aspect-[3/4] bg-gradient-to-br from-purple-rich to-purple-darkest flex items-center justify-center overflow-hidden">
+                            <img src={FOUNDER_PHOTO} alt="Maxims founder" loading="lazy" className="w-full h-full object-cover" />
                         </div>
                         <div className="absolute -bottom-4 -right-4 w-20 h-20 border-r-2 border-b-2 border-gold/40" />
                         <div className="absolute -top-4 -left-4 w-20 h-20 border-l-2 border-t-2 border-gold/40" />
@@ -80,7 +79,7 @@ export default function About() {
                         </p>
                         <blockquote className="border-l-2 border-gold pl-5 font-editorial text-[1rem] italic text-purple-mid leading-relaxed">
                             "Design is not decoration. It is a language. And we are here to help you speak it fluently."
-                            <cite className="block mt-2 font-title text-[0.62rem] not-italic tracking-[0.2em] text-gold">— Christine Namicit Gadzama, Founder</cite>
+                            <cite className="block mt-2 font-title text-[0.62rem] not-italic tracking-[0.2em] text-gold">— Christine J-K Gadzama, Founder</cite>
                         </blockquote>
                     </motion.div>
                 </div>
@@ -145,47 +144,24 @@ export default function About() {
                 </div>
             </section>
 
-            {/* Team Teaser */}
-            <section className="section-base bg-cream">
-                <div className="section-header-center">
-                    <p className="eyebrow mb-3">The People</p>
-                    <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Meet the Team</h2>
-                    <div className="gold-divider" />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-[750px] mx-auto">
-                    {loading && Array.from({ length: 3 }).map((_, i) => (
-                        <div key={`skel-${i}`} className="card-luxury p-8 text-center animate-pulse">
-                            <div className="w-20 h-20 rounded-full bg-purple-rich/10 mx-auto mb-4" />
-                            <div className="w-3/4 h-3 bg-purple-rich/10 mx-auto mb-2 rounded" />
-                            <div className="w-1/2 h-2 bg-purple-rich/10 mx-auto rounded" />
-                        </div>
-                    ))}
-                    {team.map((t, i) => (
-                        <motion.div
-                            key={t.id}
-                            className="card-luxury p-8 text-center group"
-                            initial={{ opacity: 0, y: 18 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.1 }}
-                            viewport={{ once: true }}
-                            whileHover={{ y: -4 }}
-                        >
-                            <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden bg-gradient-to-br from-cream to-cream-dark flex items-center justify-center">
-                                {t.avatar_url ? (
-                                    <img src={getStorageUrl(BUCKETS.team, t.avatar_url)} alt={t.name} loading="lazy" className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300" />
-                                ) : (
-                                    <span className="text-4xl flex items-center justify-center w-full h-full opacity-30">👩‍🎨</span>
-                                )}
-                            </div>
-                            <h3 className="font-editorial text-[0.95rem] text-charcoal mb-1">{t.name}</h3>
-                            <p className="font-title text-[0.58rem] tracking-[0.2em] uppercase text-gold">{t.role}</p>
-                        </motion.div>
-                    ))}
-                </div>
-                <div className="text-center mt-10">
-                    <Link to="/team" className="btn-maxims btn-gold-solid">Meet Full Team <ArrowRight size={14} /></Link>
-                </div>
-            </section>
+            {/* Video showcase */}
+            <VideoShowcase
+                eyebrow="Behind the Brand"
+                title="See Maxims in Motion"
+                subtitle="A look inside our space and the way we work."
+                className="bg-purple-darkest"
+            />
+
+            {/* Team photos */}
+            <TeamGalleryBand
+                eyebrow="The People"
+                title="Meet the Team"
+                subtitle="The artisans and designers behind every Maxims space."
+                className="bg-cream"
+            />
+            <div className="text-center -mt-6 pb-16 bg-cream">
+                <Link to="/team" className="btn-maxims btn-gold-solid">Meet Full Team <ArrowRight size={14} /></Link>
+            </div>
 
             {/* CTA */}
             <section className="section-base bg-purple-rich relative overflow-hidden text-center">

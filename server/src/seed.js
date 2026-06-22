@@ -18,7 +18,7 @@ async function run() {
     await User.create({
       email,
       password_hash: await bcrypt.hash(process.env.OWNER_PASSWORD || 'changeme123', 12),
-      full_name: process.env.OWNER_NAME || 'Maxim Okafor',
+      full_name: process.env.OWNER_NAME || 'Christine J-K Gadzama',
       role: 'owner',
     })
     console.log('✓ Owner created:', email)
