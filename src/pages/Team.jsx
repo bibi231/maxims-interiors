@@ -3,6 +3,7 @@ import { Linkedin, Mail, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useTeamMembers } from '@/hooks/useData'
 import { getStorageUrl, BUCKETS } from '@/lib/storage'
+import TeamGalleryBand from '@/components/TeamGalleryBand'
 
 export default function Team() {
     const { data: team, loading } = useTeamMembers(true)
@@ -18,7 +19,15 @@ export default function Team() {
                 </motion.div>
             </section>
 
-            <section className="section-base bg-cream-soft">
+            <TeamGalleryBand
+                eyebrow="The Visionaries"
+                title="The Maxims Team"
+                subtitle="The artisans and experts behind the Maxims brand."
+                className="bg-cream-soft"
+            />
+
+            {(loading || (team || []).length > 0) && (
+            <section className="section-base bg-cream">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-[1200px] mx-auto">
                     {loading && Array.from({ length: 6 }).map((_, i) => (
                         <div key={`skel-${i}`} className="card-luxury p-10 animate-pulse">
@@ -54,6 +63,7 @@ export default function Team() {
                     ))}
                 </div>
             </section>
+            )}
 
             {/* Join the team */}
             <section className="section-base bg-cream text-center">
