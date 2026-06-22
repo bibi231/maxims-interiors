@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { MapPin, Phone, Mail, Clock, Calendar, Instagram, Facebook, Linkedin } from 'lucide-react'
-import { submitContactForm, bookAppointment, checkSlotAvailability } from '@/hooks/useData'
+import { submitContactForm, bookAppointment, checkSlotAvailability, useSiteSettings } from '@/hooks/useData'
 
 const METHODS = [
     { icon: Calendar, title: 'Book Consultation', desc: 'Schedule a 1-on-1 session with our lead designers.', cta: 'Book Now' },
@@ -10,6 +10,8 @@ const METHODS = [
 ]
 
 export default function Contact() {
+    const { settings } = useSiteSettings()
+    const ci = settings?.contact_info || {}
     const [msgData, setMsgData] = useState({ name: '', email: '', phone: '', service: 'Full Room Design', message: '' })
     const [msgStatus, setMsgStatus] = useState('idle')
 
@@ -153,12 +155,24 @@ export default function Contact() {
                             <div className="space-y-4 mb-10">
                                 <div className="flex gap-4 items-start">
                                     <MapPin className="text-gold shrink-0 mt-1" size={16} />
-                                    <p className="font-body text-sm text-cream-soft leading-relaxed">123 Design Boulevard, Wuse 2, Abuja, FCT, Nigeria</p>
+                                    <p className="font-body text-sm text-cream-soft leading-relaxed">{ci.address || 'Abuja, FCT, Nigeria'}</p>
                                 </div>
                                 <div className="flex gap-4 items-center">
                                     <Phone className="text-gold shrink-0" size={16} />
-                                    <p className="font-body text-sm text-cream-soft">+234 800 000 0000</p>
+                                    <p className="font-body text-sm text-cream-soft">{ci.phone || '+234 800 000 0000'}</p>
                                 </div>
+                                {ci.email && (
+                                    <div className="flex gap-4 items-center">
+                                        <Mail className="text-gold shrink-0" size={16} />
+                                        <p className="font-body text-sm text-cream-soft">{ci.email}</p>
+                                    </div>
+                                )}
+                                {ci.hours && (
+                                    <div className="flex gap-4 items-center">
+                                        <Clock className="text-gold shrink-0" size={16} />
+                                        <p className="font-body text-sm text-cream-soft">{ci.hours}</p>
+                                    </div>
+                                )}
                             </div>
                             <div className="flex gap-3">
                                 {[Instagram, Facebook, Linkedin].map((Icon, i) => (

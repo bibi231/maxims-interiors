@@ -1,20 +1,22 @@
 import { Link } from 'react-router-dom'
 import { Instagram, Facebook, Linkedin, Youtube, MapPin, Phone, Mail, Clock } from 'lucide-react'
 import NewsletterSignup from '@/components/NewsletterSignup'
+import { useSiteSettings } from '@/hooks/useData'
 
 const NAV_LINKS = ['/', '/about', '/interior-decor', '/shop', '/gallery', '/team', '/testimonials']
 const NAV_NAMES = ['Home', 'About Us', 'Interior Décor', 'Shop', 'Gallery', 'Our Team', 'Reviews']
 
 const SERVICES = ['Full Room Design', 'Space Planning', 'Color Consultation', 'Furniture Sourcing', 'Bulk & Trade Orders', 'Virtual Design', 'Home Staging']
 
-const CONTACT = [
-    { icon: MapPin, text: '123 Design Boulevard, Wuse 2, Abuja, FCT, Nigeria' },
-    { icon: Phone, text: '+234 800 000 0000' },
-    { icon: Mail, text: 'hello@maximsinteriors.com' },
-    { icon: Clock, text: 'Mon–Sat: 9am – 7pm WAT' },
-]
-
 export default function Footer() {
+    const { settings } = useSiteSettings()
+    const ci = settings?.contact_info || {}
+    const CONTACT = [
+        { icon: MapPin, text: ci.address || 'Abuja, FCT, Nigeria' },
+        { icon: Phone, text: ci.phone || '+234 800 000 0000' },
+        { icon: Mail, text: ci.email || 'maximsinteriorandhomegoods@gmail.com' },
+        { icon: Clock, text: ci.hours || 'Mon–Fri: 9am – 5pm WAT' },
+    ].filter(c => c.text)
     return (
         <footer className="bg-charcoal relative">
             {/* Gold top line */}
