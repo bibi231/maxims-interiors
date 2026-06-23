@@ -16,6 +16,14 @@ export const NEWLOOK_VIDEO_POSTER = poster(NEWLOOK_VIDEO)
 export const REVEAL_VIDEO_POSTER = poster(REVEAL_VIDEO)
 export const SITES_VIDEO_POSTER = poster(SITES_VIDEO)
 
+// All videos as a list (for the gallery / homepage film strip).
+export const VIDEOS = [
+  { src: NEWLOOK_VIDEO, poster: NEWLOOK_VIDEO_POSTER, title: 'A Space Transformed', tag: 'Interior Reveal' },
+  { src: SITES_VIDEO, poster: SITES_VIDEO_POSTER, title: 'On Site', tag: 'Projects in Progress' },
+  { src: REVEAL_VIDEO, poster: REVEAL_VIDEO_POSTER, title: 'The Reveal', tag: 'Finished Space' },
+  { src: OFFICE_VIDEO, poster: OFFICE_VIDEO_POSTER, title: 'Inside the Studio', tag: 'Walk-through' },
+]
+
 // ── Team / studio photos ──
 export const TEAM_PHOTOS = [
   `${CLD}/image/upload/v1782161768/maxims/team/ohfi82yl7o5ryvc6chkp.jpg`,

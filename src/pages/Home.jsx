@@ -10,8 +10,8 @@ import { InfiniteMovingCards } from '@/components/ui/infinite-moving-cards'
 import { VelocityScroll } from '@/components/ui/velocity-scroll'
 import { AnimatedGradientText } from '@/components/ui/animated-gradient-text'
 import { ShinyButton } from '@/components/ui/shiny-button'
-import VideoShowcase from '@/components/VideoShowcase'
-import { NEWLOOK_VIDEO, NEWLOOK_VIDEO_POSTER } from '@/lib/media'
+import VideoGallery from '@/components/VideoGallery'
+import { FOUNDER_PHOTO } from '@/lib/media'
 
 /* ────────── DATA ────────────────────────────────────── */
 const SERVICES = [
@@ -219,13 +219,11 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* ===== VIDEO SHOWCASE ===== */}
-            <VideoShowcase
+            {/* ===== VIDEO GALLERY ===== */}
+            <VideoGallery
                 eyebrow="In Motion"
-                title="See a Space Transformed"
-                subtitle="Step inside one of our finished interiors — design, texture and light in motion."
-                src={NEWLOOK_VIDEO}
-                poster={NEWLOOK_VIDEO_POSTER}
+                title="Our Work in Motion"
+                subtitle="Reveals, walk-throughs and live projects — see Maxims come alive."
                 className="bg-purple-darkest"
             />
 
@@ -240,8 +238,8 @@ export default function Home() {
                         transition={{ duration: 0.8 }}
                         viewport={{ once: true }}
                     >
-                        <div className="aspect-[4/5] bg-gradient-to-br from-purple-rich to-purple-darkest flex items-center justify-center">
-                            <span className="text-8xl opacity-20">🏛</span>
+                        <div className="aspect-[4/5] bg-gradient-to-br from-purple-rich to-purple-darkest flex items-center justify-center overflow-hidden">
+                            <img src={FOUNDER_PHOTO} alt="Christine J-K Gadzama, Founder of Maxims" loading="lazy" className="w-full h-full object-cover" />
                         </div>
                         {/* Accent corners */}
                         <div className="absolute -top-3 -left-3 w-14 h-14 border-l-2 border-t-2 border-gold/50" />

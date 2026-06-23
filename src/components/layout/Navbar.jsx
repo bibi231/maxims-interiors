@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, ChevronDown, ArrowRight } from 'lucide-react'
+import { Menu, X, ChevronDown, ArrowRight, Sun, Moon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { getTheme, setTheme } from '@/lib/theme'
 
 /* ── Nav link data ───────────────────────────────────────── */
 const NAV = [
@@ -69,9 +70,17 @@ export default function Navbar() {
     const [scrolled, setScrolled] = useState(false)
     const [mobileOpen, setMobileOpen] = useState(false)
     const [activeDropdown, setDrop] = useState(null)
+    const [theme, setThemeState] = useState('light')
     const location = useLocation()
     const isHome = location.pathname === '/'
     const isAdmin = location.pathname === '/admin'
+
+    useEffect(() => { const t = getTheme(); setThemeState(t); setTheme(t) }, [location])
+
+    const toggleTheme = () => {
+        const next = theme === 'dark' ? 'light' : 'dark'
+        setThemeState(next); setTheme(next)
+    }
 
     useEffect(() => {
         const handler = () => setScrolled(window.scrollY > 55)
@@ -155,6 +164,13 @@ export default function Navbar() {
 
                 {/* CTA + Hamburger */}
                 <div className="flex items-center gap-3">
+                    <button
+                        onClick={toggleTheme}
+                        aria-label="Toggle light or dark mode"
+                        className="w-9 h-9 rounded-full border border-gold/30 text-gold flex items-center justify-center hover:bg-gold/10 transition-colors"
+                    >
+                        {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+                    </button>
                     <Link
                         to="/contact"
                         className="hidden lg:inline-flex btn-maxims btn-gold-solid text-[0.62rem] px-5 py-2.5"

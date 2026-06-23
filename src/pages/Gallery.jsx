@@ -4,8 +4,7 @@ import { X, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useGallery } from '@/hooks/useData'
 import { getStorageUrl, BUCKETS } from '@/lib/storage'
-import VideoShowcase from '@/components/VideoShowcase'
-import { SITES_VIDEO, SITES_VIDEO_POSTER } from '@/lib/media'
+import VideoGallery from '@/components/VideoGallery'
 
 const GRADS = ['linear-gradient(135deg,#2E1660,#5B35A0)', 'linear-gradient(135deg,#1C0D35,#3B1F6B)', 'linear-gradient(135deg,#2A1850,#7B52C0)', 'linear-gradient(135deg,#12111A,#2E1660)', 'linear-gradient(135deg,#1E1C2C,#5B35A0)', 'linear-gradient(135deg,#2E1660,#1C0D35)']
 
@@ -109,12 +108,10 @@ export default function Gallery() {
                 </div>
             </section>
 
-            <VideoShowcase
-                eyebrow="On Site"
-                title="Our Projects in Motion"
-                subtitle="From construction to completion — a look at the spaces we're shaping."
-                src={SITES_VIDEO}
-                poster={SITES_VIDEO_POSTER}
+            <VideoGallery
+                eyebrow="On Film"
+                title="Projects in Motion"
+                subtitle="From construction to completion — every Maxims space, in motion."
                 className="bg-charcoal-mid"
             />
 

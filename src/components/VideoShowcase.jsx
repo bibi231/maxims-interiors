@@ -1,8 +1,8 @@
 // src/components/VideoShowcase.jsx
-// Reusable luxury video band — click-to-play office walk-through.
+// Reusable luxury video band — autoplays muted, loops; tap to unmute.
 import { useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Play } from 'lucide-react'
+import { Volume2, VolumeX } from 'lucide-react'
 import { OFFICE_VIDEO, OFFICE_VIDEO_POSTER } from '@/lib/media'
 
 export default function VideoShowcase({
@@ -14,13 +14,14 @@ export default function VideoShowcase({
   className = 'bg-charcoal-mid',
 }) {
   const videoRef = useRef(null)
-  const [playing, setPlaying] = useState(false)
+  const [muted, setMuted] = useState(true)
 
-  const play = () => {
+  const toggleMute = () => {
     const v = videoRef.current
     if (!v) return
-    v.play()
-    setPlaying(true)
+    v.muted = !v.muted
+    setMuted(v.muted)
+    if (v.paused) v.play().catch(() => {})
   }
 
   return (
@@ -33,7 +34,7 @@ export default function VideoShowcase({
       </div>
 
       <motion.div
-        className="relative max-w-[960px] mx-auto aspect-video overflow-hidden border border-gold/20 shadow-deep group"
+        className="relative max-w-[960px] mx-auto aspect-video overflow-hidden border border-gold/20 shadow-deep"
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -43,23 +44,20 @@ export default function VideoShowcase({
           ref={videoRef}
           src={src}
           poster={poster}
-          controls={playing}
+          autoPlay
+          muted
+          loop
           playsInline
-          preload="none"
+          preload="metadata"
           className="w-full h-full object-cover bg-charcoal"
-          onPause={() => setPlaying(false)}
         />
-        {!playing && (
-          <button
-            onClick={play}
-            aria-label="Play video"
-            className="absolute inset-0 flex items-center justify-center bg-charcoal/30 hover:bg-charcoal/15 transition-colors"
-          >
-            <span className="w-20 h-20 rounded-full bg-gold/90 text-purple-darkest flex items-center justify-center shadow-gold-lg group-hover:scale-105 transition-transform">
-              <Play size={30} className="ml-1" fill="currentColor" />
-            </span>
-          </button>
-        )}
+        <button
+          onClick={toggleMute}
+          aria-label={muted ? 'Unmute' : 'Mute'}
+          className="absolute bottom-4 right-4 w-11 h-11 rounded-full bg-charcoal/60 backdrop-blur-sm text-gold border border-gold/30 flex items-center justify-center hover:bg-charcoal/80 transition-colors"
+        >
+          {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+        </button>
       </motion.div>
     </section>
   )
