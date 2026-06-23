@@ -3,20 +3,29 @@
 // Centralised here so pages share the same assets and they're easy to swap later.
 
 const CLD = 'https://res.cloudinary.com/dckmnbwcv'
+const poster = (videoUrl) => videoUrl.replace('/video/upload/', '/video/upload/so_1/').replace(/\.mp4$/, '.jpg')
 
-// Office walk-through video (compressed for web) + an auto-generated poster frame.
+// ── Videos ──
 export const OFFICE_VIDEO = `${CLD}/video/upload/v1782165325/maxims/video/pfs5vx7g35oukewtieje.mp4`
-export const OFFICE_VIDEO_POSTER = `${CLD}/video/upload/so_3/v1782165325/maxims/video/pfs5vx7g35oukewtieje.jpg`
+export const NEWLOOK_VIDEO = `${CLD}/video/upload/v1782225695/maxims/video/tf620p5gycackbqh6wsu.mp4`
+export const REVEAL_VIDEO = `${CLD}/video/upload/v1782225673/maxims/video/iym79uy6uldqlsjfjsvk.mp4`
+export const SITES_VIDEO = `${CLD}/video/upload/v1782225734/maxims/video/krlbaellk0afkfsjpdk1.mp4`
 
-// Team / studio photos (people in Maxims aprons + sourcing trips).
+export const OFFICE_VIDEO_POSTER = poster(OFFICE_VIDEO)
+export const NEWLOOK_VIDEO_POSTER = poster(NEWLOOK_VIDEO)
+export const REVEAL_VIDEO_POSTER = poster(REVEAL_VIDEO)
+export const SITES_VIDEO_POSTER = poster(SITES_VIDEO)
+
+// ── Team / studio photos ──
 export const TEAM_PHOTOS = [
   `${CLD}/image/upload/v1782161768/maxims/team/ohfi82yl7o5ryvc6chkp.jpg`,
+  `${CLD}/image/upload/v1782223902/maxims/team/lhtmnzef336gokkchsix.jpg`,
   `${CLD}/image/upload/v1782161779/maxims/team/nib59duhmaloxsxg149u.jpg`,
   `${CLD}/image/upload/v1782161936/maxims/team/qu7idvia3xkx7ivwk4oe.jpg`,
 ]
 
-// Candidate founder / sourcing portrait (a solo shot curating homeware).
-export const FOUNDER_PHOTO = `${CLD}/image/upload/v1782161758/maxims/team/dbo6hwy4rbuymnebhuqz.jpg`
+// ── Founder (Christine J-K Gadzama) ──
+export const FOUNDER_PHOTO = `${CLD}/image/upload/v1782223902/maxims/team/g183xpc2phdhbej1neff.jpg`
 
-// Lifestyle shot — throw pillows styled on a sofa.
+// ── Lifestyle ──
 export const SOFA_LIFESTYLE = `${CLD}/image/upload/v1782161751/maxims/catalog/awgzzv89oxtv0ejabfhr.jpg`
