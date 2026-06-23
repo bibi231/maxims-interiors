@@ -4,21 +4,22 @@ import { ArrowRight, Award, Heart, Star, Users } from 'lucide-react'
 import { AnimatedGradientText } from '@/components/ui/animated-gradient-text'
 import VideoShowcase from '@/components/VideoShowcase'
 import TeamGalleryBand from '@/components/TeamGalleryBand'
-import { FOUNDER_PHOTO } from '@/lib/media'
+import { FOUNDER_PHOTO, REVEAL_VIDEO, REVEAL_VIDEO_POSTER } from '@/lib/media'
 
 const VALUES = [
-    { icon: Award, title: 'Excellence', desc: 'We hold every project to an uncompromising standard — from concept to installation.' },
-    { icon: Heart, title: 'Passion', desc: 'Interior design is our calling. We pour genuine love and artistry into every space.' },
-    { icon: Users, title: 'Personalization', desc: 'No two clients are alike. We listen deeply and design spaces authentically, uniquely yours.' },
-    { icon: Star, title: 'Elegance', desc: 'Luxury isn\'t just aesthetic — it\'s a feeling of intentional refinement in every detail.' },
+    { icon: Award, title: 'Excellence', desc: 'Three decades of leadership distilled into an uncompromising standard — from concept to installation.' },
+    { icon: Heart, title: 'Sustainability', desc: 'Eco-friendly materials and responsible sourcing, so every space respects both people and planet.' },
+    { icon: Users, title: 'Personalization', desc: 'No two clients are alike. We listen deeply and design spaces that are authentically, uniquely yours.' },
+    { icon: Star, title: 'Elegance', desc: 'Timeless style and modern comfort, refined in every considered detail.' },
 ]
 
 const TIMELINE = [
-    { year: '2016', event: 'Maxims founded in Abuja with a vision for accessible luxury design.' },
-    { year: '2018', event: 'Expanded to Lagos. First commercial project: Meridian Boutique Hotel.' },
-    { year: '2020', event: 'Launched our Home Goods collection with 50+ curated products.' },
-    { year: '2022', event: 'Trade & Bulk program introduced. Now serving hotels and developers nationally.' },
-    { year: '2024', event: '200+ completed projects. Recognized as one of Nigeria\'s top design firms.' },
+    { year: 'Public Service', event: 'Nearly two decades at the Nigerian Ports Authority, rising from Procurement Officer to Head of Procurement.' },
+    { year: 'London', event: 'Sales Manager at Save & Prosper, Mayfair — leading teams and growing revenue across international markets.' },
+    { year: 'Abu Dhabi', event: 'Consultant to Abu Dhabi Ports, bridging international business and modern procurement operations.' },
+    { year: 'Dubai', event: 'Founded Major-Miner Film Productions and Perazim Events, spanning film and destination weddings.' },
+    { year: 'Abuja', event: 'Trained at Top Notch Interior Design School, turning a lifelong love of design into craft.' },
+    { year: 'Maxims', event: 'Founded Maxims Interior & Home Goods to redefine interiors through sustainability, elegance and innovation.' },
 ]
 
 export default function About() {
@@ -69,17 +70,17 @@ export default function About() {
                             </em>
                         </h2>
                         <p className="font-body text-[0.93rem] text-charcoal-muted leading-[1.9] mb-4">
-                            I started Maxims from a single belief: that beautiful spaces are not a luxury for the few — they are a right for everyone who wants to live with intention.
+                            My journey has spanned more than three decades — from procurement leadership at the Nigerian Ports Authority to international business in London and Abu Dhabi, and creative ventures in Dubai. Through all of it, I was drawn to one thing: how thoughtfully designed spaces shape the way we live.
                         </p>
                         <p className="font-body text-[0.93rem] text-charcoal-muted leading-[1.9] mb-4">
-                            Growing up in Abuja, I was always captivated by how a room could make you feel — how light, texture, and proportion could transform mood and meaning. I studied design, returned home, and built the team that became Maxims.
+                            I trained in interior design here in Abuja and founded Maxims to bring that vision home — interiors built on sustainability, elegance, and innovative design thinking, using eco-friendly materials and responsible sourcing so every project gives back to both people and the environment.
                         </p>
                         <p className="font-body text-[0.93rem] text-charcoal-muted leading-[1.9] mb-8">
-                            Today, we've completed over 200 projects across Nigeria. But what we're most proud of are the clients who write to us months later, saying their home has changed their life.
+                            We design for purposeful living: sophisticated spaces that combine aesthetics, functionality and comfort. Whatever the project, my promise is the same — beauty made with intention, integrity and care.
                         </p>
                         <blockquote className="border-l-2 border-gold pl-5 font-editorial text-[1rem] italic text-purple-mid leading-relaxed">
-                            "Design is not decoration. It is a language. And we are here to help you speak it fluently."
-                            <cite className="block mt-2 font-title text-[0.62rem] not-italic tracking-[0.2em] text-gold">— Christine J-K Gadzama, Founder</cite>
+                            "The more value you add to others and your work, the more valuable you become."
+                            <cite className="block mt-2 font-title text-[0.62rem] not-italic tracking-[0.2em] text-gold">— Christine J-K Gadzama, Founder & CEO</cite>
                         </blockquote>
                     </motion.div>
                 </div>
@@ -115,8 +116,8 @@ export default function About() {
             {/* Timeline */}
             <section className="section-base bg-charcoal-mid">
                 <div className="section-header-center">
-                    <p className="eyebrow mb-3" style={{ color: 'rgba(201,168,76,0.6)' }}>Our Journey</p>
-                    <h2 className="text-display-md text-gold-light font-display">Milestones</h2>
+                    <p className="eyebrow mb-3" style={{ color: 'rgba(201,168,76,0.6)' }}>The Founder's Journey</p>
+                    <h2 className="text-display-md text-gold-light font-display">Three Decades of Vision</h2>
                     <div className="gold-divider" />
                 </div>
                 <div className="relative max-w-[750px] mx-auto">
@@ -148,7 +149,9 @@ export default function About() {
             <VideoShowcase
                 eyebrow="Behind the Brand"
                 title="See Maxims in Motion"
-                subtitle="A look inside our space and the way we work."
+                subtitle="A look inside our spaces and the way we work."
+                src={REVEAL_VIDEO}
+                poster={REVEAL_VIDEO_POSTER}
                 className="bg-purple-darkest"
             />
 

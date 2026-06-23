@@ -11,6 +11,7 @@ import { VelocityScroll } from '@/components/ui/velocity-scroll'
 import { AnimatedGradientText } from '@/components/ui/animated-gradient-text'
 import { ShinyButton } from '@/components/ui/shiny-button'
 import VideoShowcase from '@/components/VideoShowcase'
+import { NEWLOOK_VIDEO, NEWLOOK_VIDEO_POSTER } from '@/lib/media'
 
 /* ────────── DATA ────────────────────────────────────── */
 const SERVICES = [
@@ -221,8 +222,10 @@ export default function Home() {
             {/* ===== VIDEO SHOWCASE ===== */}
             <VideoShowcase
                 eyebrow="In Motion"
-                title="See Our Work Come Alive"
-                subtitle="A walk-through of a Maxims space — design, texture and light in motion."
+                title="See a Space Transformed"
+                subtitle="Step inside one of our finished interiors — design, texture and light in motion."
+                src={NEWLOOK_VIDEO}
+                poster={NEWLOOK_VIDEO_POSTER}
                 className="bg-purple-darkest"
             />
 
