@@ -1,6 +1,7 @@
 // src/components/admin/AdminLayout.jsx
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { getTheme, applyTheme } from '@/lib/theme'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, Package, ShoppingBag, Users, Calendar,
@@ -43,6 +44,12 @@ export default function AdminLayout({ children, badgeCounts = {} }) {
   const { profile, signOut, can } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
+
+  // Admin is always rendered in its own (light-var) palette; ignore the public dark toggle.
+  useEffect(() => {
+    applyTheme('light')
+    return () => applyTheme(getTheme())
+  }, [])
 
   const visibleNav = ALL_NAV.filter(item => can(item.section))
 
