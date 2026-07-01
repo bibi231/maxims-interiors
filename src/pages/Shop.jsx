@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Heart, ShoppingBag, Filter, CreditCard, X } from 'lucide-react'
 import { useProducts, placeOrder } from '@/hooks/useData'
@@ -9,6 +10,7 @@ const fmt = n => '₦' + Number(n).toLocaleString()
 const badgeClass = (b) => b === 'New' || b === 'New Arrival' ? 'bg-gold text-purple-darkest' : b === 'Staff Pick' ? 'bg-purple-rich text-gold-light' : b === 'Sale' ? 'bg-red-700 text-white' : 'bg-charcoal text-white'
 
 export default function Shop() {
+    const navigate = useNavigate()
     const { data: products, loading } = useProducts({ status: 'active' })
     const [cat, setCat] = useState('All')
     const [sort, setSort] = useState('featured')
@@ -125,7 +127,8 @@ export default function Shop() {
                     <motion.div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-[1200px] mx-auto" layout>
                         <AnimatePresence mode='popLayout'>
                             {shown.map((p, i) => (
-                                <motion.div key={p.id} className="card-luxury group" layout
+                                <motion.div key={p.id} className="card-luxury group cursor-pointer" layout
+                                    onClick={() => navigate(`/shop/${p.slug}`)}
                                     initial={{ opacity: 0, scale: 0.93 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.93 }}
                                     transition={{ delay: i * 0.04, duration: 0.38 }} whileHover={{ y: -5 }}>
                                     <div className="relative aspect-square bg-gradient-to-br from-cream to-cream-dark flex items-center justify-center overflow-hidden">
@@ -135,22 +138,22 @@ export default function Shop() {
                                             <span className="text-5xl group-hover:scale-110 transition-transform duration-400">🛋️</span>
                                         )}
                                         {p.badge && <div className={`absolute top-2.5 left-2.5 font-body font-black text-[0.5rem] tracking-[0.12em] uppercase px-2 py-0.5 ${badgeClass(p.badge)}`}>{p.badge}</div>}
-                                        <button onClick={() => setWished(w => w.includes(p.id) ? w.filter(x => x !== p.id) : [...w, p.id])}
+                                        <button onClick={(e) => { e.stopPropagation(); setWished(w => w.includes(p.id) ? w.filter(x => x !== p.id) : [...w, p.id]) }}
                                             className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-card/85 flex items-center justify-center shadow">
                                             <Heart size={13} fill={wished.includes(p.id) ? '#C9A84C' : 'none'} color={wished.includes(p.id) ? '#C9A84C' : '#7A7890'} />
                                         </button>
                                         <div className="absolute inset-0 bg-purple-rich/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                            <button onClick={() => addCart(p)} className="btn-maxims btn-gold-solid text-[0.55rem] px-4 py-2">
+                                            <button onClick={(e) => { e.stopPropagation(); addCart(p) }} className="btn-maxims btn-gold-solid text-[0.55rem] px-4 py-2">
                                                 {added === p.id ? '✓ Added!' : 'Add to Cart'}
                                             </button>
                                         </div>
                                     </div>
                                     <div className="p-4">
                                         <p className="eyebrow text-[0.52rem] mb-1">{p.category}</p>
-                                        <h3 className="font-editorial text-[0.88rem] text-charcoal mb-2">{p.name}</h3>
+                                        <h3 className="font-editorial text-[0.88rem] text-charcoal mb-2 group-hover:text-gold transition-colors">{p.name}</h3>
                                         <div className="flex items-center justify-between">
                                             <span className="font-title text-[0.82rem] text-purple-rich dark:text-gold-light font-semibold">{fmt(p.price)}</span>
-                                            <button onClick={() => addCart(p)} className="w-8 h-8 bg-purple-rich hover:bg-gold hover:text-purple-darkest dark:text-cream-soft text-gold-light flex items-center justify-center transition-colors">
+                                            <button onClick={(e) => { e.stopPropagation(); addCart(p) }} className="w-8 h-8 bg-purple-rich hover:bg-gold hover:text-purple-darkest dark:text-cream-soft text-gold-light flex items-center justify-center transition-colors">
                                                 <ShoppingBag size={13} />
                                             </button>
                                         </div>
