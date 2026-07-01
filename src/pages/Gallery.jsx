@@ -35,7 +35,7 @@ export default function Gallery() {
                         <div className="h-px w-16" style={{ background: 'linear-gradient(to right, transparent, #C9A84C)' }} /><span className="text-gold text-xs">✦</span>
                         <div className="h-px w-16" style={{ background: 'linear-gradient(to left, transparent, #C9A84C)' }} />
                     </div>
-                    <p className="font-body text-cream-soft text-sm mt-2">200+ completed projects across Nigeria</p>
+                    <p className="font-body text-cream-soft text-sm mt-2">20+ completed projects across Nigeria</p>
                 </motion.div>
             </section>
 

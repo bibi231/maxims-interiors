@@ -18,7 +18,9 @@ function VideoCard({ v, i }) {
   }
   return (
     <motion.div
-      className="relative aspect-video overflow-hidden border border-gold/15 group bg-charcoal"
+      className="relative z-0 aspect-video overflow-hidden border border-gold/15 group bg-charcoal
+                 transition-all duration-500 ease-luxury cursor-pointer
+                 hover:scale-[1.08] hover:z-20 hover:shadow-gold-lg hover:border-gold/50"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}

@@ -27,7 +27,7 @@ const formatPrice = (price) => {
     return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', minimumFractionDigits: 0 }).format(price);
 };
 
-const STATS = [['200+', 'Projects Completed'], ['150+', 'Happy Clients'], ['8', 'Years Experience'], ['4.9★', 'Avg. Rating']]
+const STATS = [['20+', 'Projects Completed'], ['150+', 'Happy Clients'], ['8', 'Years Experience'], ['4.9★', 'Avg. Rating']]
 
 /* ────────── MARQUEE STRIP ───────────────────────────── */
 function MarqueeStrip() {
@@ -130,7 +130,7 @@ export default function Home() {
 
                 {/* Floating stat badges */}
                 {[
-                    { val: '200+', lbl: 'Projects', cls: 'bottom-[22%] left-[6%]', delay: 1.8 },
+                    { val: '20+', lbl: 'Projects', cls: 'bottom-[22%] left-[6%]', delay: 1.8 },
                     { val: '4.9★', lbl: 'Rating', cls: 'bottom-[28%] right-[6%]', delay: 2.0 },
                 ].map(({ val, lbl, cls, delay }) => (
                     <motion.div
