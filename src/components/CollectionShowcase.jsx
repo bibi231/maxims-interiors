@@ -15,7 +15,7 @@ function CollectionCard({ c, i }) {
       viewport={{ once: true }}
       transition={{ delay: i * 0.07, duration: 0.5 }}
     >
-      <Link to="/shop" className="block">
+      <Link to={`/shop/${c.slug}`} className="block">
         <div className="relative aspect-[3/4] overflow-hidden border border-gold/15 bg-charcoal
                         transition-all duration-500 ease-luxury
                         group-hover:scale-[1.06] group-hover:z-20 group-hover:shadow-gold-lg group-hover:border-gold/50">

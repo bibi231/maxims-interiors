@@ -16,6 +16,7 @@ import Footer from '@/components/layout/Footer'
 import Home          from '@/pages/Home'
 import About         from '@/pages/About'
 import Shop          from '@/pages/Shop'
+import ProductDetail from '@/pages/ProductDetail'
 import Gallery       from '@/pages/Gallery'
 import InteriorDecor from '@/pages/InteriorDecor'
 import BulkOrders    from '@/pages/BulkOrders'
@@ -72,6 +73,7 @@ function AnimatedPublicRoutes() {
           <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
           <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
           <Route path="/shop" element={<PublicLayout><Shop /></PublicLayout>} />
+          <Route path="/shop/:slug" element={<PublicLayout><ProductDetail /></PublicLayout>} />
           <Route path="/gallery" element={<PublicLayout><Gallery /></PublicLayout>} />
           <Route path="/interior-decor" element={<PublicLayout><InteriorDecor /></PublicLayout>} />
           <Route path="/bulk-orders" element={<PublicLayout><BulkOrders /></PublicLayout>} />

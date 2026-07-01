@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useGallery, useTestimonials, useProducts } from '@/hooks/useData'
 import { getStorageUrl, BUCKETS } from '@/lib/storage'
 import { motion, useScroll, useTransform } from 'framer-motion'
@@ -48,6 +48,7 @@ export default function Home() {
     const { data: testimonialsData } = useTestimonials({ published: true, featured: true })
     const { data: productsData } = useProducts({ status: 'active', featured: true })
 
+    const navigate = useNavigate()
     const works = worksData?.slice(0, 5) || []
     const testimonials = testimonialsData?.slice(0, 3) || []
     const products = productsData?.slice(0, 4) || []
@@ -58,10 +59,10 @@ export default function Home() {
             {/* ===== HERO ===== */}
             <section className="relative w-full min-h-screen bg-charcoal flex items-center justify-center overflow-hidden">
                 <Hero3D />
-                {/* Dark overlay */}
-                <div className="absolute inset-0 z-[2]" style={{ background: 'radial-gradient(ellipse at 50% 50%, rgba(59,31,107,0.4), rgba(18,17,26,0.72))' }} />
-                {/* Bottom fade to page */}
-                <div className="absolute bottom-0 left-0 right-0 h-48 z-[3]" style={{ background: 'linear-gradient(to bottom, transparent, #FAF7F2)' }} />
+                {/* Purple ambiance overlay */}
+                <div className="absolute inset-0 z-[2]" style={{ background: 'radial-gradient(ellipse at 50% 45%, rgba(91,53,160,0.45), rgba(28,13,53,0.82))' }} />
+                {/* Bottom fade blends into the dark strip below (keeps content legible) */}
+                <div className="absolute bottom-0 left-0 right-0 h-56 z-[3]" style={{ background: 'linear-gradient(to bottom, transparent, #1C0D35)' }} />
 
                 {/* Content */}
                 <div className="relative z-[10] text-center max-w-[820px] px-6 pt-20">
@@ -336,7 +337,8 @@ export default function Home() {
                     {products.map((p, i) => (
                         <motion.div
                             key={p.id}
-                            className="card-luxury group"
+                            className="card-luxury group cursor-pointer"
+                            onClick={() => navigate(`/shop/${p.slug}`)}
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.09, duration: 0.55 }}

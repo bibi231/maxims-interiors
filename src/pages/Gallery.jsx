@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom'
 import { useGallery } from '@/hooks/useData'
 import { getStorageUrl, BUCKETS } from '@/lib/storage'
 import VideoGallery from '@/components/VideoGallery'
+import CollectionShowcase from '@/components/CollectionShowcase'
+import CollectionShowcase from '@/components/CollectionShowcase'
 
 const GRADS = ['linear-gradient(135deg,#2E1660,#5B35A0)', 'linear-gradient(135deg,#1C0D35,#3B1F6B)', 'linear-gradient(135deg,#2A1850,#7B52C0)', 'linear-gradient(135deg,#12111A,#2E1660)', 'linear-gradient(135deg,#1E1C2C,#5B35A0)', 'linear-gradient(135deg,#2E1660,#1C0D35)']
 
@@ -113,6 +115,20 @@ export default function Gallery() {
                 title="Projects in Motion"
                 subtitle="From construction to completion — every Maxims space, in motion."
                 className="bg-charcoal-mid"
+            />
+
+            <CollectionShowcase
+                eyebrow="Shop the Look"
+                title="Signature Collections"
+                subtitle="Our throw-pillow collections — hover to see each one in motion."
+                className="bg-purple-darkest"
+            />
+
+            <CollectionShowcase
+                eyebrow="Shop the Look"
+                title="Signature Collections"
+                subtitle="Our throw-pillow collections in motion — hover to preview, tap to shop."
+                className="bg-purple-darkest"
             />
 
             {/* Lightbox */}
