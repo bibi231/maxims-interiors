@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Heart, ShoppingBag, Filter, CreditCard, X } from 'lucide-react'
 import { useProducts, placeOrder } from '@/hooks/useData'
 import { getStorageUrl, BUCKETS } from '@/lib/storage'
+import CollectionShowcase from '@/components/CollectionShowcase'
 
 const fmt = n => '₦' + Number(n).toLocaleString()
 const badgeClass = (b) => b === 'New' || b === 'New Arrival' ? 'bg-gold text-purple-darkest' : b === 'Staff Pick' ? 'bg-purple-rich text-gold-light' : b === 'Sale' ? 'bg-red-700 text-white' : 'bg-charcoal text-white'
@@ -160,21 +161,9 @@ export default function Shop() {
                     </motion.div>
                 )}
 
-                {/* Feature Banner */}
-                <motion.div className="max-w-[1200px] mx-auto mt-16 bg-charcoal-mid border border-gold/12 grid grid-cols-1 md:grid-cols-[1fr_auto] items-center gap-8 p-12 relative overflow-hidden"
-                    initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                    <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 50%, rgba(59,31,107,0.4), transparent 60%)' }} />
-                    <div className="relative z-10">
-                        <p className="eyebrow mb-3" style={{ color: 'rgba(201,168,76,0.65)' }}>Staff Pick of the Season</p>
-                        <h2 className="text-display-md text-cream-soft font-display mb-3">The Elara Collection</h2>
-                        <p className="font-body text-[0.88rem] text-cream-soft leading-relaxed mb-5 max-w-md">
-                            Our bestselling living room series — handcrafted velvet chairs, sculptural side tables, and curated accent pieces.
-                        </p>
-                        <button className="btn-maxims btn-gold-solid">Shop the Collection</button>
-                    </div>
-                    <div className="text-8xl opacity-25 hidden md:block">🛋️</div>
-                </motion.div>
             </section>
+
+            <CollectionShowcase className="bg-charcoal-mid" />
 
             {/* Floating Cart Stub */}
             <AnimatePresence>

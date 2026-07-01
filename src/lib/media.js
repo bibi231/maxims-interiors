@@ -37,3 +37,28 @@ export const FOUNDER_PHOTO = `${CLD}/image/upload/v1782223902/maxims/team/g183xp
 
 // ── Lifestyle ──
 export const SOFA_LIFESTYLE = `${CLD}/image/upload/v1782161751/maxims/catalog/awgzzv89oxtv0ejabfhr.jpg`
+
+// ── Signature throw-pillow collections (portrait product reels) ──
+export const COLLECTIONS = [
+  { name: 'The Regal Collection',   price: 24000, slug: 'the-regal-collection',
+    video: `${CLD}/video/upload/v1782921075/maxims/collections/vvdx3oriedwcz4h6alkn.mp4`,
+    poster: `${CLD}/image/upload/v1782921078/maxims/collections/dvnbv0eoqmsuur6mnny0.jpg` },
+  { name: 'Royal Nest Collection',  price: 22000, slug: 'royal-nest-collection',
+    video: `${CLD}/video/upload/v1782935188/maxims/collections/rxgvwosi5vlch8imfeik.mp4`,
+    poster: `${CLD}/image/upload/v1782921289/maxims/collections/maxpvgq4r9nyszxd4oiz.jpg` },
+  { name: 'The Amani Collection',   price: 23000, slug: 'the-amani-collection',
+    video: `${CLD}/video/upload/v1782935244/maxims/collections/yddkl6npmggwixtnedzc.mp4`,
+    poster: `${CLD}/image/upload/v1782921290/maxims/collections/obd6lq4ezlm98uzckg6j.jpg` },
+  { name: 'Willow Throw Pillow',    price: 25000, slug: 'willow-throw-pillow',
+    video: `${CLD}/video/upload/v1782935709/maxims/collections/gnzvhnj6kc1z2pdppvnt.mp4`,
+    poster: `${CLD}/image/upload/v1782921289/maxims/collections/fg2mhigvxbjaccz1q1km.jpg` },
+  { name: 'The Opulence Collection', price: 26000, slug: 'the-opulence-collection',
+    video: `${CLD}/video/upload/v1782935817/maxims/collections/kfe4prcjfy8hao3jg6yk.mp4`,
+    poster: `${CLD}/image/upload/v1782921289/maxims/collections/lv6clccrlzu96z1rnmzo.jpg` },
+  { name: 'Terra Collection',       price: 24000, slug: 'terra-collection',
+    video: `${CLD}/video/upload/v1782935965/maxims/collections/n5wcsumb0p4bkxnunzds.mp4`,
+    poster: `${CLD}/image/upload/v1782921289/maxims/collections/yg2pi4r6bkx2srdbjvbm.jpg` },
+]
+
+export const SPINSET_VIDEO = `${CLD}/video/upload/v1782935969/maxims/collections/htt0hu1mk2rljgo4tdlo.mp4`
+export const SPINSET_POSTER = `${CLD}/image/upload/v1782921289/maxims/collections/syvqgzzkkrb59jaakv19.jpg`
