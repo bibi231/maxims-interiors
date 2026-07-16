@@ -1,13 +1,13 @@
 // src/components/admin/AdminLayout.jsx
 import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { getTheme, applyTheme } from '@/lib/theme'
+import { getTheme, applyTheme, setTheme } from '@/lib/theme'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, Package, ShoppingBag, Users, Calendar,
   MessageSquare, Images, Star, Settings, Activity,
   LogOut, Menu, X, ChevronRight, Bell, User, Building2,
-  CreditCard, Mail,
+  CreditCard, Mail, Sun, Moon,
 } from 'lucide-react'
 import { useAuth, ROLE_PERMISSIONS } from '@/context/AuthContext'
 import { cn } from '@/lib/utils'
@@ -41,15 +41,23 @@ const ROLE_BADGES = {
 export default function AdminLayout({ children, badgeCounts = {} }) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [mobileSidebar, setMobileSidebar] = useState(false)
+  const [notifOpen, setNotifOpen] = useState(false)
+  const [adminTheme, setAdminTheme] = useState(() => {
+    try { return localStorage.getItem('maxims-admin-theme') || 'dark' } catch { return 'dark' }
+  })
   const { profile, signOut, can } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
 
-  // Admin is always rendered in its own (light-var) palette; ignore the public dark toggle.
   useEffect(() => {
-    applyTheme('light')
+    applyTheme(adminTheme)
+    try { localStorage.setItem('maxims-admin-theme', adminTheme) } catch {}
     return () => applyTheme(getTheme())
-  }, [])
+  }, [adminTheme])
+
+  function toggleAdminTheme() {
+    setAdminTheme(t => t === 'dark' ? 'light' : 'dark')
+  }
 
   const visibleNav = ALL_NAV.filter(item => can(item.section))
 
@@ -216,14 +224,79 @@ export default function AdminLayout({ children, badgeCounts = {} }) {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <button className="relative text-cream-soft/30 hover:text-gold transition-colors">
-              <Bell size={16} />
-              {(badgeCounts.total ?? 0) > 0 && (
-                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-gold rounded-full text-[0.4rem] text-purple-darkest font-black flex items-center justify-center">
-                  {badgeCounts.total > 9 ? '9+' : badgeCounts.total}
-                </span>
-              )}
+            {/* Dark / Light toggle */}
+            <button onClick={toggleAdminTheme}
+              title={adminTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              className="text-cream-soft/30 hover:text-gold transition-colors">
+              {adminTheme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
             </button>
+
+            {/* Notification bell */}
+            <div className="relative">
+              <button onClick={() => setNotifOpen(o => !o)}
+                className="relative text-cream-soft/30 hover:text-gold transition-colors">
+                <Bell size={16} />
+                {(badgeCounts.total ?? 0) > 0 && (
+                  <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-gold rounded-full text-[0.4rem] text-purple-darkest font-black flex items-center justify-center">
+                    {badgeCounts.total > 9 ? '9+' : badgeCounts.total}
+                  </span>
+                )}
+              </button>
+              {notifOpen && (
+                <>
+                  <div className="fixed inset-0 z-[100]" onClick={() => setNotifOpen(false)} />
+                  <div className="absolute right-0 top-8 w-72 bg-purple-darkest border border-gold/15 shadow-2xl z-[101]">
+                    <div className="px-4 py-3 border-b border-gold/10">
+                      <p className="font-title text-[0.6rem] tracking-[0.2em] uppercase text-gold/60">Notifications</p>
+                    </div>
+                    <div className="divide-y divide-gold/8 max-h-72 overflow-y-auto">
+                      {(badgeCounts.orders ?? 0) > 0 && (
+                        <Link to="/admin/orders" onClick={() => setNotifOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 hover:bg-gold/5 transition-colors">
+                          <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
+                          <p className="font-body text-[0.78rem] text-cream-soft/70">
+                            <span className="text-gold font-semibold">{badgeCounts.orders}</span> pending order{badgeCounts.orders !== 1 ? 's' : ''} awaiting review
+                          </p>
+                        </Link>
+                      )}
+                      {(badgeCounts.appointments ?? 0) > 0 && (
+                        <Link to="/admin/appointments" onClick={() => setNotifOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 hover:bg-gold/5 transition-colors">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                          <p className="font-body text-[0.78rem] text-cream-soft/70">
+                            <span className="text-blue-400 font-semibold">{badgeCounts.appointments}</span> unconfirmed appointment{badgeCounts.appointments !== 1 ? 's' : ''}
+                          </p>
+                        </Link>
+                      )}
+                      {(badgeCounts.messages ?? 0) > 0 && (
+                        <Link to="/admin/messages" onClick={() => setNotifOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 hover:bg-gold/5 transition-colors">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 shrink-0" />
+                          <p className="font-body text-[0.78rem] text-cream-soft/70">
+                            <span className="text-green-400 font-semibold">{badgeCounts.messages}</span> unread message{badgeCounts.messages !== 1 ? 's' : ''}
+                          </p>
+                        </Link>
+                      )}
+                      {(badgeCounts.bulk ?? 0) > 0 && (
+                        <Link to="/admin/bulk-requests" onClick={() => setNotifOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 hover:bg-gold/5 transition-colors">
+                          <span className="w-1.5 h-1.5 rounded-full bg-purple-light shrink-0" />
+                          <p className="font-body text-[0.78rem] text-cream-soft/70">
+                            <span className="text-purple-light font-semibold">{badgeCounts.bulk}</span> new bulk request{badgeCounts.bulk !== 1 ? 's' : ''}
+                          </p>
+                        </Link>
+                      )}
+                      {(badgeCounts.total ?? 0) === 0 && (
+                        <div className="px-4 py-6 text-center">
+                          <p className="font-body text-[0.75rem] text-cream-soft/25">You're all caught up ✓</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
             <Link to="/admin/settings" className="text-cream-soft/30 hover:text-gold transition-colors">
               <User size={16} />
             </Link>
