@@ -55,7 +55,7 @@ function InviteForm({ onDone }) {
       </div>
       <div>
         <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/30 block mb-1.5">Email Address</label>
-        <input className={inputCls} type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="chidera@maximsinteriors.com" required />
+        <input className={inputCls} type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="chidera@maximsinterior.com.ng" required />
       </div>
       <div>
         <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/30 block mb-1.5">Temporary Password</label>
@@ -247,7 +247,7 @@ export default function Settings() {
       {activeTab === 'contact' && contactForm && (
         <div className="max-w-[600px]">
           <div className="grid grid-cols-1 gap-4 mb-5">
-            {[['Phone Number','phone','+234 800 000 0000'],['Email Address','email','hello@maximsinteriors.com'],['Physical Address','address','123 Design Blvd, Wuse 2, Abuja'],['Business Hours','hours','Mon–Sat: 9am–7pm WAT']].map(([label,key,ph])=>(
+            {[['Phone Number','phone','+234 800 000 0000'],['Email Address','email','info@maximsinterior.com.ng'],['Physical Address','address','123 Design Blvd, Wuse 2, Abuja'],['Business Hours','hours','Mon–Sat: 9am–7pm WAT']].map(([label,key,ph])=>(
               <div key={key}>
                 <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-cream-soft/35 block mb-2">{label}</label>
                 <input className={inputCls} value={contactForm[key]||''} onChange={e=>setContactForm(f=>({...f,[key]:e.target.value}))} placeholder={ph} />

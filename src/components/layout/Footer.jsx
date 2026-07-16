@@ -14,7 +14,7 @@ export default function Footer() {
     const CONTACT = [
         { icon: MapPin, text: ci.address || 'Abuja, FCT, Nigeria' },
         { icon: Phone, text: ci.phone || '+234 800 000 0000' },
-        { icon: Mail, text: ci.email || 'maximsinteriorandhomegoods@gmail.com' },
+        { icon: Mail, text: ci.email || 'info@maximsinterior.com.ng' },
         { icon: Clock, text: ci.hours || 'Mon–Fri: 9am – 5pm WAT' },
     ].filter(c => c.text)
     return (

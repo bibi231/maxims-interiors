@@ -16,7 +16,7 @@ function smtpTransport() {
 }
 
 export async function sendMail({ to, subject, html, cc, replyTo }) {
-  const from = process.env.MAIL_FROM || 'Maxims Interiors <hello@maximsinteriors.com>'
+  const from = process.env.MAIL_FROM || 'Maxims Interiors <info@maximsinterior.com.ng>'
   try {
     if ((process.env.EMAIL_PROVIDER || 'smtp') === 'resend') {
       const res = await fetch('https://api.resend.com/emails', {

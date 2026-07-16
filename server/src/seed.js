@@ -12,7 +12,7 @@ async function run() {
   await connectDB(process.env.MONGODB_URI)
 
   // ── Owner ──
-  const email = (process.env.OWNER_EMAIL || 'maxim@maximsinteriors.com').toLowerCase()
+  const email = (process.env.OWNER_EMAIL || 'info@maximsinterior.com.ng').toLowerCase()
   const existing = await User.findOne({ email })
   if (!existing) {
     await User.create({
@@ -28,7 +28,7 @@ async function run() {
 
   // ── Site settings ──
   const settings = {
-    contact_info: { phone: '+234 800 000 0000', email: 'hello@maximsinteriors.com', address: '123 Design Boulevard, Wuse 2, Abuja, FCT', hours: 'Mon–Sat: 9am–7pm WAT' },
+    contact_info: { phone: '+234 800 000 0000', email: 'info@maximsinterior.com.ng', address: '123 Design Boulevard, Wuse 2, Abuja, FCT', hours: 'Mon–Sat: 9am–7pm WAT' },
     social_links: { instagram: '', facebook: '', linkedin: '', youtube: '' },
     hero_content: { headline: 'Where Luxury Meets Living', subtext: 'Transforming spaces into timeless experiences' },
     delivery_fee: 5000,

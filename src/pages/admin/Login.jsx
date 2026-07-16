@@ -81,7 +81,7 @@ export default function AdminLogin() {
                 type="email" value={email} onChange={e => setEmail(e.target.value)} required
                 className="w-full bg-charcoal border border-gold/12 px-4 py-3 font-body text-[0.88rem] text-cream-soft
                            placeholder:text-cream-soft/20 focus:outline-none focus:border-gold/50 transition-colors"
-                placeholder="you@maximsinteriors.com"
+                placeholder="you@maximsinterior.com.ng"
               />
             </div>
             <div>
