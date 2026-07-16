@@ -161,12 +161,14 @@ export default function Contact() {
                                     <Phone className="text-gold shrink-0" size={16} />
                                     <p className="font-body text-sm text-cream-soft">{ci.phone || '+234 800 000 0000'}</p>
                                 </div>
-                                {ci.email && (
-                                    <div className="flex gap-4 items-center">
-                                        <Mail className="text-gold shrink-0" size={16} />
-                                        <p className="font-body text-sm text-cream-soft">{ci.email}</p>
+                                <div className="flex gap-4 items-start">
+                                    <Mail className="text-gold shrink-0 mt-1" size={16} />
+                                    <div className="space-y-1">
+                                        <p className="font-body text-sm text-cream-soft"><span className="text-gold/55 font-title text-[0.55rem] tracking-wider uppercase block sm:inline mr-1">General:</span> contact@maximsinterior.com.ng</p>
+                                        <p className="font-body text-sm text-cream-soft"><span className="text-gold/55 font-title text-[0.55rem] tracking-wider uppercase block sm:inline mr-1">Support:</span> support@maximsinterior.com.ng</p>
+                                        <p className="font-body text-sm text-cream-soft"><span className="text-gold/55 font-title text-[0.55rem] tracking-wider uppercase block sm:inline mr-1">Owner:</span> christinegadzama@maximsinterior.com.ng</p>
                                     </div>
-                                )}
+                                </div>
                                 {ci.hours && (
                                     <div className="flex gap-4 items-center">
                                         <Clock className="text-gold shrink-0" size={16} />

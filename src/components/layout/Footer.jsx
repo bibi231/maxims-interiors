@@ -99,6 +99,8 @@ export default function Footer() {
                         © {new Date().getFullYear()} Maxims Interiors & Home Goods. All Rights Reserved.
                     </p>
                     <div className="flex items-center gap-4 text-[0.7rem] text-cream-soft">
+                        <a href="mailto:support@maximsinterior.com.ng" className="hover:text-gold transition-colors">Support</a>
+                        <span>·</span>
                         <a href="#" className="hover:text-gold transition-colors">Privacy</a>
                         <span>·</span>
                         <a href="#" className="hover:text-gold transition-colors">Terms</a>
