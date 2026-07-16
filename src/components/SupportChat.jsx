@@ -8,6 +8,7 @@ import { useLocation } from 'react-router-dom'
 
 const URL = import.meta.env.VITE_SUPPORTAI_WIDGET_URL || 'https://supportai.com.ng/widget.js'
 const KEY = import.meta.env.VITE_SUPPORTAI_SITE_KEY || ''
+const BOT_ID = import.meta.env.VITE_SUPPORTAI_BOT_ID || '6a58aa0726d3a64c4c51611b'
 const SCRIPT_ID = 'supportai-widget'
 
 export default function SupportChat() {
@@ -15,7 +16,7 @@ export default function SupportChat() {
   const onAdmin = pathname.startsWith('/admin')
 
   useEffect(() => {
-    if (!KEY || onAdmin) return
+    if (onAdmin) return
     if (document.getElementById(SCRIPT_ID)) return
 
     // Load only after the page is interactive so it never blocks rendering.
@@ -25,13 +26,15 @@ export default function SupportChat() {
       s.src = URL
       s.async = true
       s.defer = true
-      // Common data-attribute conventions for auto-init widgets.
-      s.setAttribute('data-site-key', KEY)
-      s.setAttribute('data-key', KEY)
-      s.setAttribute('data-business', KEY)
+      s.setAttribute('data-bot-id', BOT_ID)
+      if (KEY) {
+        s.setAttribute('data-site-key', KEY)
+        s.setAttribute('data-key', KEY)
+        s.setAttribute('data-business', KEY)
+      }
       s.onload = () => {
         // Fallback: if the widget exposes an init() instead of auto-starting.
-        try { window.SupportAIWidget?.init?.({ siteKey: KEY, key: KEY }) } catch { /* ignore */ }
+        try { window.SupportAIWidget?.init?.({ siteKey: KEY, key: KEY, botId: BOT_ID }) } catch { /* ignore */ }
       }
       s.onerror = () => { /* SupportAI unavailable — fail silently */ }
       document.body.appendChild(s)
