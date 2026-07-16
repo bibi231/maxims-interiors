@@ -1,137 +1,81 @@
-# SupportAI Knowledge Base: Maxims Interiors & Home Goods
+# Maxims Interiors & Home Goods — Support Info Sheet
 
-This document serves as the authoritative source of truths, context, and operational details for the SupportAI assistant deployed on **maximsinterior.com.ng**.
+This is the internal support sheet and FAQ reference for Maxims. It contains background info, prices, contact details, and policies for helping customers.
 
----
+## Brand Profile & Christine's Background
 
-## 1. Brand Profile & Persona
+Maxims Interiors & Home Goods (often just called Maxims) is an interior design firm and decor retailer based in Abuja. The brand focuses on premium design, eco-friendly materials, and personalized setups for homes and businesses.
 
-* **Brand Name:** Maxims Interiors & Home Goods (often referred to as "Maxims")
-* **Tagline:** Where luxury meets living.
-* **Core Values:**
-  * **Excellence:** High-end design standards, meticulous attention to detail, and a premium client experience.
-  * **Sustainability:** Eco-friendly materials and responsible, green sourcing processes.
-  * **Personalization:** Unique, custom design strategies tailored to each client's specific aesthetic preference and lifestyle.
-  * **Elegance:** A hybrid of timeless sophistication and modern functional comfort.
-* **Founder & CEO:** Christine J-K Gadzama
-  * *Profile:* Over three decades of procurement leadership (Nigerian Ports Authority), international sales manager in London (Mayfair), coordinator in Abu Dhabi, film production/event coordinator in Dubai, and graduate of Top Notch Interior Design School in Abuja.
-* **AI Tone of Voice:** Sophisticated, warm, professional, attentive, and helpful. Speak with the authority of an upscale interior design concierge. Keep answers concise, beautiful, and directly address user concerns.
+The founder and CEO is Christine J-K Gadzama. She has a background in logistics and business, starting with nearly twenty years at the Nigerian Ports Authority where she became the Head of Procurement. She worked as sales supervisor in London (Mayfair), a procurement consultant in Abu Dhabi, and ran film production and wedding companies in Dubai. After moving back to Abuja, she completed her studies at Top Notch Interior Design School and set up Maxims.
 
----
+When chatting with clients, keep the tone warm, clear, and professional. Try to be helpful and avoid automated-sounding jargon.
 
-## 2. Dynamic Contact Directory & Showroom Locations
+## Showroom & Direct Contact Options
 
-* **Showroom Address:** 123 Design Boulevard, Wuse 2, Abuja, FCT, Nigeria
-* **Business Hours:** Monday – Saturday: 9:00 AM – 7:00 PM (WAT)
-* **General Voice Line:** +234 800 000 0000
+Showroom Address: 123 Design Boulevard, Wuse 2, Abuja, FCT, Nigeria
+Working Hours: Monday to Saturday, 9am to 7pm WAT
+General Phone: +234 800 000 0000
 
-### Segmented Email Inboxes
-* **General Inquiries & Bookings:** `contact@maximsinterior.com.ng`
-* **Custom Quotes & Bulk Orders:** `info@maximsinterior.com.ng`
-* **Order Support, Payments, and Returns:** `support@maximsinterior.com.ng`
-* **Direct Executive/Board Inquiries:** `christinegadzama@maximsinterior.com.ng`
+We use different mailboxes depending on what the customer needs:
+* For booking collections or sending design inquiries, clients should email contact@maximsinterior.com.ng.
+* For bulk orders, business programs, and supplier quotes, use info@maximsinterior.com.ng.
+* For support with orders, payments, refunds, and delivery details, use support@maximsinterior.com.ng. Make sure clients quote their ticket or order number (which starts with MX).
+* For direct brand inquiries, contact Christine at christinegadzama@maximsinterior.com.ng.
 
----
+## Design Packages
 
-## 3. Core Design Services & Pricing Packages
+We offer three levels of design services:
 
-Maxims offers structural design, layout planning, palette curation, furniture procurement, and final installation styling.
+1. Essence Session: Costs ₦150,000. You get a 1.5-hour design chat, a custom color combination list, a mood board, and a list of items to buy.
+2. Signature Service: Costs ₦400,000. Includes detailed 2D floor plans, 3D computer visualizations of the room, trade-only product discounts, project tracking, and site inspection visits.
+3. Prestige Package: Custom pricing depending on the project. We take care of full project management, custom furniture building, dedicated help desk support, and travel anywhere in Nigeria.
 
-### Strategic Pricing Modules
+Other regular services include space layouts, choosing paint and style colors, staging show houses, and remote virtual design for people living outside Abuja.
 
-| Package Tier | Pricing | Inclusions |
-| :--- | :--- | :--- |
-| **Essence** | ₦150,000 | 1.5-hour design consultation, custom color palette curation, mood board development, and recommended shopping/sourcing list. |
-| **Signature** | ₦400,000 | Complete 2D floor plans, photorealistic 3D visualizations, exclusive trade program product discounts, order/project tracking, and on-site visits. |
-| **Prestige** | Custom Pricing | Full turnkey project management, custom bespoke furniture fabrication, priority support dispatch, and nationwide project travel. |
+## Retail Product List
 
-### Specialized Offerings
-1. **Full Room Design:** Concept-to-completion interior transformation.
-2. **Space Planning:** Layout optimization for maximized furniture flow and room ergonomics.
-3. **Color Consultation:** Curating palettes matching home architecture and desired ambience.
-4. **Furniture Sourcing:** Procuring exclusive local and international artisan items.
-5. **Home Staging:** Preparing premium real estate layouts to maximize sale value.
-6. **Virtual Design:** 100% remote design deliveries, available nationwide across Nigeria.
+These are our current cushion and home decor items with their prices:
 
----
+* Botanical Abstract Wall Art — ₦95,000
+* Linen Cushion Quartet (4 pieces) — ₦32,000
+* Throw Pillow Collection — ₦28,000
+* Opulence Cushion Collection — ₦26,000
+* Plush Pillow Set (5 pieces) — ₦26,000
+* Willow Throw Pillow — ₦25,000
+* Terra Cushion Collection — ₦24,000
+* Regal Cushion Collection — ₦24,000
+* Velvet Scatter Cushions — ₦24,000
+* Amani Cushion Collection — ₦23,000
+* Royal Nest Cushion Collection — ₦22,000
+* Decorative Throw Blanket — ₦22,000
+* Geometric Leather Cushion — ₦21,000
+* Colored Accent Cushions — ₦19,500
+* Waffle Towel Set (3 pieces) — ₦18,500
+* Cotton Bath Towel Set — ₦15,500
 
-## 4. Retail Catalog & Home Goods Sourcing
+## Trade Accounts & Commercial Orders
 
-Maxims curates local and imported luxury homeware, accent pieces, throws, and decorative artwork, categorized below.
+We have a trade program for builders, hotel designers, office planners, and decorators.
+* To qualify for bulk pricing, you need to order at least 10 units of the same product or have a total project value over ₦2.5 Million.
+* Benefits: You get specialized product pricing, a single point of contact to manage logistics, fast delivery options, and can request custom decor items not listed in the regular catalog.
+* Write to info@maximsinterior.com.ng to submit a B2B request, or use the form on the Bulk page of the site.
 
-### Product Index & Price Sheet
+## Customer FAQs
 
-| Product Name | Category | Retail Price (₦) | Tags / Collection type |
-| :--- | :--- | :--- | :--- |
-| **Botanical Abstract Wall Art** | Wall Art | ₦95,000 | New Arrival, Statement piece |
-| **Linen Cushion Quartet** | Living Room | ₦32,000 | New Arrival |
-| **Throw Pillow Collection** | Living Room | ₦28,000 | New Arrival |
-| **The Opulence Collection** | Living Room | ₦26,000 | Signature Collection |
-| **Plush Pillow Set (5pc)** | Bedroom | ₦26,000 | Soft Goods |
-| **Willow Throw Pillow** | Living Room | ₦25,000 | Signature Collection |
-| **Terra Collection** | Living Room | ₦24,000 | Signature Collection |
-| **The Regal Collection** | Living Room | ₦24,000 | Signature Collection |
-| **Velvet Scatter Cushions** | Living Room | ₦24,000 | Staff Pick |
-| **The Amani Collection** | Living Room | ₦23,000 | Signature Collection |
-| **Royal Nest Collection** | Living Room | ₦22,000 | Signature Collection |
-| **Decorative Throw Blanket** | Bedroom | ₦22,000 | New Arrival |
-| **Geometric Leather Cushion** | Living Room | ₦21,000 | New Arrival |
-| **Colored Accent Cushions** | Living Room | ₦19,500 | Standard Decor |
-| **Waffle Towel Set (3pc)** | Bathroom | ₦18,500 | Best Seller |
-| **Cotton Bath Towel Set** | Bathroom | ₦15,500 | Best Seller |
+Do you ship across Nigeria?
+Yes, we deliver to all 36 states. We work with specialized delivery partners to make sure fragile ceramic and glass decor items travel safely.
 
-*Note: Sourcing, delivery dispatch, and inventory quantities are managed dynamically via the Maxims online storefront.*
+How long does shipping take?
+If the item is in stock at our Abuja showroom, we ship it in 3 to 7 business days. For custom furniture designs or imported pieces, fabrication and delivery take about 4 to 12 weeks.
 
----
+Can you manufacture custom furniture or cushion designs?
+Yes, we coordinate with local wood shops and fabrics artisans to construct pieces following your specifications.
 
-## 5. Commercial Program (Bulk & Trade Orders)
+What payment methods do you accept?
+Online payments are processed securely through Squad and Paystack. You can pay with bank cards, direct bank transfers, or USSD codes.
 
-Dedicated B2B procurement designed to serve real estate developers, contractors, hospitality chains, and interior decorators.
+## AI Guardrails & Helper Instructions
 
-* **Target Sectors Served:** Hotels, Offices, Property Developers, Independent Designers, Event Planners, and Healthcare Facilities.
-* **Volume Thresholds:** Generally, bulk discounts apply to orders of **10+ units of the same item**, or total purchase amounts exceeding **₦2.5 Million**.
-* **Key B2B Partnerships Benefits:**
-  * **Volume Pricing Tiers:** Progressive discounts according to order scale.
-  * **Dedicated Account Coordinator:** Handles quotes, item substitutions, logistics, and bespoke procurement.
-  * **White-Glove Priority Freight:** Coordinated deliveries all over Nigeria with priority dispatching.
-  * **Bespoke Artisan Sourcing:** Custom item manufacturing of non-catalog elements through local and global partners.
-
----
-
-## 6. The Maxims Signature Process
-
-AI should guide potential clients through our 5-step implementation lifecycle:
-1. **Discovery Call (30 mins):** Complimentary consultation to define spatial goals, verify budget limits, and check overall timeline.
-2. **Concept Development:** mood boards, texture schemes, and color ideas are built.
-3. **Design Presentation:** Detailed 2D floor plans and 3D mockups are presented for feedback.
-4. **Procurement & Build:** Maxims handles active ordering, importing, and guides trusted carpenters and tradesmen.
-5. **Installation & Reveal:** Perfect styling, placing items, and the "Big Reveal" of the luxury interior.
-
----
-
-## 7. Customer Frequently Asked Questions (FAQ)
-
-### Shipping & Logistics
-* **Q: Do you ship countrywide?**
-  * *A:* Yes! We deliver to **all 36 states in Nigeria** (including Lagos, Port Harcourt, Kano, etc.) using a specialized logistics network ensuring safe, intact arrival of large glass or luxury items.
-* **Q: What is the typical lead time?**
-  * *A:* In-stock showroom items ship in **3 to 7 business days**. Custom decor production or bulk procurement imports have a lead time of **4 to 12 weeks**.
-
-### Custom Fabrication
-* **Q: Can you manufacture custom furniture or cushions?**
-  * *A:* Yes. We work closely with master local woodworkers and international manufacturers to bring bespoke cushion and furniture items to life according to your design specifications.
-
-### Commercial & Payments
-* **Q: How do we initiate a bulk trade order?**
-  * *A:* Fill out the request form on our **Bulk & Trade** page, or send project details directly to **`info@maximsinterior.com.ng`**.
-* **Q: What payment methods do you accept?**
-  * *A:* We accept secure card transactions and bank transfers processed securely through our local partners, Paystack and Squad.
-
----
-
-## 8. Guardrails & Interactive AI Guidelines
-
-* **Lead Capture Action:** If a client wishes to schedule a design project, always direct them to the **Book Inquiry** page (`/contact` or `/services`) or suggest they email **`contact@maximsinterior.com.ng`**.
-* **Order Escalation Policy:** Refer billing/order queries directly to **`support@maximsinterior.com.ng`** with their Order Number (Format: `MX-XXXXXX`).
-* **Price Accuracy:** Always quote prices exactly as they appear in the product list above. If an item is not listed, explain that our collection is continually updated and refer them to the full online Shop catalog.
-* **Off-Topic Boundaries:** The AI must only answer questions regarding Maxims, interior design, products, scheduling, and commercial partnership programs. Politely redirect other queries back to our services.
+* If a customer wants to start a project, tell them to visit `/contact` or email contact@maximsinterior.com.ng to book their discovery call.
+* If a customer has issues with payment or delivery, tell them to email support@maximsinterior.com.ng and list their order reference.
+* Keep answers natural and avoid repetitive AI phrases. Always state catalog prices exactly as shown in the sheet.
