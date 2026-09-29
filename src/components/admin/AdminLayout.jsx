@@ -7,10 +7,11 @@ import {
   LayoutDashboard, Package, ShoppingBag, Users, Calendar,
   MessageSquare, Images, Star, Settings, Activity,
   LogOut, Menu, X, ChevronRight, Bell, User, Building2,
-  CreditCard, Mail, Sun, Moon,
+  CreditCard, Mail, Sun, Moon, ExternalLink,
 } from 'lucide-react'
 import { useAuth, ROLE_PERMISSIONS } from '@/context/AuthContext'
 import { cn } from '@/lib/utils'
+import { api } from '@/lib/api'
 
 // All possible nav items — filtered by role
 const ALL_NAV = [
@@ -38,7 +39,20 @@ const ROLE_BADGES = {
   content_editor:   'bg-cream-soft/10 text-cream-soft/60',
 }
 
-export default function AdminLayout({ children, badgeCounts = {} }) {
+export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) {
+  // Live counts for the bell + sidebar badges, polled from the server so the
+  // bell works on every admin page (page-supplied counts are a fallback).
+  const [serverCounts, setServerCounts] = useState(null)
+  useEffect(() => {
+    let alive = true
+    const load = () => api.get('/stats/notifications').then((c) => { if (alive) setServerCounts(c) }).catch(() => {})
+    load()
+    const id = setInterval(load, 30000)
+    window.addEventListener('focus', load)
+    return () => { alive = false; clearInterval(id); window.removeEventListener('focus', load) }
+  }, [])
+  const badgeCounts = serverCounts || pageCounts
+
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [mobileSidebar, setMobileSidebar] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
@@ -133,7 +147,7 @@ export default function AdminLayout({ children, badgeCounts = {} }) {
       <div className="px-3 py-3 border-t border-gold/8 space-y-0.5">
         <Link to="/" target="_blank"
           className="flex items-center gap-3 px-3 py-2 font-body text-[0.72rem] text-cream-soft/25 hover:text-gold transition-colors">
-          <span className="text-xs">↗</span> View Live Site
+          <ExternalLink size={13} /> View Live Site
         </Link>
         <button onClick={handleSignOut}
           className="w-full flex items-center gap-3 px-3 py-2 font-body text-[0.72rem] text-cream-soft/25 hover:text-red-400 transition-colors">
@@ -255,7 +269,7 @@ export default function AdminLayout({ children, badgeCounts = {} }) {
                           className="flex items-center gap-3 px-4 py-3 hover:bg-gold/5 transition-colors">
                           <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
                           <p className="font-body text-[0.78rem] text-cream-soft/70">
-                            <span className="text-gold font-semibold">{badgeCounts.orders}</span> pending order{badgeCounts.orders !== 1 ? 's' : ''} awaiting review
+                            <span className="text-gold font-semibold">{badgeCounts.orders}</span> new order / quote request{badgeCounts.orders !== 1 ? 's' : ''}{badgeCounts.quotes ? ` (${badgeCounts.quotes} quote${badgeCounts.quotes !== 1 ? 's' : ''})` : ''}
                           </p>
                         </Link>
                       )}
@@ -288,7 +302,7 @@ export default function AdminLayout({ children, badgeCounts = {} }) {
                       )}
                       {(badgeCounts.total ?? 0) === 0 && (
                         <div className="px-4 py-6 text-center">
-                          <p className="font-body text-[0.75rem] text-cream-soft/25">You're all caught up ✓</p>
+                          <p className="font-body text-[0.75rem] text-cream-soft/25">You're all caught up</p>
                         </div>
                       )}
                     </div>

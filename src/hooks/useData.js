@@ -71,11 +71,12 @@ export async function updateProductStatus(id, status) { return api.put(`/product
 // ORDERS
 // ============================================================
 export function useOrders(filters = {}) {
-  return useApi(`/orders${qs({ status: filters.status, search: filters.search })}`, { poll: 20000 })
+  return useApi(`/orders${qs({ status: filters.status, kind: filters.kind, search: filters.search })}`, { poll: 20000 })
 }
 export async function updateOrderStatus(id, status) { return api.patch(`/orders/${id}`, { status }) }
 export async function assignOrder(orderId, profileId) { return api.patch(`/orders/${orderId}`, { assigned_to: profileId }) }
 export async function placeOrder(orderData) { return api.post('/orders', orderData) }
+export async function updateOrder(id, patch) { return api.patch(`/orders/${id}`, patch) }
 
 // ============================================================
 // BULK REQUESTS
