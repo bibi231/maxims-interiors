@@ -11,6 +11,7 @@ import { sendMail } from '../utils/mailer.js'
 import { emailShell, esc, detailsTable, itemsTable, refBlock } from '../utils/templates.js'
 import { notifyStaff, appUrl } from '../utils/notify.js'
 import { forwardLead } from '../utils/supportai.js'
+import { getSetting } from '../utils/siteSettings.js'
 
 const router = Router()
 const submitLimiter = rateLimit({ windowMs: 60 * 1000, max: 6, standardHeaders: true, legacyHeaders: false })
@@ -59,7 +60,19 @@ async function createRequest(req, res) {
   if (!email || !EMAIL_RE.test(email)) return res.status(400).json({ error: 'Please enter a valid email address.' })
   if (!phone || phone.replace(/\D/g, '').length < 7) return res.status(400).json({ error: 'Please enter a phone number we can reach you on.' })
 
-  const { items, subtotal } = await priceItems(b.items)
+  const { items, subtotal: productSubtotal } = await priceItems(b.items)
+  let subtotal = productSubtotal
+  // A design package from Pricing & Services: priced on the server from the
+  // admin-set price (never from the client), so it can be paid online.
+  const pkgName = clean(b.package, 80)
+  if (pkgName) {
+    const { packages = [] } = await getSetting('pricing')
+    const pkg = packages.find((p) => p.name.toLowerCase() === pkgName.toLowerCase())
+    if (pkg && Number(pkg.price) > 0) {
+      items.push({ product_id: null, name: `${pkg.name} design package`, slug: null, sku: null, price: Number(pkg.price), qty: 1, image: null, package: pkg.name })
+      subtotal += Number(pkg.price)
+    }
+  }
   const service = clean(b.service, 160)
   if (kind === 'order' && !items.length) return res.status(400).json({ error: 'Your cart is empty. Add a product first.' })
   if (kind === 'quote' && !items.length && !service && !clean(b.notes)) {
@@ -69,7 +82,7 @@ async function createRequest(req, res) {
   const order = await Order.create({
     order_number: reference(kind),
     kind,
-    source: clean(b.source, 40) || (kind === 'order' ? 'cart' : items.length ? 'product' : 'service'),
+    source: clean(b.source, 40) || (kind === 'order' ? 'cart' : pkgName ? 'package' : items.length ? 'product' : 'service'),
     service,
     customer_name: name,
     customer_email: email,

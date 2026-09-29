@@ -4,16 +4,16 @@ import { User } from '../models.js'
 
 // Mirror of the frontend ROLE_PERMISSIONS — the server is the source of truth.
 export const ROLE_PERMISSIONS = {
-  owner:           { access: ['dashboard','products','orders','transactions','bulk_requests','appointments','messages','gallery','testimonials','team','newsletter','settings','activity'],
-                     write:  ['products','orders','transactions','bulk_requests','appointments','messages','gallery','testimonials','team','newsletter','settings'], canDelete: true },
-  senior_designer: { access: ['dashboard','appointments','bulk_requests','gallery','testimonials','orders','settings'],
-                     write:  ['appointments','bulk_requests','gallery','testimonials'], canDelete: false },
+  owner:           { access: ['dashboard','products','orders','transactions','bulk_requests','appointments','messages','gallery','testimonials','team','newsletter','settings','activity','blog','pricing'],
+                     write:  ['products','orders','transactions','bulk_requests','appointments','messages','gallery','testimonials','team','newsletter','settings','blog','pricing'], canDelete: true },
+  senior_designer: { access: ['dashboard','appointments','bulk_requests','gallery','testimonials','orders','settings','blog'],
+                     write:  ['appointments','bulk_requests','gallery','testimonials','blog'], canDelete: false },
   project_manager: { access: ['dashboard','appointments','bulk_requests','messages','orders','transactions','settings'],
                      write:  ['appointments','bulk_requests','messages','orders'], canDelete: false },
   shop_manager:    { access: ['dashboard','products','orders','transactions','settings'],
                      write:  ['products','orders','transactions'], canDelete: false },
-  content_editor:  { access: ['dashboard','gallery','testimonials','settings'],
-                     write:  ['gallery','testimonials'], canDelete: false },
+  content_editor:  { access: ['dashboard','gallery','testimonials','settings','blog'],
+                     write:  ['gallery','testimonials','blog'], canDelete: false },
 }
 
 export function signToken(user) {

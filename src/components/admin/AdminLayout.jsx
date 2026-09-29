@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Package, ShoppingBag, Users, Calendar,
   MessageSquare, Images, Star, Settings, Activity,
   LogOut, Menu, X, ChevronRight, Bell, User, Building2,
-  CreditCard, Mail, Sun, Moon, ExternalLink,
+  CreditCard, Mail, Sun, Moon, ExternalLink, Tags,
 } from 'lucide-react'
 import { useAuth, ROLE_PERMISSIONS } from '@/context/AuthContext'
 import { cn } from '@/lib/utils'
@@ -19,6 +19,7 @@ const ALL_NAV = [
   { section: 'orders',       icon: ShoppingBag,     label: 'Orders',        path: '/admin/orders',        badge: 'orders' },
   { section: 'transactions', icon: CreditCard,      label: 'Transactions',  path: '/admin/transactions' },
   { section: 'products',     icon: Package,         label: 'Products',      path: '/admin/products' },
+  { section: 'pricing',      icon: Tags,            label: 'Pricing & Services', path: '/admin/pricing' },
   { section: 'appointments', icon: Calendar,        label: 'Appointments',  path: '/admin/appointments',  badge: 'appointments' },
   { section: 'bulk_requests',icon: Building2,       label: 'Bulk Requests', path: '/admin/bulk-requests', badge: 'bulk' },
   { section: 'messages',     icon: MessageSquare,   label: 'Messages',      path: '/admin/messages',      badge: 'messages' },

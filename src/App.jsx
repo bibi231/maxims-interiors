@@ -46,6 +46,7 @@ const AdminTeam         = lazy(() => import('@/pages/admin/Team'))
 const AdminNewsletter   = lazy(() => import('@/pages/admin/Newsletter'))
 const AdminSettings     = lazy(() => import('@/pages/admin/Settings'))
 const AdminActivity     = lazy(() => import('@/pages/admin/Activity'))
+const AdminPricing      = lazy(() => import('@/pages/admin/Pricing'))
 
 const AdminLoader = () => (
   <div className="min-h-screen bg-charcoal flex items-center justify-center">
@@ -123,6 +124,7 @@ export default function App() {
             <Route path="/admin/newsletter" element={protect('newsletter', <AdminNewsletter />)} />
             <Route path="/admin/settings" element={protect('settings', <AdminSettings />)} />
             <Route path="/admin/activity" element={protect('activity', <AdminActivity />)} />
+            <Route path="/admin/pricing" element={protect('pricing', <AdminPricing />)} />
 
             {/* All public routes */}
             <Route path="/*" element={<AnimatedPublicRoutes />} />

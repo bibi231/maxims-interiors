@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Check, Package, Users, Truck, Database } from 'lucide-react'
-import { submitBulkRequest } from '@/hooks/useData'
+import { submitBulkRequest, usePricing } from '@/hooks/useData'
+import { formatNaira } from '@/lib/utils'
 
 const SERVE = [
     { icon: '🏨', label: 'Hotels' },
@@ -20,27 +21,36 @@ const BENEFITS = [
     { icon: Database, title: 'Custom Sourcing', desc: 'Access to bespoke manufacturing and non-catalog pieces for unique projects.' },
 ]
 
-const FAQS = [
-    { q: 'What qualifies as a bulk order?', a: 'Typically, orders of 10+ identical items or total project values over ₦2.5 Million qualify for our trade program.' },
+const faqs = (bulk) => [
+    { q: 'What qualifies as a bulk order?', a: `Typically, orders of ${bulk.min_items || 10}+ identical items${bulk.min_value ? ` or total project values over ${formatNaira(bulk.min_value)}` : ''} qualify for our trade program.` },
     { q: 'Do you ship nationwide?', a: 'Yes, we have a specialized logistics network that delivers to all 36 states in Nigeria.' },
     { q: 'Can you manufacture custom designs?', a: 'Absolutely. We work with local and international artisans to create pieces to your exact specifications.' },
     { q: 'What is the typical lead time?', a: 'Stock items ship in 3-7 days. Custom or large-scale procurement typically ranges from 4-12 weeks.' },
 ]
 
 export default function BulkOrders() {
+    const { pricing } = usePricing()
+    const FAQS = faqs(pricing.bulk || {})
     const [reqData, setReqData] = useState({ name: '', company: '', email: '', phone: '', requirements: '' })
     const [reqStatus, setReqStatus] = useState('idle')
+    const [reqError, setReqError] = useState('')
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        setReqStatus('submitting')
+        setReqStatus('submitting'); setReqError('')
         try {
-            await submitBulkRequest(reqData)
+            // API field names (the form used to send name/company/requirements, which the API rejected)
+            await submitBulkRequest({
+                contact_name: reqData.name.trim(),
+                company_name: reqData.company.trim() || reqData.name.trim(),
+                email: reqData.email.trim(),
+                phone: reqData.phone.trim() || undefined,
+                message: reqData.requirements.trim(),
+            })
             setReqStatus('success')
             setReqData({ name: '', company: '', email: '', phone: '', requirements: '' })
-            setTimeout(() => setReqStatus('idle'), 3000)
         } catch (err) {
-            console.error(err)
+            setReqError(err.message || 'Could not send. Please email or call us.')
             setReqStatus('error')
         }
     }
@@ -148,8 +158,10 @@ export default function BulkOrders() {
                             <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-gold">Project Requirements</label>
                             <textarea required rows="4" value={reqData.requirements} onChange={e => setReqData({ ...reqData, requirements: e.target.value })} className="w-full bg-cream-soft/30 border border-purple-rich/10 px-4 py-3 font-body text-sm focus:border-gold outline-none transition-colors resize-none disabled:opacity-50" disabled={reqStatus === 'submitting'} placeholder="Tell us about your project and product needs..." />
                         </div>
-                        <button type="submit" disabled={reqStatus === 'submitting'} className="md:col-span-2 btn-maxims btn-gold-solid w-full justify-center mt-4">
-                            {reqStatus === 'submitting' ? 'Sending...' : reqStatus === 'success' ? '✓ Inquiry Sent' : 'Send Inquiry'}
+                        {reqStatus === 'error' && <p className="md:col-span-2 font-body text-[0.95rem] text-red-700 dark:text-red-400">{reqError}</p>}
+                        {reqStatus === 'success' && <p className="md:col-span-2 font-body text-[0.95rem] text-green-700 dark:text-green-400 font-semibold">Thank you. Your request has been sent; your account manager will contact you with a quote.</p>}
+                        <button type="submit" disabled={reqStatus === 'submitting'} className="md:col-span-2 btn-maxims btn-gold-solid w-full justify-center mt-2">
+                            {reqStatus === 'submitting' ? 'Sending...' : 'Send Inquiry'}
                         </button>
                     </form>
                 </div>

@@ -191,6 +191,27 @@ try {
     assert.deepEqual((await call('GET', '/settings', null, null)).body['smoke_' + tag], { a: [3] })
   })
 
+  await step('pricing & contact settings: defaults, validation, server-priced package quote', async () => {
+    const s = (await call('GET', '/settings', null, null)).body
+    assert.match(s.contact_info.address, /Oke Agbe Street, Garki 2, Abuja/)
+    assert.ok(Array.isArray(s.pricing.packages) && s.pricing.packages.length >= 1)
+    const bad = await call('PUT', '/settings/pricing', { value: { packages: [{ name: 'X', price: 'abc' }] } })
+    assert.equal(bad.status, 400)
+    const put = await call('PUT', '/settings/pricing', { value: { consultation: { fee: '25,000' }, packages: [{ name: 'Smoke Pkg', price: '₦123,000', features: 'a\nb' }, { name: 'Bespoke', price: '' }], services: [{ title: 'Svc', price_from: 5000 }], bulk: { min_items: 12, min_value: 3000000 } } })
+    assert.equal(put.status, 200, JSON.stringify(put.body))
+    const pr = (await call('GET', '/settings', null, null)).body.pricing
+    assert.equal(pr.consultation.fee, 25000); assert.equal(pr.packages[0].price, 123000); assert.deepEqual(pr.packages[0].features, ['a', 'b'])
+    assert.equal(pr.packages[1].price, null)
+    const q = await call('POST', '/orders', { kind: 'quote', package: 'smoke pkg', customer_name: 'Pk Buyer', customer_email: 'pk@example.com', customer_phone: '08011112222' }, null)
+    assert.equal(q.status, 201); assert.equal(q.body.total, 123000); assert.equal(q.body.items[0].name, 'Smoke Pkg design package')
+    const staff = (await User.find({ role: 'content_editor' }))[0]
+    if (staff) {
+      const { signToken } = await import('../src/middleware/auth.js')
+      assert.equal((await call('PUT', '/settings/pricing', { value: {} }, signToken(staff))).status, 403)
+    }
+    await call('PUT', '/settings/pricing', { value: s.pricing })
+  })
+
   await step('gallery, testimonials, team CRUD + published filters', async () => {
     const g = await call('POST', '/gallery', { title: 'Smoke Project', slug: 'smoke-proj-' + tag, category: 'Living Room', year: '2025', is_published: false })
     assert.equal(g.status, 201); assert.equal(g.body.year, 2025)

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, CheckCircle2, AlertCircle, Send, CreditCard, Phone, Mail, MessageCircle } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
-import { placeOrder } from '@/hooks/useData'
+import { placeOrder, usePricing } from '@/hooks/useData'
 import { initializePayment } from '@/hooks/usePayment'
 import { formatNaira, cn } from '@/lib/utils'
 
@@ -22,6 +22,7 @@ const labelCls = 'font-title text-[0.56rem] tracking-[0.18em] uppercase text-cha
 
 export default function RequestModal() {
   const { request, closeRequest, items: cartItems, subtotal: cartSubtotal, clear, paymentsEnabled } = useCart()
+  const { pricing } = usePricing()
   const [form, setForm] = useState(EMPTY)
   const [state, setState] = useState('idle') // idle | sending | done | error
   const [error, setError] = useState('')
@@ -36,7 +37,10 @@ export default function RequestModal() {
 
   if (!request) return null
   const isQuote = request.kind === 'quote'
-  const lineItems = request.product ? [{ ...request.product, qty: request.qty || 1 }] : request.source === 'cart' ? cartItems : []
+  const pkg = request.package ? (pricing.packages || []).find((p) => p.name === request.package) : null
+  const lineItems = request.product ? [{ ...request.product, qty: request.qty || 1 }]
+    : request.source === 'cart' ? cartItems
+    : pkg?.price ? [{ id: `pkg-${pkg.name}`, name: `${pkg.name} design package`, price: pkg.price, qty: 1, isPackage: true }] : []
   const total = lineItems.reduce((s, i) => s + Number(i.price || 0) * i.qty, 0)
   const title = isQuote ? (request.service ? 'Request a quote' : 'Request a quote') : 'Request your order'
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
@@ -55,7 +59,8 @@ export default function RequestModal() {
         source: request.source,
         ...form,
         service: form.service || undefined,
-        items: lineItems.map((i) => ({ product_id: i.id, qty: i.qty })),
+        items: lineItems.filter((i) => !i.isPackage).map((i) => ({ product_id: i.id, qty: i.qty })),
+        package: request.package || undefined,
       })
       try { localStorage.setItem('maxims_contact', JSON.stringify(pickContact(form))) } catch { /* ignore */ }
       if (request.source === 'cart') clear()

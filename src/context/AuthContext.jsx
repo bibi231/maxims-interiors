@@ -13,16 +13,16 @@ export const ROLE_PERMISSIONS = {
     label: 'Owner',
     color: 'text-gold bg-gold/10',
     canAccess: ['dashboard', 'products', 'orders', 'transactions', 'bulk_requests', 'appointments',
-                'messages', 'gallery', 'testimonials', 'team', 'newsletter', 'settings', 'activity'],
+                'messages', 'gallery', 'testimonials', 'team', 'newsletter', 'settings', 'activity', 'blog', 'pricing'],
     canWrite:  ['products', 'orders', 'transactions', 'bulk_requests', 'appointments', 'messages',
-                'gallery', 'testimonials', 'team', 'newsletter', 'settings'],
+                'gallery', 'testimonials', 'team', 'newsletter', 'settings', 'blog', 'pricing'],
     canDelete: true, canInviteTeam: true, canChangeRoles: true,
   },
   senior_designer: {
     label: 'Senior Designer',
     color: 'text-purple-light bg-purple-light/10',
-    canAccess: ['dashboard', 'appointments', 'bulk_requests', 'gallery', 'testimonials', 'orders', 'settings'],
-    canWrite:  ['appointments', 'bulk_requests', 'gallery', 'testimonials'],
+    canAccess: ['dashboard', 'appointments', 'bulk_requests', 'gallery', 'testimonials', 'orders', 'settings', 'blog'],
+    canWrite:  ['appointments', 'bulk_requests', 'gallery', 'testimonials', 'blog'],
     canDelete: false, canInviteTeam: false, canChangeRoles: false,
   },
   project_manager: {
@@ -42,8 +42,8 @@ export const ROLE_PERMISSIONS = {
   content_editor: {
     label: 'Content Editor',
     color: 'text-cream-soft/70 bg-cream-soft/8',
-    canAccess: ['dashboard', 'gallery', 'testimonials', 'settings'],
-    canWrite:  ['gallery', 'testimonials'],
+    canAccess: ['dashboard', 'gallery', 'testimonials', 'settings', 'blog'],
+    canWrite:  ['gallery', 'testimonials', 'blog'],
     canDelete: false, canInviteTeam: false, canChangeRoles: false,
   },
 }

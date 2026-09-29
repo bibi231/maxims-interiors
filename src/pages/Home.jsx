@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useGallery, useTestimonials, useProducts } from '@/hooks/useData'
+import { useGallery, useTestimonials, useProducts, usePricing } from '@/hooks/useData'
+import { formatNaira } from '@/lib/utils'
 import { getStorageUrl, BUCKETS } from '@/lib/storage'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowRight, Star } from 'lucide-react'
@@ -48,6 +49,8 @@ export default function Home() {
     const { data: worksData } = useGallery({ published: true, featured: true })
     const { data: testimonialsData } = useTestimonials({ published: true, featured: true })
     const { data: productsData } = useProducts({ status: 'active', featured: true })
+    const { pricing } = usePricing()
+    const consultFee = Number(pricing.consultation?.fee) || 0
 
     const navigate = useNavigate()
     const { add: addToCart, openDrawer } = useCart()
@@ -394,11 +397,13 @@ export default function Home() {
                         Transform Your Space<br /><em className="text-gold-light italic">Into a Masterpiece</em>
                     </h2>
                     <p className="font-body text-[0.92rem] text-cream-soft leading-relaxed mb-10 max-w-[520px] mx-auto">
-                        Book your complimentary design consultation and take the first step toward your dream space.
+                        {consultFee > 0
+                            ? <>Book a design consultation ({formatNaira(consultFee)}) and take the first step toward your dream space.</>
+                            : <>Book your complimentary design consultation and take the first step toward your dream space.</>}
                     </p>
                     <div className="flex gap-4 justify-center flex-wrap">
                         <Link to="/contact" className="btn-maxims btn-gold-solid">
-                            Book Free Consultation <ArrowRight size={14} />
+                            {consultFee > 0 ? 'Book a Consultation' : 'Book Free Consultation'} <ArrowRight size={14} />
                         </Link>
                         <Link to="/gallery" className="btn-maxims btn-outline-light">
                             View Portfolio
