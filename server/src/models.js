@@ -1,244 +1,230 @@
 // server/src/models.js
 // ============================================================
-// All Mongoose models in one place.
-// Field names are snake_case to match the frontend (which was first
-// built against Postgres) — keeps the React layer almost unchanged.
-// Every model exposes `id` (not `_id`) in JSON.
+// All models in one place, backed by MariaDB (see sql/001-schema.sql and
+// db/model.js). Field names are snake_case to match the frontend.
+// Every record exposes `id` (and `_id`) in JSON; password_hash is never sent.
 // ============================================================
-import mongoose from 'mongoose'
+import { defineModel, isValidId } from './db/model.js'
 
-const { Schema, model } = mongoose
-
-// Shared options: snake_case timestamps + clean JSON (id instead of _id)
-const opts = {
-  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
-  toJSON: {
-    virtuals: true,
-    versionKey: false,
-    transform(_doc, ret) {
-      ret.id = ret._id
-      delete ret._id
-      delete ret.password_hash // never leak credentials
-      return ret
-    },
-  },
-}
+export { isValidId }
 
 export const ROLES = ['owner', 'senior_designer', 'project_manager', 'shop_manager', 'content_editor']
 
+const S = (extra = {}) => ({ type: 'string', ...extra })
+const T = (extra = {}) => ({ type: 'text', ...extra })
+const N = (extra = {}) => ({ type: 'number', ...extra })
+const I = (extra = {}) => ({ type: 'int', ...extra })
+const B = (def) => ({ type: 'bool', default: def })
+const D = () => ({ type: 'date' })
+const J = (def) => ({ type: 'json', default: def })
+const R = (ref) => ({ type: 'ref', ref })
+
 // ── USERS (staff / profiles) ─────────────────────────────────
-const userSchema = new Schema({
-  email:         { type: String, required: true, unique: true, lowercase: true, trim: true },
-  password_hash: { type: String, required: true },
-  full_name:     { type: String, required: true },
-  role:          { type: String, enum: ROLES, default: 'content_editor' },
-  avatar_url:    String,
-  title:         String,
-  phone:         String,
-  is_active:     { type: Boolean, default: true },
-  last_seen:     Date,
+export const User = defineModel('User', 'users', {
+  email:            S({ required: true, lowercase: true, trim: true }),
+  password_hash:    S({ required: true, hidden: true }),
+  full_name:        S({ required: true }),
+  role:             S({ enum: ROLES, default: 'content_editor' }),
+  avatar_url:       T(),
+  title:            S(),
+  phone:            S(),
+  is_active:        B(true),
+  last_seen:        D(),
   // Bumped on every password change; reset links embed it so they are single-use.
-  password_version: { type: Number, default: 0 },
-}, opts)
+  password_version: I({ default: 0 }),
+})
 
 // ── PRODUCTS ─────────────────────────────────────────────────
-const productSchema = new Schema({
-  name:          { type: String, required: true },
-  slug:          { type: String, required: true, unique: true },
-  description:   String,
-  price:         { type: Number, required: true },
-  compare_price: Number,
-  category:      { type: String, required: true },
-  badge:         String,
-  images:        { type: [String], default: [] },
-  cover_image:   String,
-  stock_qty:     { type: Number, default: 0 },
-  sku:           String,
-  status:        { type: String, enum: ['active', 'draft', 'archived', 'out_of_stock'], default: 'active' },
-  is_featured:   { type: Boolean, default: false },
-  sort_order:    { type: Number, default: 0 },
-  tags:          { type: [String], default: [] },
-}, opts)
+export const Product = defineModel('Product', 'products', {
+  name:          S({ required: true }),
+  slug:          S({ required: true }),
+  description:   T(),
+  price:         N({ required: true }),
+  compare_price: N(),
+  category:      S({ required: true }),
+  badge:         S(),
+  images:        J([]),
+  cover_image:   T(),
+  stock_qty:     I({ default: 0 }),
+  sku:           S(),
+  status:        S({ enum: ['active', 'draft', 'archived', 'out_of_stock'], default: 'active' }),
+  is_featured:   B(false),
+  sort_order:    I({ default: 0 }),
+  tags:          J([]),
+})
 
-// ── ORDERS ───────────────────────────────────────────────────
+// ── ORDERS (order requests + quote requests) ─────────────────
 export const ORDER_STATUSES = ['new', 'contacted', 'awaiting_payment', 'paid', 'confirmed', 'delivered', 'cancelled',
   'pending', 'processing', 'shipped', 'refunded']
-const orderSchema = new Schema({
-  order_number:     { type: String, unique: true },
-  customer_name:    { type: String, required: true },
-  customer_email:   { type: String, required: true },
-  customer_phone:   String,
-  delivery_address: String,
-  city:             String,
-  state:            String,
-  items:            { type: [Schema.Types.Mixed], default: [] },
-  subtotal:         { type: Number, default: 0 },
-  delivery_fee:     { type: Number, default: 0 },
-  total:            { type: Number, default: 0 },
+
+// staff_notes / status_history entries get a timestamp when first saved.
+function stampEntries(doc) {
+  for (const k of ['staff_notes', 'status_history']) {
+    if (!Array.isArray(doc[k])) doc[k] = []
+    for (const e of doc[k]) if (e && typeof e === 'object' && !e.created_at) e.created_at = new Date()
+  }
+}
+
+export const Order = defineModel('Order', 'orders', {
+  order_number:      S(),
+  customer_name:     S({ required: true }),
+  customer_email:    S({ required: true }),
+  customer_phone:    S(),
+  delivery_address:  T(),
+  city:              S(),
+  state:             S(),
+  items:             J([]),   // [{ product_id, name, slug, sku, price, qty, image }]
+  subtotal:          N({ default: 0 }),
+  delivery_fee:      N({ default: 0 }),
+  total:             N({ default: 0 }),
   // Workflow: new -> contacted -> awaiting_payment -> paid/confirmed -> delivered | cancelled.
-  // Legacy values (pending/processing/shipped/refunded) stay valid for old rows.
-  status:           { type: String, enum: ORDER_STATUSES, default: 'new' },
-  // 'order' = cart order request, 'quote' = quote request (product or service)
-  kind:             { type: String, enum: ['order', 'quote'], default: 'order' },
-  source:           String,            // cart | product | service | legacy
-  service:          String,            // for service/consultation quote requests
-  preferred_contact: { type: String, enum: ['phone', 'whatsapp', 'email'], default: 'phone' },
-  payment_method:   String,
-  payment_ref:      String,
-  payment_status:   { type: String, default: 'unpaid' },
-  notes:            String,            // customer's own notes
-  staff_notes:      { type: [{ text: String, author_name: String, created_at: { type: Date, default: Date.now } }], default: [] },
-  status_history:   { type: [{ status: String, author_name: String, created_at: { type: Date, default: Date.now } }], default: [] },
-  assigned_to:      { type: Schema.Types.ObjectId, ref: 'User' },
-}, opts)
+  status:            S({ enum: ORDER_STATUSES, default: 'new' }),
+  kind:              S({ enum: ['order', 'quote'], default: 'order' }),
+  source:            S(),
+  service:           S(),
+  preferred_contact: S({ enum: ['phone', 'whatsapp', 'email'], default: 'phone' }),
+  payment_method:    S(),
+  payment_ref:       S(),
+  payment_status:    S({ default: 'unpaid' }),
+  notes:             T(),
+  staff_notes:       J([]),   // [{ text, author_name, created_at }]
+  status_history:    J([]),   // [{ status, author_name, created_at }]
+  assigned_to:       R('User'),
+}, { beforeSave: stampEntries })
 
 // ── BULK REQUESTS ────────────────────────────────────────────
-const bulkSchema = new Schema({
-  company_name:     { type: String, required: true },
-  contact_name:     { type: String, required: true },
-  email:            { type: String, required: true },
-  phone:            String,
-  project_type:     String,
-  product_category: String,
-  quantity:         String,
-  budget_range:     String,
-  message:          String,
-  status:           { type: String, enum: ['new', 'reviewing', 'quoted', 'accepted', 'declined', 'completed'], default: 'new' },
-  quote_amount:     Number,
-  quote_notes:      String,
-  assigned_to:      { type: Schema.Types.ObjectId, ref: 'User' },
-  internal_notes:   String,
-}, opts)
+export const BulkRequest = defineModel('BulkRequest', 'bulk_requests', {
+  company_name:     T({ required: true }),
+  contact_name:     T({ required: true }),
+  email:            T({ required: true }),
+  phone:            T(),
+  project_type:     T(),
+  product_category: T(),
+  quantity:         T(),
+  budget_range:     T(),
+  message:          T(),
+  status:           S({ enum: ['new', 'reviewing', 'quoted', 'accepted', 'declined', 'completed'], default: 'new' }),
+  quote_amount:     N(),
+  quote_notes:      T(),
+  assigned_to:      R('User'),
+  internal_notes:   T(),
+})
 
 // ── APPOINTMENTS ─────────────────────────────────────────────
-const apptSchema = new Schema({
-  client_name:    { type: String, required: true },
-  client_email:   { type: String, required: true },
-  client_phone:   String,
-  type:           { type: String, default: 'design_consultation' },
-  service:        String,
-  preferred_date: { type: String, required: true }, // YYYY-MM-DD
-  preferred_time: { type: String, required: true }, // HH:mm
-  duration_mins:  { type: Number, default: 60 },
-  status:         { type: String, enum: ['pending', 'confirmed', 'completed', 'cancelled', 'rescheduled'], default: 'pending' },
-  location:       { type: String, default: 'showroom' },
-  meeting_link:   String,
-  notes:          String,
-  internal_notes: String,
-  assigned_to:    { type: Schema.Types.ObjectId, ref: 'User' },
-  confirmed_at:   Date,
-}, opts)
+export const Appointment = defineModel('Appointment', 'appointments', {
+  client_name:    S({ required: true }),
+  client_email:   S({ required: true }),
+  client_phone:   S(),
+  type:           S({ default: 'design_consultation' }),
+  service:        S(),
+  preferred_date: S({ required: true }), // YYYY-MM-DD
+  preferred_time: S({ required: true }), // HH:mm
+  duration_mins:  I({ default: 60 }),
+  status:         S({ enum: ['pending', 'confirmed', 'completed', 'cancelled', 'rescheduled'], default: 'pending' }),
+  location:       S({ default: 'showroom' }),
+  meeting_link:   T(),
+  notes:          T(),
+  internal_notes: T(),
+  assigned_to:    R('User'),
+  confirmed_at:   D(),
+})
 
 // ── CONTACT MESSAGES ─────────────────────────────────────────
-const messageSchema = new Schema({
-  full_name:  { type: String, required: true },
-  email:      { type: String, required: true },
-  phone:      String,
-  service:    String,
-  message:    { type: String, required: true },
-  status:     { type: String, enum: ['unread', 'read', 'replied', 'archived'], default: 'unread' },
-  replied_by: { type: Schema.Types.ObjectId, ref: 'User' },
-  reply_text: String,
-  replied_at: Date,
-}, opts)
+export const Message = defineModel('Message', 'messages', {
+  full_name:  S({ required: true }),
+  email:      S({ required: true }),
+  phone:      S(),
+  service:    S(),
+  message:    T({ required: true }),
+  status:     S({ enum: ['unread', 'read', 'replied', 'archived'], default: 'unread' }),
+  replied_by: R('User'),
+  reply_text: T(),
+  replied_at: D(),
+})
 
 // ── GALLERY PROJECTS ─────────────────────────────────────────
-const gallerySchema = new Schema({
-  title:        { type: String, required: true },
-  slug:         { type: String, required: true, unique: true },
-  category:     { type: String, required: true },
-  location:     String,
-  year:         Number,
-  grid_size:    { type: String, enum: ['small', 'medium', 'large'], default: 'small' },
-  description:  String,
-  images:       { type: [String], default: [] },
-  cover_image:  String,
-  is_featured:  { type: Boolean, default: false },
-  is_published: { type: Boolean, default: true },
-  sort_order:   { type: Number, default: 0 },
-  sqft:         String,
-  duration:     String,
-  client_name:  String,
-}, opts)
+export const Gallery = defineModel('Gallery', 'gallery', {
+  title:        S({ required: true }),
+  slug:         S({ required: true }),
+  category:     S({ required: true }),
+  location:     S(),
+  year:         I(),
+  grid_size:    S({ enum: ['small', 'medium', 'large'], default: 'small' }),
+  description:  T(),
+  images:       J([]),
+  cover_image:  T(),
+  is_featured:  B(false),
+  is_published: B(true),
+  sort_order:   I({ default: 0 }),
+  sqft:         S(),
+  duration:     S(),
+  client_name:  S(),
+})
 
 // ── TESTIMONIALS ─────────────────────────────────────────────
-const testimonialSchema = new Schema({
-  client_name:  { type: String, required: true },
-  client_role:  String,
-  quote:        { type: String, required: true },
-  rating:       { type: Number, default: 5, min: 1, max: 5 },
-  project_type: String,
-  avatar_url:   String,
-  is_featured:  { type: Boolean, default: false },
-  is_published: { type: Boolean, default: true },
-  sort_order:   { type: Number, default: 0 },
-}, opts)
+export const Testimonial = defineModel('Testimonial', 'testimonials', {
+  client_name:  S({ required: true }),
+  client_role:  S(),
+  quote:        T({ required: true }),
+  rating:       I({ default: 5 }),
+  project_type: S(),
+  avatar_url:   T(),
+  is_featured:  B(false),
+  is_published: B(true),
+  sort_order:   I({ default: 0 }),
+})
 
 // ── TEAM MEMBERS ─────────────────────────────────────────────
-const teamSchema = new Schema({
-  full_name:    { type: String, required: true },
-  title:        { type: String, required: true },
-  bio:          String,
-  photo_url:    String,
-  instagram:    String,
-  linkedin:     String,
-  sort_order:   { type: Number, default: 0 },
-  is_published: { type: Boolean, default: true },
-  profile_id:   { type: Schema.Types.ObjectId, ref: 'User' },
-}, opts)
+export const TeamMember = defineModel('TeamMember', 'team_members', {
+  full_name:    S({ required: true }),
+  title:        S({ required: true }),
+  bio:          T(),
+  photo_url:    T(),
+  instagram:    S(),
+  linkedin:     S(),
+  sort_order:   I({ default: 0 }),
+  is_published: B(true),
+  profile_id:   R('User'),
+})
 
 // ── SITE SETTINGS (key/value) ────────────────────────────────
-const settingSchema = new Schema({
-  key:   { type: String, required: true, unique: true },
-  value: Schema.Types.Mixed,
-}, opts)
+export const Setting = defineModel('Setting', 'settings', {
+  key:   S({ required: true }),
+  value: J(),
+})
 
 // ── ACTIVITY LOG ─────────────────────────────────────────────
-const activitySchema = new Schema({
-  user_id:       { type: Schema.Types.ObjectId, ref: 'User' },
-  action:        { type: String, required: true },
-  resource_type: String,
-  resource_id:   String,
-  description:   String,
-}, opts)
+export const Activity = defineModel('Activity', 'activity', {
+  user_id:       R('User'),
+  action:        S({ required: true }),
+  resource_type: S(),
+  resource_id:   S(),
+  description:   T(),
+})
 
 // ── NEWSLETTER ───────────────────────────────────────────────
-const newsletterSchema = new Schema({
-  email:       { type: String, required: true, unique: true, lowercase: true, trim: true },
-  name:        String,
-  source:      { type: String, default: 'website' },
-  status:      { type: String, enum: ['subscribed', 'unsubscribed', 'bounced'], default: 'subscribed' },
-  welcomed_at: Date,
-}, opts)
+export const Newsletter = defineModel('Newsletter', 'newsletter', {
+  email:       S({ required: true, lowercase: true, trim: true }),
+  name:        S(),
+  source:      S({ default: 'website' }),
+  status:      S({ enum: ['subscribed', 'unsubscribed', 'bounced'], default: 'subscribed' }),
+  welcomed_at: D(),
+})
 
 // ── TRANSACTIONS ─────────────────────────────────────────────
-const txnSchema = new Schema({
-  reference:        { type: String, required: true, unique: true },
-  provider:         { type: String, default: 'squad' },
-  order_id:         { type: Schema.Types.ObjectId, ref: 'Order' },
-  customer_name:    String,
-  customer_email:   { type: String, required: true },
-  customer_phone:   String,
-  amount:           { type: Number, required: true },
-  currency:         { type: String, default: 'NGN' },
-  status:           { type: String, enum: ['pending', 'success', 'failed', 'abandoned', 'refunded'], default: 'pending' },
-  channel:          String,
-  description:      String,
-  gateway_response: String,
-  metadata:         { type: Schema.Types.Mixed, default: {} },
-  paid_at:          Date,
-}, opts)
-
-export const User        = model('User', userSchema)
-export const Product     = model('Product', productSchema)
-export const Order       = model('Order', orderSchema)
-export const BulkRequest = model('BulkRequest', bulkSchema)
-export const Appointment = model('Appointment', apptSchema)
-export const Message     = model('Message', messageSchema)
-export const Gallery     = model('Gallery', gallerySchema)
-export const Testimonial = model('Testimonial', testimonialSchema)
-export const TeamMember  = model('TeamMember', teamSchema)
-export const Setting     = model('Setting', settingSchema)
-export const Activity    = model('Activity', activitySchema)
-export const Newsletter  = model('Newsletter', newsletterSchema)
-export const Transaction = model('Transaction', txnSchema)
+export const Transaction = defineModel('Transaction', 'transactions', {
+  reference:        S({ required: true }),
+  provider:         S({ default: 'squad' }),
+  order_id:         R('Order'),
+  customer_name:    S(),
+  customer_email:   S({ required: true }),
+  customer_phone:   S(),
+  amount:           N({ required: true }),
+  currency:         S({ default: 'NGN' }),
+  status:           S({ enum: ['pending', 'success', 'failed', 'abandoned', 'refunded'], default: 'pending' }),
+  channel:          S(),
+  description:      T(),
+  gateway_response: T(),
+  metadata:         J({}),
+  paid_at:          D(),
+})

@@ -4,8 +4,7 @@
 // the storefront can additionally start a payment for an order request.
 import { Router } from 'express'
 import rateLimit from 'express-rate-limit'
-import mongoose from 'mongoose'
-import { Order, Product, ORDER_STATUSES } from '../models.js'
+import { Order, Product, ORDER_STATUSES, isValidId } from '../models.js'
 import { requireAuth, canAccess, canWrite, requireOwner } from '../middleware/auth.js'
 import { logActivity } from '../utils/activity.js'
 import { sendMail } from '../utils/mailer.js'
@@ -34,7 +33,7 @@ const clean = (v, max = 500) => (typeof v === 'string' ? v.trim().slice(0, max) 
 // Re-price the cart from the database: never trust client-sent prices.
 async function priceItems(rawItems) {
   const input = Array.isArray(rawItems) ? rawItems.slice(0, 50) : []
-  const ids = input.map((i) => i?.product_id || i?.id).filter((id) => mongoose.isValidObjectId(id))
+  const ids = input.map((i) => i?.product_id || i?.id).map(String).filter(isValidId)
   const products = ids.length ? await Product.find({ _id: { $in: ids } }) : []
   const byId = new Map(products.map((p) => [String(p._id), p]))
   const items = []
