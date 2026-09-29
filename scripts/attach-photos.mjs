@@ -1,12 +1,13 @@
 // scripts/attach-photos.mjs
 // Attaches the already-uploaded Cloudinary photos to existing/new products and
-// gallery projects, writing DIRECTLY to MongoDB Atlas. No API/login needed.
+// gallery projects, writing DIRECTLY to the MariaDB database. No API/login needed.
+// Safe to re-run (skips anything that already exists).
 //
-// RUN:  MONGODB_URI="<your atlas uri>" node scripts/attach-photos.mjs
-// (the URI is the same MONGODB_URI you set in Vercel env)
-import mongoose from 'mongoose'
+// RUN (from server/):  npm run seed:photos
+//   or: DATABASE_URL="mysql://user:pass@host:3306/db" node scripts/attach-photos.mjs
+import 'dotenv/config'
 import { Product, Gallery } from '../server/src/models.js'
-import { connectDB } from '../server/src/config/db.js'
+import { connectDB, closeDB } from '../server/src/config/db.js'
 
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
 // filename -> Cloudinary URL
@@ -70,7 +71,7 @@ const U = (...names) => names.map(n => MAP[n]).filter(Boolean)
 
 async function run() {
   await connectDB()
-  console.log('connected to Atlas')
+  console.log('connected to database')
 
   const setImgs = async (name, imgs) => {
     const p = await Product.findOne({ name })
@@ -106,6 +107,6 @@ async function run() {
     await Gallery.create({ title, slug:slug(title), category, location, year, grid_size, is_featured, is_published:true, images, cover_image:images[0], description })
     console.log('  created gallery', title, images.length, 'imgs')
   }
-  console.log('DONE'); await mongoose.disconnect(); process.exit(0)
+  console.log('DONE'); await closeDB()
 }
 run().catch(e => { console.error(e); process.exit(1) })

@@ -1,85 +1,88 @@
 // server/src/migrate-users.js
-// One-time migration:
-//  1. Updates Christine's email from the old Gmail to christinegadzama@maximsinterior.com.ng
-//  2. Removes the placeholder "Maxim Okafor" seeded account
-//  3. Creates the professional mailbox staff accounts if they don't already exist
-// Run with: node src/migrate-users.js
+// Creates / repairs the staff accounts on the MariaDB database.
+//
+//  1. Moves Christine's legacy Gmail login to christinegadzama@maximsinterior.com.ng
+//  2. Removes the old placeholder "Maxim Okafor" account
+//  3. Creates the mailbox staff accounts WITHOUT a password and emails each a
+//     72-hour, single-use set-up link (the same flow as Admin > Team > Add staff)
+//
+// No default password exists anywhere. Options:
+//   --print-links      also print each set-up link to this console (use if email is down)
+//   --resend           send a fresh set-up link to accounts that already exist
+//   --temp-passwords   instead of links, give each NEW account a random temporary
+//                      password, printed once here (share privately; staff should
+//                      change it after signing in)
+//
+// Run: npm run staff   (node src/migrate-users.js [--print-links] [--resend] [--temp-passwords])
 import 'dotenv/config'
 import bcrypt from 'bcryptjs'
-import { connectDB } from './config/db.js'
+import crypto from 'node:crypto'
+import { closeDB } from './config/db.js'
 import { User } from './models.js'
+import { sendSetupEmail, setupLink } from './utils/staffInvite.js'
 
-async function run() {
-  await connectDB(process.env.MONGODB_URI)
-  console.log('Connected to DB…\n')
+const args = new Set(process.argv.slice(2))
+const PRINT = args.has('--print-links')
+const RESEND = args.has('--resend')
+const TEMP = args.has('--temp-passwords')
 
-  // 1. Update Christine's own account email
-  const old = await User.findOneAndUpdate(
-    { email: 'maximsinteriorandhomegoods@gmail.com' },
-    { email: 'christinegadzama@maximsinterior.com.ng' },
-    { new: true }
-  )
-  if (old) console.log('✓ Christine email updated →', old.email)
-  else console.log('• Christine old Gmail not found (may already be updated)')
+const ACCOUNTS = [
+  { email: 'christinegadzama@maximsinterior.com.ng', full_name: 'Christine J-K Gadzama', title: 'Owner',                   role: 'owner' },
+  { email: 'admin@maximsinterior.com.ng',            full_name: 'Site Administrator',    title: 'Platform Administration', role: 'project_manager' },
+  { email: 'info@maximsinterior.com.ng',             full_name: 'Maxims Info Desk',      title: 'General Enquiries',       role: 'shop_manager' },
+  { email: 'support@maximsinterior.com.ng',          full_name: 'Maxims Support',        title: 'Customer Support',        role: 'shop_manager' },
+  { email: 'contact@maximsinterior.com.ng',          full_name: 'Maxims Contact Desk',   title: 'Client Relations',        role: 'content_editor' },
+]
 
-  // 2. Remove the placeholder seeded account (Maxim Okafor / info@...)
-  //    We'll replace it with the proper "info" mailbox entry below.
-  const removed = await User.deleteOne({ email: 'info@maximsinterior.com.ng', full_name: /maxim okafor/i })
-  if (removed.deletedCount) console.log('✓ Removed placeholder "Maxim Okafor" account')
-  else console.log('• Placeholder account not found (may already be removed)')
-
-  // 3. Staff accounts — email → { name, role, title }
-  const accounts = [
-    {
-      email:    'info@maximsinterior.com.ng',
-      full_name: 'Maxims Info Desk',
-      title:    'General Enquiries',
-      role:     'shop_manager',
-      password: process.env.STAFF_DEFAULT_PASSWORD || 'Maxims2026!',
-    },
-    {
-      email:    'admin@maximsinterior.com.ng',
-      full_name: 'Site Administrator',
-      title:    'Platform Administration',
-      role:     'project_manager',
-      password: process.env.STAFF_DEFAULT_PASSWORD || 'Maxims2026!',
-    },
-    {
-      email:    'contact@maximsinterior.com.ng',
-      full_name: 'Maxims Contact Desk',
-      title:    'Client Relations',
-      role:     'content_editor',
-      password: process.env.STAFF_DEFAULT_PASSWORD || 'Maxims2026!',
-    },
-    {
-      email:    'support@maximsinterior.com.ng',
-      full_name: 'Maxims Support',
-      title:    'Customer Support',
-      role:     'shop_manager',
-      password: process.env.STAFF_DEFAULT_PASSWORD || 'Maxims2026!',
-    },
-  ]
-
-  for (const acc of accounts) {
-    const exists = await User.findOne({ email: acc.email })
-    if (exists) {
-      console.log(`• ${acc.email} already exists — skipping`)
-      continue
-    }
-    const hashed = await bcrypt.hash(acc.password, 12)
-    await User.create({
-      email:         acc.email,
-      full_name:     acc.full_name,
-      title:         acc.title,
-      role:          acc.role,
-      password_hash: hashed,
-      is_active:     true,
-    })
-    console.log(`✓ Created: ${acc.email} (${acc.role})`)
-  }
-
-  console.log('\n✅ Migration complete.')
-  process.exit(0)
+async function invite(user) {
+  const sent = await sendSetupEmail(user)
+  console.log(sent
+    ? `  set-up link emailed to ${user.email}`
+    : `  EMAIL FAILED for ${user.email} (check SMTP_*; re-run with --resend --print-links)`)
+  if (PRINT) console.log(`  link: ${setupLink(user)}`)
 }
 
-run().catch(e => { console.error(e); process.exit(1) })
+async function run() {
+  if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET must be set (set-up links are signed with it)')
+
+  // 1. Legacy Gmail login -> domain mailbox
+  const legacy = await User.findOne({ email: 'maximsinteriorandhomegoods@gmail.com' })
+  if (legacy && !(await User.findOne({ email: ACCOUNTS[0].email }))) {
+    legacy.email = ACCOUNTS[0].email
+    await legacy.save()
+    console.log('✓ Christine email updated →', legacy.email)
+  }
+
+  // 2. Placeholder seeded account
+  const removed = await User.deleteOne({ email: 'info@maximsinterior.com.ng', full_name: /maxim okafor/i })
+  if (removed.deletedCount) console.log('✓ Removed placeholder "Maxim Okafor" account')
+
+  // 3. Staff accounts
+  const temps = []
+  for (const acc of ACCOUNTS) {
+    const exists = await User.findOne({ email: acc.email })
+    if (exists) {
+      console.log(`• ${acc.email} already exists (${exists.role})`)
+      if (RESEND && exists.is_active) await invite(exists)
+      continue
+    }
+    const temp = TEMP ? crypto.randomBytes(12).toString('base64url') : null
+    // Without --temp-passwords the hash is of random bytes nobody knows, so the
+    // account is unusable until the mailbox owner sets a password via the link.
+    const password_hash = await bcrypt.hash(temp || crypto.randomBytes(24).toString('hex'), 12)
+    const user = await User.create({ ...acc, password_hash, is_active: true })
+    console.log(`✓ Created ${user.email} (${user.role})`)
+    if (TEMP) temps.push([user.email, temp])
+    else await invite(user)
+  }
+
+  if (temps.length) {
+    console.log('\nTemporary passwords (shown once, not stored anywhere):')
+    for (const [e, p] of temps) console.log(`  ${e}  ${p}`)
+  }
+  console.log('\n✅ Staff accounts done.')
+}
+
+run()
+  .then(() => closeDB())
+  .catch(async (e) => { console.error(e.message || e); await closeDB().catch(() => {}); process.exit(1) })

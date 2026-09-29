@@ -3,14 +3,12 @@
 // Miner's review is present + featured. Safe on an existing database.
 // Run: node src/seedReviews.js
 import 'dotenv/config'
-import { connectDB } from './config/db.js'
+import { closeDB } from './config/db.js'
 import { Testimonial } from './models.js'
 
 const PLACEHOLDERS = ['Chief Emmanuel Okafor', 'Dr. Ngozi Adeyemi']
 
 async function run() {
-  await connectDB(process.env.MONGODB_URI)
-
   const removed = await Testimonial.deleteMany({ client_name: { $in: PLACEHOLDERS } })
   console.log(`• Removed ${removed.deletedCount} placeholder review(s)`)
 
@@ -30,7 +28,6 @@ async function run() {
   )
   console.log('✓ Christine Miner review ensured (featured)')
   console.log('\n✅ Reviews updated.')
-  process.exit(0)
 }
 
-run().catch((e) => { console.error(e); process.exit(1) })
+run().then(() => closeDB()).catch(async (e) => { console.error(e); await closeDB().catch(() => {}); process.exit(1) })

@@ -28,8 +28,10 @@ export async function sendMail({ to, subject, html, cc, replyTo }) {
     } else {
       await smtpTransport().sendMail({ from, to, cc, replyTo, subject, html })
     }
+    return true
   } catch (err) {
     // Email failures must never break the API request that triggered them.
     console.error('[mailer] send failed:', err.message)
+    return false
   }
 }

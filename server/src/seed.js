@@ -1,31 +1,17 @@
 // server/src/seed.js
-// Seeds the owner account, site settings, and sample content.
-// Run once: npm run seed   (safe to re-run — upserts, won't duplicate)
+// Seeds site settings and the base catalogue (sample products, gallery,
+// testimonials). Safe to re-run: settings upsert, content only when empty.
+// Staff accounts are NOT created here (no default passwords): run
+//   npm run staff   -> creates the staff accounts and emails set-up links.
+// Real catalogue photos: npm run seed:photos (scripts/attach-photos.mjs).
+// Run once: npm run seed
 import 'dotenv/config'
-import bcrypt from 'bcryptjs'
-import { connectDB } from './config/db.js'
-import { User, Setting, Product, Gallery, Testimonial } from './models.js'
+import { closeDB } from './config/db.js'
+import { Setting, Product, Gallery, Testimonial } from './models.js'
 
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 
 async function run() {
-  await connectDB(process.env.MONGODB_URI)
-
-  // ── Owner ──
-  const email = (process.env.OWNER_EMAIL || 'info@maximsinterior.com.ng').toLowerCase()
-  const existing = await User.findOne({ email })
-  if (!existing) {
-    await User.create({
-      email,
-      password_hash: await bcrypt.hash(process.env.OWNER_PASSWORD || 'changeme123', 12),
-      full_name: process.env.OWNER_NAME || 'Christine J-K Gadzama',
-      role: 'owner',
-    })
-    console.log('✓ Owner created:', email)
-  } else {
-    console.log('• Owner already exists:', email)
-  }
-
   // ── Site settings ──
   const settings = {
     contact_info: { phone: '+234 800 000 0000', email: 'info@maximsinterior.com.ng', address: '123 Design Boulevard, Wuse 2, Abuja, FCT', hours: 'Mon–Sat: 9am–7pm WAT' },
@@ -33,8 +19,9 @@ async function run() {
     hero_content: { headline: 'Where Luxury Meets Living', subtext: 'Transforming spaces into timeless experiences' },
     delivery_fee: 5000,
   }
+  // Only fills in missing keys, so re-running never overwrites edits made in the admin.
   for (const [key, value] of Object.entries(settings)) {
-    await Setting.findOneAndUpdate({ key }, { value }, { upsert: true })
+    if (!(await Setting.findOne({ key }))) await Setting.create({ key, value })
   }
   console.log('✓ Settings seeded')
 
