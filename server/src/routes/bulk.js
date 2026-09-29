@@ -5,7 +5,9 @@ import { BulkRequest } from '../models.js'
 import { requireAuth, canAccess, canWrite } from '../middleware/auth.js'
 import { logActivity } from '../utils/activity.js'
 import { sendMail } from '../utils/mailer.js'
-import { emailShell, naira } from '../utils/templates.js'
+import { emailShell, naira, esc, detailsTable } from '../utils/templates.js'
+import { notifyStaff } from '../utils/notify.js'
+import { forwardLead } from '../utils/supportai.js'
 
 const router = Router()
 const submitLimiter = rateLimit({ windowMs: 60 * 1000, max: 5 })
@@ -14,14 +16,16 @@ const submitLimiter = rateLimit({ windowMs: 60 * 1000, max: 5 })
 router.post('/', submitLimiter, async (req, res) => {
   const b = req.body || {}
   if (!b.company_name || !b.contact_name || !b.email) return res.status(400).json({ error: 'Company, name and email required' })
-  const row = await BulkRequest.create(b)
-  // Notify staff
-  await sendMail({
-    to: process.env.NOTIFICATION_EMAIL || process.env.MAIL_FROM,
+  const pick = ['company_name', 'contact_name', 'email', 'phone', 'project_type', 'product_category', 'quantity', 'budget_range', 'message']
+  const row = await BulkRequest.create(Object.fromEntries(pick.filter((k) => b[k] !== undefined).map((k) => [k, String(b[k]).slice(0, 3000)])))
+  notifyStaff({
+    subject: `New bulk request from ${row.company_name}`,
+    heading: 'New Bulk / Trade Request',
     replyTo: row.email,
-    subject: `New Bulk Request — ${row.company_name}`,
-    html: emailShell({ heading: 'New Bulk / Trade Request', body: `<p><strong>${row.company_name}</strong> (${row.contact_name}) submitted a request.</p><p>${row.message || ''}</p><p style="font-size:13px;color:#6b6880;">${row.email} · ${row.phone || ''}<br>${row.project_type || ''} · ${row.budget_range || ''}</p>` }),
+    adminPath: '/admin/bulk-requests',
+    body: detailsTable([['Company', row.company_name], ['Contact', row.contact_name], ['Email', row.email], ['Phone', row.phone], ['Project type', row.project_type], ['Category', row.product_category], ['Quantity', row.quantity], ['Budget', row.budget_range], ['Message', row.message]]),
   })
+  forwardLead({ kind: 'quote', name: row.contact_name, company: row.company_name, email: row.email, phone: row.phone, message: [row.project_type, row.quantity, row.budget_range, row.message].filter(Boolean).join(' | ') })
   res.status(201).json(row)
 })
 

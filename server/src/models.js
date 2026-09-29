@@ -37,6 +37,8 @@ const userSchema = new Schema({
   phone:         String,
   is_active:     { type: Boolean, default: true },
   last_seen:     Date,
+  // Bumped on every password change; reset links embed it so they are single-use.
+  password_version: { type: Number, default: 0 },
 }, opts)
 
 // ── PRODUCTS ─────────────────────────────────────────────────
@@ -59,6 +61,8 @@ const productSchema = new Schema({
 }, opts)
 
 // ── ORDERS ───────────────────────────────────────────────────
+export const ORDER_STATUSES = ['new', 'contacted', 'awaiting_payment', 'paid', 'confirmed', 'delivered', 'cancelled',
+  'pending', 'processing', 'shipped', 'refunded']
 const orderSchema = new Schema({
   order_number:     { type: String, unique: true },
   customer_name:    { type: String, required: true },
@@ -71,11 +75,20 @@ const orderSchema = new Schema({
   subtotal:         { type: Number, default: 0 },
   delivery_fee:     { type: Number, default: 0 },
   total:            { type: Number, default: 0 },
-  status:           { type: String, enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'], default: 'pending' },
+  // Workflow: new -> contacted -> awaiting_payment -> paid/confirmed -> delivered | cancelled.
+  // Legacy values (pending/processing/shipped/refunded) stay valid for old rows.
+  status:           { type: String, enum: ORDER_STATUSES, default: 'new' },
+  // 'order' = cart order request, 'quote' = quote request (product or service)
+  kind:             { type: String, enum: ['order', 'quote'], default: 'order' },
+  source:           String,            // cart | product | service | legacy
+  service:          String,            // for service/consultation quote requests
+  preferred_contact: { type: String, enum: ['phone', 'whatsapp', 'email'], default: 'phone' },
   payment_method:   String,
   payment_ref:      String,
   payment_status:   { type: String, default: 'unpaid' },
-  notes:            String,
+  notes:            String,            // customer's own notes
+  staff_notes:      { type: [{ text: String, author_name: String, created_at: { type: Date, default: Date.now } }], default: [] },
+  status_history:   { type: [{ status: String, author_name: String, created_at: { type: Date, default: Date.now } }], default: [] },
   assigned_to:      { type: Schema.Types.ObjectId, ref: 'User' },
 }, opts)
 

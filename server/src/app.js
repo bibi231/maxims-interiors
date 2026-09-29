@@ -22,6 +22,7 @@ import newsletterRoutes from './routes/newsletter.js'
 import settingRoutes from './routes/settings.js'
 import paymentRoutes from './routes/payments.js'
 import miscRoutes from './routes/misc.js'
+import { paymentsEnabled } from './utils/config.js'
 
 export function createApp() {
   const app = express()
@@ -44,6 +45,12 @@ export function createApp() {
 
   app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'maxims-api' }))
   app.get('/health', (_req, res) => res.json({ ok: true, service: 'maxims-api' }))
+
+  // Public runtime config for the storefront (no secrets).
+  app.get('/api/config', (_req, res) => res.json({
+    payments_enabled: paymentsEnabled(),
+    payment_provider: process.env.PAYMENT_PROVIDER || 'squad',
+  }))
 
   app.use('/api/auth', authRoutes)
   app.use('/api/products', productRoutes)

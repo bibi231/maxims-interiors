@@ -5,7 +5,9 @@ import { Appointment } from '../models.js'
 import { requireAuth, canAccess, canWrite } from '../middleware/auth.js'
 import { logActivity } from '../utils/activity.js'
 import { sendMail } from '../utils/mailer.js'
-import { emailShell } from '../utils/templates.js'
+import { emailShell, detailsTable } from '../utils/templates.js'
+import { notifyStaff } from '../utils/notify.js'
+import { forwardLead } from '../utils/supportai.js'
 
 const router = Router()
 const bookLimiter = rateLimit({ windowMs: 60 * 1000, max: 6 })
@@ -25,11 +27,14 @@ router.post('/', bookLimiter, async (req, res) => {
   const taken = await Appointment.exists({ preferred_date: b.preferred_date, preferred_time: b.preferred_time, status: { $nin: ['cancelled', 'rescheduled'] } })
   if (taken) return res.status(409).json({ error: 'That slot is no longer available' })
   const appt = await Appointment.create(b)
-  await sendMail({
-    to: process.env.NOTIFICATION_EMAIL || process.env.MAIL_FROM,
-    subject: `New Consultation Request — ${appt.client_name}`,
-    html: emailShell({ heading: 'New Consultation Request', body: `<p><strong>${appt.client_name}</strong> requested ${appt.preferred_date} at ${appt.preferred_time}.</p><p style="font-size:13px;color:#6b6880;">${appt.client_email} · ${appt.client_phone || ''}</p>` }),
+  notifyStaff({
+    subject: `New consultation request from ${appt.client_name}`,
+    heading: 'New Consultation Request',
+    replyTo: appt.client_email,
+    adminPath: '/admin/appointments',
+    body: detailsTable([['Name', appt.client_name], ['Email', appt.client_email], ['Phone', appt.client_phone], ['Service', appt.service || appt.type], ['Date', appt.preferred_date], ['Time', appt.preferred_time], ['Notes', appt.notes]]),
   })
+  forwardLead({ kind: 'booking', name: appt.client_name, email: appt.client_email, phone: appt.client_phone, message: `${appt.service || appt.type} on ${appt.preferred_date} ${appt.preferred_time}${appt.notes ? ' | ' + appt.notes : ''}` })
   res.status(201).json(appt)
 })
 

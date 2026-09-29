@@ -2,6 +2,7 @@
 import { Router } from 'express'
 import rateLimit from 'express-rate-limit'
 import { Transaction, Order } from '../models.js'
+import { paymentsEnabled } from '../utils/config.js'
 import { requireAuth, canAccess } from '../middleware/auth.js'
 import { initPayment, verifyPayment, verifyWebhookSignature, generateReference } from '../utils/payments.js'
 
@@ -10,8 +11,18 @@ const initLimiter = rateLimit({ windowMs: 60 * 1000, max: 15 })
 
 // PUBLIC/ADMIN — initialise a payment, return a checkout URL.
 router.post('/initialize', initLimiter, async (req, res) => {
+  // Payments are switched off until the Paystack / Squad keys are live.
+  // Customers submit order/quote requests instead (see routes/orders.js).
+  if (!paymentsEnabled()) return res.status(503).json({ error: 'Online payment is not available yet. Please submit an order request and our team will contact you.' })
   try {
-    const { amount, email, name, phone, provider = process.env.PAYMENT_PROVIDER || 'squad', orderId, description, metadata } = req.body
+    const { email, name, phone, provider = process.env.PAYMENT_PROVIDER || 'squad', orderId, description, metadata } = req.body
+    let { amount } = req.body
+    // When paying for an order, charge the server-side order total, not a client-sent amount.
+    if (orderId) {
+      const order = await Order.findById(orderId).catch(() => null)
+      if (!order) return res.status(404).json({ error: 'Order not found' })
+      amount = order.total
+    }
     const amt = Number(amount)
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'Valid email required' })
     if (!amt || amt <= 0 || amt > 100_000_000) return res.status(400).json({ error: 'Invalid amount' })

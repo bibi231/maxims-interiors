@@ -48,14 +48,29 @@ router.get('/stats/dashboard', requireAuth, canAccess('dashboard'), async (_req,
     orders: {
       total: orders.length,
       thisMonth: orders.filter((o) => o.created_at >= monthStart).length,
-      pending: orders.filter((o) => o.status === 'pending').length,
-      revenue: orders.filter((o) => o.status !== 'cancelled').reduce((s, o) => s + Number(o.total), 0),
+      pending: orders.filter((o) => ['new', 'pending'].includes(o.status)).length,
+      revenue: orders.filter((o) => ['paid', 'confirmed', 'delivered', 'shipped'].includes(o.status)).reduce((s, o) => s + Number(o.total || 0), 0),
     },
     bulk: { total: bulk.length, new: bulk.filter((b) => b.status === 'new').length, thisMonth: bulk.filter((b) => b.created_at >= monthStart).length },
     appointments: { total: appts.length, pending: appts.filter((a) => a.status === 'pending').length, today: appts.filter((a) => new Date(a.preferred_date).toDateString() === today).length },
     messages: { total: messages.length, unread: messages.filter((m) => m.status === 'unread').length },
     products: { total: products.length, active: products.filter((p) => p.status === 'active').length, lowStock: products.filter((p) => p.stock_qty <= 3 && p.status === 'active').length },
   })
+})
+
+// ── NOTIFICATION COUNTS (admin bell, polled) ──
+// Only counts sections the signed-in role can see.
+router.get('/stats/notifications', requireAuth, async (req, res) => {
+  const perms = ROLE_PERMISSIONS[req.user.role]?.access || []
+  const has = (s) => perms.includes(s)
+  const [orders, quotes, appointments, messages, bulk] = await Promise.all([
+    has('orders') ? Order.countDocuments({ status: { $in: ['new', 'pending'] }, kind: { $ne: 'quote' } }) : 0,
+    has('orders') ? Order.countDocuments({ status: 'new', kind: 'quote' }) : 0,
+    has('appointments') ? Appointment.countDocuments({ status: 'pending' }) : 0,
+    has('messages') ? Message.countDocuments({ status: 'unread' }) : 0,
+    has('bulk_requests') ? BulkRequest.countDocuments({ status: 'new' }) : 0,
+  ])
+  res.json({ orders: orders + quotes, newOrders: orders, quotes, appointments, messages, bulk, total: orders + quotes + appointments + messages + bulk })
 })
 
 // ── PAYMENT STATS ──

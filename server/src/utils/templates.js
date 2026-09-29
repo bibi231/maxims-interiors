@@ -30,3 +30,35 @@ ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0;"
   </table>
 </td></tr></table></body></html>`
 }
+
+// Escape user-supplied text before it goes into an email body.
+export function esc(v) {
+  return String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+}
+
+// Two-column label/value table. Rows with empty values are skipped.
+export function detailsTable(rows) {
+  const tr = rows
+    .filter(([, v]) => v !== undefined && v !== null && String(v).trim() !== '')
+    .map(([k, v]) => `<tr><td style="padding:8px 12px 8px 0;border-bottom:1px solid #eee;color:#6b6880;font-size:12px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;vertical-align:top;">${esc(k)}</td><td style="padding:8px 0;border-bottom:1px solid #eee;color:#1C0D35;font-size:14px;">${esc(v).replace(/\n/g, '<br>')}</td></tr>`)
+    .join('')
+  return `<table width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;">${tr}</table>`
+}
+
+// Line items + totals. Items: [{ name, qty, price }].
+export function itemsTable(items = [], { subtotal, deliveryFee, total } = {}) {
+  if (!items.length) return ''
+  const rows = items.map((i) => `<tr><td style="padding:10px 0;border-bottom:1px solid #eee;font-size:14px;color:#3D3B50;">${esc(i.name)} <span style="color:#6b6880;">&times; ${Number(i.qty) || 1}</span></td><td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right;font-size:14px;color:#3D3B50;white-space:nowrap;">${naira((Number(i.price) || 0) * (Number(i.qty) || 1))}</td></tr>`).join('')
+  const line = (label, val, strong) => `<tr><td style="padding:8px 0;${strong ? 'font-weight:bold;color:#1C0D35;' : 'color:#6b6880;'}font-size:14px;">${label}</td><td style="padding:8px 0;text-align:right;${strong ? 'font-weight:bold;color:#1C0D35;font-size:16px;' : 'color:#6b6880;font-size:14px;'}">${val}</td></tr>`
+  return `<table width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;">${rows}
+    ${subtotal !== undefined ? line('Subtotal', naira(subtotal)) : ''}
+    ${deliveryFee ? line('Delivery', naira(deliveryFee)) : ''}
+    ${total !== undefined ? line('Estimated total', naira(total), true) : ''}</table>`
+}
+
+// Highlighted reference-number block for customer confirmations.
+export function refBlock(label, ref) {
+  return `<div style="background:#FAF7F2;border-left:3px solid #C9A84C;padding:14px 16px;margin:18px 0;">
+    <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#6b6880;">${esc(label)}</div>
+    <div style="font-family:Georgia,serif;font-size:22px;color:#1C0D35;margin-top:4px;letter-spacing:1px;">${esc(ref)}</div></div>`
+}
