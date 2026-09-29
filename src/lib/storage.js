@@ -10,6 +10,7 @@ export const BUCKETS = {
   team: 'team',
   testimonials: 'testimonials',
   avatars: 'avatars',
+  blog: 'blog',
 }
 
 /** Resolve a stored image value to a displayable URL. */

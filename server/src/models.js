@@ -231,3 +231,20 @@ export const Transaction = defineModel('Transaction', 'transactions', {
   metadata:         J({}),
   paid_at:          D(),
 })
+
+// ── BLOG / JOURNAL POSTS ─────────────────────────────────────
+export const BlogPost = defineModel('BlogPost', 'blog_posts', {
+  title:           S({ required: true, trim: true }),
+  slug:            S({ required: true, trim: true, lowercase: true }),
+  excerpt:         T(),
+  content:         T(),        // sanitised HTML (utils/sanitize.js)
+  cover_image:     T(),
+  tags:            J([]),
+  status:          S({ enum: ['draft', 'published'], default: 'draft' }),
+  published_at:    D(),
+  seo_title:       S(),
+  seo_description: S(),
+  author_id:       R('User'),
+  author_name:     S(),
+  reading_minutes: I({ default: 1 }),
+})

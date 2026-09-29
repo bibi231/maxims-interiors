@@ -22,6 +22,7 @@ export default defineConfig({
         // Split heavy/independent groups so the public site loads lean
         manualChunks(id) {
           if (id.includes('node_modules')) {
+            if (id.includes('@tiptap') || id.includes('prosemirror') || id.includes('orderedmap') || id.includes('rope-sequence') || id.includes('linkifyjs')) return 'editor'
             if (id.includes('framer-motion')) return 'motion'
             if (id.includes('three')) return 'three'
             if (id.includes('react-router')) return 'router'

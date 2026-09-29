@@ -29,6 +29,7 @@ import Testimonials  from '@/pages/Testimonials'
 import Team          from '@/pages/Team'
 import PaymentCallback from '@/pages/PaymentCallback'
 import PayOrder      from '@/pages/PayOrder'
+import { BlogList, BlogPost } from '@/pages/Blog'
 import NotFound      from '@/pages/NotFound'
 
 // Admin Pages (lazy-loaded for performance)
@@ -48,6 +49,7 @@ const AdminNewsletter   = lazy(() => import('@/pages/admin/Newsletter'))
 const AdminSettings     = lazy(() => import('@/pages/admin/Settings'))
 const AdminActivity     = lazy(() => import('@/pages/admin/Activity'))
 const AdminPricing      = lazy(() => import('@/pages/admin/Pricing'))
+const AdminBlog         = lazy(() => import('@/pages/admin/Blog'))
 
 const AdminLoader = () => (
   <div className="min-h-screen bg-charcoal flex items-center justify-center">
@@ -88,6 +90,8 @@ function AnimatedPublicRoutes() {
           <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
           <Route path="/testimonials" element={<PublicLayout><Testimonials /></PublicLayout>} />
           <Route path="/team" element={<PublicLayout><Team /></PublicLayout>} />
+          <Route path="/blog" element={<PublicLayout><BlogList /></PublicLayout>} />
+          <Route path="/blog/:slug" element={<PublicLayout><BlogPost /></PublicLayout>} />
           <Route path="/payment/callback" element={<PublicLayout><PaymentCallback /></PublicLayout>} />
           <Route path="/pay/:id" element={<PublicLayout><PayOrder /></PublicLayout>} />
           <Route path="*" element={<PublicLayout><NotFound /></PublicLayout>} />
@@ -127,6 +131,7 @@ export default function App() {
             <Route path="/admin/settings" element={protect('settings', <AdminSettings />)} />
             <Route path="/admin/activity" element={protect('activity', <AdminActivity />)} />
             <Route path="/admin/pricing" element={protect('pricing', <AdminPricing />)} />
+            <Route path="/admin/blog" element={protect('blog', <AdminBlog />)} />
 
             {/* All public routes */}
             <Route path="/*" element={<AnimatedPublicRoutes />} />

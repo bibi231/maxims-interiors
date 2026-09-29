@@ -22,6 +22,8 @@ import newsletterRoutes from './routes/newsletter.js'
 import settingRoutes from './routes/settings.js'
 import paymentRoutes from './routes/payments.js'
 import miscRoutes from './routes/misc.js'
+import blogRoutes from './routes/blog.js'
+import sitemapRoutes from './routes/sitemap.js'
 import { paymentsEnabled, paymentProvider } from './utils/config.js'
 import { pingDB } from './config/db.js'
 
@@ -88,6 +90,8 @@ export function createApp() {
   app.use('/api/newsletter', newsletterRoutes)
   app.use('/api/settings', settingRoutes)
   app.use('/api/payments', paymentRoutes)
+  app.use('/api/blog', blogRoutes)
+  app.use('/api', sitemapRoutes)
   app.use('/api', miscRoutes)
 
   app.use((_req, res) => res.status(404).json({ error: 'Not found' }))

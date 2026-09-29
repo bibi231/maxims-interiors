@@ -298,6 +298,51 @@ try {
     for (let i = 0; i < 6; i++) assert.equal((await call('POST', '/auth/reset-password', { token: 'bad', password: 'abcdefgh1' }, null)).status, 400)
   })
 
+  await step('blog: CRUD, sanitised HTML, drafts hidden, slugs, scheduled posts, sitemap', async () => {
+    const title = 'Smoke Journal ' + tag
+    const dirty = '<h1>Heading</h1><p onclick="x()">Hello <strong>world</strong><script>alert(1)</script> <a href="javascript:alert(1)">bad</a> <a href="https://example.com">ext</a></p><img src="https://img.example.com/a.jpg" onerror="alert(1)"><iframe src="https://evil"></iframe>'
+    const c = await call('POST', '/blog', { title, content: dirty, tags: 'Living Room, Tips, Tips', status: 'draft' })
+    assert.equal(c.status, 201, JSON.stringify(c.body))
+    const post = c.body
+    assert.equal(post.slug, 'smoke-journal-' + tag)
+    assert.deepEqual(post.tags, ['Living Room', 'Tips'])
+    assert.ok(!/script|onclick|onerror|javascript:|iframe|<h1/i.test(post.content), post.content)
+    assert.match(post.content, /<h2>Heading<\/h2>/); assert.match(post.content, /rel="noopener noreferrer nofollow"/)
+    assert.ok(post.excerpt.startsWith('Heading Hello world'))
+    // draft is hidden from the public
+    assert.ok(!(await call('GET', '/blog', null, null)).body.some((p) => p.id === post.id))
+    assert.equal((await call('GET', `/blog/${post.slug}`, null, null)).status, 404)
+    assert.ok((await call('GET', '/blog?all=1')).body.some((p) => p.id === post.id))
+    // duplicate title -> unique slug
+    const dup = await call('POST', '/blog', { title, content: '<p>x</p>' })
+    assert.equal(dup.body.slug, 'smoke-journal-' + tag + '-2')
+    // publish
+    const pub = await call('PUT', `/blog/${post.id}`, { status: 'published', seo_title: 'SEO T', seo_description: 'SEO D' })
+    assert.equal(pub.body.status, 'published'); assert.ok(pub.body.published_at)
+    const one = await call('GET', `/blog/${post.slug}`, null, null)
+    assert.equal(one.status, 200); assert.equal(one.body.seo_title, 'SEO T'); assert.ok(one.body.content.includes('<strong>world</strong>'))
+    assert.equal(one.body.author_id, undefined)
+    assert.ok((await call('GET', '/blog?tag=tips', null, null)).body.some((p) => p.id === post.id))
+    // scheduled in the future: not public yet
+    const future = await call('PUT', `/blog/${dup.body.id}`, { status: 'published', published_at: '2099-01-01T00:00:00Z' })
+    assert.equal(future.status, 200)
+    assert.equal((await call('GET', `/blog/${dup.body.slug}`, null, null)).status, 404)
+    // content editors can write, shop managers cannot
+    const { signToken } = await import('../src/middleware/auth.js')
+    const shop = await User.findOne({ role: 'shop_manager', is_active: true })
+    if (shop) assert.equal((await call('POST', '/blog', { title: 'x' }, signToken(shop))).status, 403)
+    assert.equal((await call('POST', '/blog', { title: '  ' })).status, 400)
+    // sitemap
+    const sm = await fetch(base + '/sitemap.xml')
+    const xml = await sm.text()
+    assert.equal(sm.status, 200); assert.match(sm.headers.get('content-type'), /xml/)
+    assert.ok(xml.includes(`/blog/${post.slug}</loc>`)); assert.ok(!xml.includes(`/blog/${dup.body.slug}<`))
+    // delete
+    assert.equal((await call('DELETE', `/blog/${post.id}`)).body.ok, true)
+    await call('DELETE', `/blog/${dup.body.id}`)
+    assert.equal((await call('GET', `/blog/${post.slug}`, null, null)).status, 404)
+  })
+
   await step('activity log with populated profile', async () => {
     const a = await call('GET', '/activity?limit=5')
     assert.equal(a.status, 200); assert.ok(a.body.length > 0 && a.body.length <= 5)
