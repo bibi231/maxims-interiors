@@ -27,7 +27,7 @@ router.patch('/profiles/:id/role', requireAuth, requireOwner, async (req, res) =
 })
 router.patch('/profiles/:id', requireAuth, requireOwner, async (req, res) => {
   const updates = (({ full_name, title, phone, is_active }) => ({ full_name, title, phone, is_active }))(req.body)
-  if (req.body.password) updates.password_hash = await bcrypt.hash(req.body.password, 12)
+  if (req.body.password) { updates.password_hash = await bcrypt.hash(req.body.password, 12); updates.$inc = { password_version: 1 } }
   const u = await User.findByIdAndUpdate(req.params.id, updates, { new: true })
   res.json(u)
 })

@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { Save, UserPlus, Shield, RefreshCw } from 'lucide-react'
 import AdminLayout from '@/components/admin/AdminLayout'
+import { api } from '@/lib/api'
 import { useProfiles, updateProfileRole, deactivateProfile, useSiteSettings, inviteStaff } from '@/hooks/useData'
 import { useAuth, ROLE_PERMISSIONS } from '@/context/AuthContext'
 import { cn } from '@/lib/utils'
@@ -13,6 +14,40 @@ const ROLE_COLORS = {
   project_manager:  'text-blue-400 bg-blue-400/10',
   shop_manager:     'text-green-400 bg-green-400/10',
   content_editor:   'text-cream-soft/50 bg-cream-soft/8',
+}
+
+// ── Change own password ───────────────────────────────────────
+function ChangePasswordForm() {
+  const [pwd, setPwd] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [msg, setMsg] = useState(null)
+  const [busy, setBusy] = useState(false)
+  async function submit(e) {
+    e.preventDefault()
+    setMsg(null)
+    if (pwd.length < 8) return setMsg({ ok: false, text: 'Password must be at least 8 characters.' })
+    if (pwd !== confirm) return setMsg({ ok: false, text: 'The two passwords do not match.' })
+    setBusy(true)
+    try {
+      await api.put('/auth/me', { password: pwd })
+      setPwd(''); setConfirm('')
+      setMsg({ ok: true, text: 'Password updated.' })
+    } catch (err) {
+      setMsg({ ok: false, text: err.message || 'Could not update password.' })
+    }
+    setBusy(false)
+  }
+  const cls = 'w-full bg-charcoal-mid border border-gold/10 px-3 py-2.5 font-body text-[0.85rem] text-cream-soft/80 placeholder:text-cream-soft/20 focus:outline-none focus:border-gold/40'
+  return (
+    <form onSubmit={submit} className="space-y-2.5">
+      <input type="password" className={cls} value={pwd} onChange={e => setPwd(e.target.value)} placeholder="New password (min. 8 characters)" autoComplete="new-password" />
+      <input type="password" className={cls} value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="Confirm new password" autoComplete="new-password" />
+      {msg && <p className={`font-body text-[0.75rem] ${msg.ok ? 'text-green-400' : 'text-yellow-400'}`}>{msg.text}</p>}
+      <button disabled={busy} className="inline-flex items-center gap-2 border border-gold/30 text-gold font-title text-[0.6rem] tracking-[0.15em] uppercase px-5 py-2.5 hover:bg-gold/10 disabled:opacity-40">
+        <RefreshCw size={12} /> {busy ? 'Saving...' : 'Update password'}
+      </button>
+    </form>
+  )
 }
 
 // ── Invite new team member ────────────────────────────────────
@@ -29,8 +64,8 @@ function InviteForm({ onDone }) {
     e.preventDefault()
     setLoading(true); setError('')
     try {
-      if (password.length < 8) throw new Error('Password must be at least 8 characters')
-      await inviteStaff({ email, full_name: name, role, password })
+      if (password && password.length < 8) throw new Error('Temporary password must be at least 8 characters, or leave it blank to email a set-up link.')
+      await inviteStaff({ email: email.trim(), full_name: name.trim(), role, password: password || undefined })
       setSuccess(true)
       onDone()
     } catch (err) {
@@ -41,7 +76,7 @@ function InviteForm({ onDone }) {
 
   if (success) return (
     <div className="bg-green-500/10 border border-green-500/20 p-4 mt-4">
-      <p className="font-body text-[0.82rem] text-green-400">✓ Account created for {name}. Share the login URL and their temporary password.</p>
+      <p className="font-body text-[0.82rem] text-green-400">Account created for {name}. We emailed {email} a link to {password ? 'sign in (share the temporary password with them directly) or' : ''} choose their own password. Sign-in page: /admin/login</p>
     </div>
   )
 
@@ -58,8 +93,8 @@ function InviteForm({ onDone }) {
         <input className={inputCls} type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="chidera@maximsinterior.com.ng" required />
       </div>
       <div>
-        <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/30 block mb-1.5">Temporary Password</label>
-        <input className={inputCls} type="text" value={password} onChange={e=>setPassword(e.target.value)} placeholder="min. 8 characters" required />
+        <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/30 block mb-1.5">Temporary Password (optional)</label>
+        <input className={inputCls} type="text" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Leave blank to email a set-up link" autoComplete="new-password" />
       </div>
       <div>
         <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/30 block mb-1.5">Role</label>
@@ -85,7 +120,7 @@ export default function Settings() {
   const { data: profiles, refresh: refreshProfiles } = useProfiles()
   const { settings, updateSetting, loading: settingsLoading } = useSiteSettings()
 
-  const [activeTab,   setActiveTab]   = useState('team')
+  const [activeTab,   setActiveTab]   = useState(() => (isOwner ? 'team' : 'account'))
   const [showInvite,  setShowInvite]  = useState(false)
   const [contactForm, setContactForm] = useState(null)
   const [socialForm,  setSocialForm]  = useState(null)
@@ -303,14 +338,10 @@ export default function Settings() {
           </div>
           <div className="bg-charcoal border border-gold/8 p-5">
             <div className="font-title text-[0.62rem] tracking-[0.18em] uppercase text-cream-soft/40 mb-3">Change Password</div>
-            <p className="font-body text-[0.8rem] text-cream-soft/30 mb-4">
-              {isOwner
-                ? 'Owners can reset any team member’s password from the API, or update it directly in the database.'
-                : 'Ask the account owner to set a new password for you from the Team & Roles tab.'}
+            <ChangePasswordForm />
+            <p className="font-body text-[0.72rem] text-cream-soft/30 mt-3">
+              Forgotten passwords can be reset from the sign-in page with “Forgot your password?”.
             </p>
-            <span className="inline-flex items-center gap-2 border border-gold/15 text-cream-soft/40 font-title text-[0.6rem] tracking-[0.15em] uppercase px-5 py-2.5">
-              <RefreshCw size={12} /> Managed by Owner
-            </span>
           </div>
         </div>
       )}

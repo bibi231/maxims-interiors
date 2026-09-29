@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Eye, EyeOff, LogIn, AlertCircle } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
+import { api } from '@/lib/api'
 
 export default function AdminLogin() {
   const [email,    setEmail]    = useState('')
@@ -11,7 +12,8 @@ export default function AdminLogin() {
   const [showPwd,  setShowPwd]  = useState(false)
   const [loading,  setLoading]  = useState(false)
   const [error,    setError]    = useState('')
-  const [resetSent, setResetSent] = useState(false)
+  const [resetSent, setResetSent] = useState('')
+  const [mode, setMode] = useState('login') // login | forgot
   const { signIn } = useAuth()
   const navigate = useNavigate()
 
@@ -29,9 +31,17 @@ export default function AdminLogin() {
     }
   }
 
-  function handleForgotPassword() {
-    // Staff accounts are managed by the owner — no self-serve reset.
-    setError('Please contact the account owner to reset your password.')
+  async function handleForgotPassword(e) {
+    e.preventDefault()
+    setError(''); setResetSent('')
+    if (!email) return setError('Enter your email address first.')
+    setLoading(true)
+    try {
+      const r = await api.post('/auth/forgot-password', { email: email.trim() })
+      setResetSent(r.message || 'If that email belongs to a staff account, a reset link is on its way.')
+    } catch (err) {
+      setError(err.message || 'Could not send the reset email. Please try again.')
+    } finally { setLoading(false) }
   }
 
   return (
@@ -56,8 +66,8 @@ export default function AdminLogin() {
 
         {/* Card */}
         <div className="bg-charcoal-mid border border-gold/12 p-8">
-          <h1 className="font-display text-2xl text-cream-soft mb-1">Welcome back</h1>
-          <p className="font-body text-[0.8rem] text-cream-soft/35 mb-8">Sign in to your admin account</p>
+          <h1 className="font-display text-2xl text-cream-soft mb-1">{mode === 'login' ? 'Welcome back' : 'Reset password'}</h1>
+          <p className="font-body text-[0.8rem] text-cream-soft/35 mb-8">{mode === 'login' ? 'Sign in with your Maxims staff email' : 'We will email you a link to choose a new password'}</p>
 
           {error && (
             <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 px-4 py-3 mb-5">
@@ -68,11 +78,11 @@ export default function AdminLogin() {
 
           {resetSent && (
             <div className="bg-green-500/10 border border-green-500/20 px-4 py-3 mb-5">
-              <span className="font-body text-[0.8rem] text-green-400">Password reset email sent — check your inbox.</span>
+              <span className="font-body text-[0.8rem] text-green-400">{resetSent}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={mode === 'login' ? handleSubmit : handleForgotPassword} className="space-y-4">
             <div>
               <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-cream-soft/40 block mb-2">
                 Email Address
@@ -84,7 +94,7 @@ export default function AdminLogin() {
                 placeholder="you@maximsinterior.com.ng"
               />
             </div>
-            <div>
+            {mode === 'login' && <div>
               <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-cream-soft/40 block mb-2">
                 Password
               </label>
@@ -101,7 +111,7 @@ export default function AdminLogin() {
                   {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
-            </div>
+            </div>}
 
             <button
               type="submit" disabled={loading}
@@ -110,16 +120,16 @@ export default function AdminLogin() {
                          hover:shadow-[0_4px_20px_rgba(201,168,76,0.35)] transition-all disabled:opacity-50 mt-2"
             >
               {loading ? (
-                <span className="animate-pulse">Signing in...</span>
-              ) : (
+                <span className="animate-pulse">{mode === 'login' ? 'Signing in...' : 'Sending...'}</span>
+              ) : mode === 'login' ? (
                 <><LogIn size={14} /> Sign In</>
-              )}
+              ) : 'Email me a reset link'}
             </button>
           </form>
 
-          <button onClick={handleForgotPassword}
-            className="w-full text-center font-body text-[0.75rem] text-cream-soft/25 hover:text-gold transition-colors mt-5">
-            Forgot your password?
+          <button type="button" onClick={() => { setMode(mode === 'login' ? 'forgot' : 'login'); setError(''); setResetSent('') }}
+            className="w-full text-center font-body text-[0.78rem] text-cream-soft/45 hover:text-gold transition-colors mt-5 py-1">
+            {mode === 'login' ? 'Forgot your password?' : 'Back to sign in'}
           </button>
         </div>
 

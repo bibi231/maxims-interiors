@@ -31,6 +31,7 @@ import NotFound      from '@/pages/NotFound'
 
 // Admin Pages (lazy-loaded for performance)
 const AdminLogin        = lazy(() => import('@/pages/admin/Login'))
+const AdminResetPwd     = lazy(() => import('@/pages/admin/ResetPassword'))
 const AdminDashboard    = lazy(() => import('@/pages/admin/Dashboard'))
 const AdminOrders       = lazy(() => import('@/pages/admin/Orders'))
 const AdminTransactions = lazy(() => import('@/pages/admin/Transactions'))
@@ -106,6 +107,7 @@ export default function App() {
           <Routes>
             {/* Admin Routes — no public layout, protected */}
             <Route path="/admin/login" element={<Suspense fallback={<AdminLoader />}><AdminLogin /></Suspense>} />
+            <Route path="/admin/reset-password" element={<Suspense fallback={<AdminLoader />}><AdminResetPwd /></Suspense>} />
             <Route path="/admin" element={protect('dashboard', <AdminDashboard />)} />
             <Route path="/admin/orders" element={protect('orders', <AdminOrders />)} />
             <Route path="/admin/transactions" element={protect('transactions', <AdminTransactions />)} />
