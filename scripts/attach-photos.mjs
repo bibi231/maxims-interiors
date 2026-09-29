@@ -84,10 +84,10 @@ async function run() {
 
   const newProducts = [
     ['Cotton Bath Towel Set',15500,'Bathroom','Best Seller',45,true,U('towels .jpeg','towels 2.jpeg','towl 4.jpeg'),'Soft, highly absorbent cotton bath towels in a coordinated set — a Maxims home-goods staple.'],
-    ['Throw Pillow Collection',28000,'Living Room','New Arrival',35,true,U('throw pillow 2.jpeg','throw pillow 4.jpeg','throw pillow 5.jpeg','throw pillow 6.jpeg'),'Curated throw pillows that bring texture and warmth to any sofa or bed.'],
-    ['Colored Accent Cushions',19500,'Living Room',null,50,true,U('colored pillow 2.jpeg','colored pillow 3.jpeg','colored pillow 4.jpeg','colored pillow 5.jpeg','colored pillow 6.jpeg','colored pillow 7.jpeg','colored pillow 8.jpeg','different colored pillows.jpeg'),'A vibrant range of accent cushions in rich, liveable colours.'],
-    ['Velvet Scatter Cushions',24000,'Living Room','Staff Pick',30,false,U('pillow 2.jpeg','pillow 3.jpeg','pillow 5.jpeg','pillow 6.jpeg','pillow 7.jpeg'),'Plush velvet scatter cushions with a refined, tactile finish.'],
-    ['Plush Pillow Set (5pc)',26000,'Bedroom',null,40,false,U('pillow 8.jpeg','pillow 9.jpeg','pillow 10.jpeg','pillow 11.jpeg','pillow 12.jpeg','pillow 13.jpeg','pillow 14.jpeg','pillow.jpeg','pillows.jpeg'),'A comfortable five-piece plush pillow set for beds and lounge seating.'],
+    ['Throw Pillow Collection',35000,'Living Room','New Arrival',35,true,U('throw pillow 2.jpeg','throw pillow 4.jpeg','throw pillow 5.jpeg','throw pillow 6.jpeg'),'Curated throw pillows that bring texture and warmth to any sofa or bed.'],
+    ['Colored Accent Cushions',35000,'Living Room',null,50,true,U('colored pillow 2.jpeg','colored pillow 3.jpeg','colored pillow 4.jpeg','colored pillow 5.jpeg','colored pillow 6.jpeg','colored pillow 7.jpeg','colored pillow 8.jpeg','different colored pillows.jpeg'),'A vibrant range of accent cushions in rich, liveable colours.'],
+    ['Velvet Scatter Cushions',35000,'Living Room','Staff Pick',30,false,U('pillow 2.jpeg','pillow 3.jpeg','pillow 5.jpeg','pillow 6.jpeg','pillow 7.jpeg'),'Plush velvet scatter cushions with a refined, tactile finish.'],
+    ['Plush Pillow Set (5pc)',35000,'Bedroom',null,40,false,U('pillow 8.jpeg','pillow 9.jpeg','pillow 10.jpeg','pillow 11.jpeg','pillow 12.jpeg','pillow 13.jpeg','pillow 14.jpeg','pillow.jpeg','pillows.jpeg'),'A comfortable five-piece plush pillow set for beds and lounge seating.'],
     ['Decorative Throw Blanket',22000,'Bedroom','New Arrival',25,false,U('blankets.jpeg','more pillows.jpeg'),'A cosy, beautifully finished throw blanket — an inviting final layer to any room.'],
   ]
   for (const [name,price,category,badge,stock_qty,is_featured,images,description] of newProducts) {

@@ -37,7 +37,7 @@ async function run() {
       ['Vela Pendant Light', 68000, 'Lighting', null, 6, false],
       ['Lagos Woven Area Rug', 127000, 'Rugs', 'New Arrival', 9, true],
       ['Waffle Towel Set (3pc)', 18500, 'Bathroom', 'Best Seller', 60, true],
-      ['Linen Cushion Quartet', 32000, 'Living Room', 'New Arrival', 40, true],
+      ['Linen Cushion Quartet', 35000, 'Living Room', 'New Arrival', 40, true],
     ]
     await Product.insertMany(products.map(([name, price, category, badge, stock_qty, is_featured]) => ({
       name, slug: slug(name), price, category, badge, stock_qty, is_featured, status: 'active',
