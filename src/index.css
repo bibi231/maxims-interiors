@@ -26,7 +26,7 @@
     /* gold */
     --secondary-foreground: 270 54% 14%;
     --muted: 30 20% 91%;
-    --muted-foreground: 246 15% 50%;
+    --muted-foreground: 246 15% 38%;
     --accent: 43 56% 55%;
     --accent-foreground: 270 54% 14%;
     --destructive: 0 62% 38%;
@@ -44,7 +44,7 @@
     --color-charcoal: 18 17 26;
     --color-charcoal-mid: 30 28 44;
     --color-charcoal-soft: 42 40 64;
-    --color-charcoal-muted: 61 59 80;
+    --color-charcoal-muted: 46 44 64;
   }
 
   .dark {
@@ -96,8 +96,35 @@
     scroll-behavior: smooth;
   }
 
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    /* entrance animations slide in from the side; never let them cause sideways scroll */
+    overflow-x: clip;
+  }
+
+  /* Legibility: 16px base, regular weight, slightly looser lines. */
   body {
     @apply bg-cream-soft text-charcoal-muted font-body antialiased overflow-x-hidden;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.65;
+  }
+
+  p, li { text-wrap: pretty; }
+
+  /* Headings: stronger weight for the display serif (was 300). */
+  h1, h2, h3 { font-weight: 600; }
+
+  /* Every tappable thing is at least 44px on touch screens. */
+  @media (pointer: coarse) {
+    button, [role='button'], select, input[type='checkbox'], input[type='radio'] { min-height: 44px; }
+    input[type='checkbox'], input[type='radio'] { min-width: 22px; }
+  }
+
+  /* iOS zooms into inputs under 16px; keep form text at 16px on phones. */
+  @media (max-width: 640px) {
+    input, select, textarea { font-size: 16px !important; }
   }
 
   ::selection {
@@ -136,37 +163,39 @@
   }
 
   .eyebrow {
-    @apply font-body text-[0.65rem] font-bold tracking-[0.4em] uppercase text-gold;
+    @apply font-body text-[0.78rem] font-black tracking-[0.3em] uppercase text-gold-deep;
   }
+  .dark .eyebrow, .bg-charcoal .eyebrow, .bg-charcoal-mid .eyebrow, .bg-purple-darkest .eyebrow, .page-hero .eyebrow { @apply text-gold; }
 
   .text-display-xl {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(3.5rem, 8vw, 7rem);
+    font-size: clamp(2.6rem, 8vw, 7rem);
     line-height: 1.05;
-    font-weight: 300;
+    font-weight: 500;
   }
 
   .text-display-lg {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-size: clamp(2.2rem, 5vw, 4.5rem);
     line-height: 1.1;
-    font-weight: 300;
+    font-weight: 600;
   }
 
   .text-display-md {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(1.8rem, 3.5vw, 3rem);
-    line-height: 1.2;
-    font-weight: 400;
+    font-size: clamp(1.9rem, 3.5vw, 3rem);
+    line-height: 1.15;
+    font-weight: 600;
   }
 
   /* ============ BRAND BUTTONS ============ */
   .btn-maxims {
-    @apply inline-flex items-center gap-2 font-title text-[0.68rem] font-semibold tracking-[0.2em] uppercase transition-all duration-300 cursor-pointer border-none outline-none;
+    @apply inline-flex items-center gap-2 font-title text-[0.78rem] font-bold tracking-[0.16em] uppercase transition-all duration-300 cursor-pointer border-none outline-none;
+    min-height: 48px;
   }
 
   .btn-gold-solid {
-    @apply btn-maxims px-8 py-3.5 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest;
+    @apply btn-maxims px-6 sm:px-8 py-3.5 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest;
     box-shadow: 0 4px 20px rgba(201, 168, 76, 0.3);
   }
 
@@ -176,16 +205,17 @@
   }
 
   .btn-outline-gold {
-    @apply btn-maxims px-8 py-3.5 bg-transparent text-gold border border-gold/60;
+    @apply btn-maxims px-6 sm:px-8 py-3.5 bg-transparent text-gold-deep border border-gold;
   }
+  .dark .btn-outline-gold, .bg-charcoal .btn-outline-gold, .bg-purple-darkest .btn-outline-gold { @apply text-gold; }
 
   .btn-outline-gold:hover {
     @apply bg-gold text-purple-darkest border-gold -translate-y-0.5;
   }
 
   .btn-outline-light {
-    @apply btn-maxims px-8 py-3.5 bg-transparent text-cream-soft border;
-    border-color: rgba(247, 245, 248, 0.3);
+    @apply btn-maxims px-6 sm:px-8 py-3.5 bg-transparent text-cream-soft border;
+    border-color: rgba(247, 245, 248, 0.55);
   }
 
   .btn-outline-light:hover {
@@ -194,7 +224,7 @@
   }
 
   .btn-purple-solid {
-    @apply btn-maxims px-8 py-3.5 bg-purple-rich text-gold-light border border-gold/15;
+    @apply btn-maxims px-6 sm:px-8 py-3.5 bg-purple-rich text-gold-light border border-gold/30;
   }
 
   .btn-purple-solid:hover {
@@ -203,11 +233,11 @@
 
   /* ============ SECTION PATTERNS ============ */
   .section-base {
-    @apply px-6 py-24 md:px-16 lg:px-24;
+    @apply px-4 py-16 sm:px-6 sm:py-20 md:px-16 md:py-24 lg:px-24;
   }
 
   .section-header-center {
-    @apply text-center mb-16;
+    @apply text-center mb-10 sm:mb-16;
   }
 
   .gold-divider {
@@ -271,8 +301,8 @@
   /* ============ PAGE HERO ============ */
   .page-hero {
     @apply relative flex items-center justify-center text-center overflow-hidden;
-    padding-top: 80px;
-    min-height: 400px;
+    padding-top: 72px;
+    min-height: 340px;
     background: #1E1C2C;
   }
 
@@ -314,9 +344,10 @@
 
   /* ── Form inputs (admin: Transactions payment-link modal, etc.) ──── */
   .lux-input {
-    @apply w-full bg-charcoal border border-gold/10 text-cream-soft
-           font-body text-sm px-4 py-3 outline-none transition-colors
-           placeholder:text-cream-soft/40 focus:border-gold/40;
+    @apply w-full bg-charcoal border border-gold/25 text-cream-soft
+           font-body text-[0.95rem] px-4 py-3 outline-none transition-colors
+           placeholder:text-cream-soft/50 focus:border-gold/60;
+    min-height: 44px;
   }
 
   /* ── Notice tints (forms, payment callback) ──────────────────── */
@@ -336,6 +367,47 @@
     background-image: linear-gradient(90deg, rgba(201,168,76,0) 0%, rgba(201,168,76,0.08) 50%, rgba(201,168,76,0) 100%);
     background-size: 700px 100%;
   }
+}
+
+/* ============ JOURNAL POST BODY (sanitised HTML) ============ */
+@layer components {
+  .prose-maxims { @apply font-body text-charcoal; font-size: 1.1rem; line-height: 1.8; overflow-wrap: anywhere; }
+  .prose-maxims > * + * { margin-top: 1.15em; }
+  .prose-maxims h2 { @apply font-display text-purple-rich dark:text-gold-light; font-size: clamp(1.7rem, 4vw, 2.2rem); font-weight: 600; line-height: 1.2; margin-top: 1.8em; }
+  .prose-maxims h3 { @apply font-display text-purple-rich dark:text-gold-light; font-size: clamp(1.35rem, 3vw, 1.6rem); font-weight: 600; line-height: 1.25; margin-top: 1.5em; }
+  .prose-maxims a { @apply text-gold-deep underline underline-offset-4 decoration-gold/60 hover:text-purple-rich; }
+  .prose-maxims strong, .prose-maxims b { font-weight: 700; }
+  .prose-maxims ul { list-style: disc; padding-left: 1.4em; }
+  .prose-maxims ol { list-style: decimal; padding-left: 1.4em; }
+  .prose-maxims li + li { margin-top: 0.4em; }
+  .prose-maxims li::marker { color: #A67C2B; }
+  .prose-maxims blockquote { @apply border-l-4 border-gold pl-5 italic font-display text-purple-rich dark:text-gold-light; font-size: 1.35rem; line-height: 1.5; }
+  .prose-maxims img { @apply w-full h-auto border border-gold/20; }
+  .prose-maxims hr { @apply border-0 h-px bg-gold/40 my-10; }
+  .prose-maxims code { @apply bg-cream-dark px-1.5 py-0.5 text-[0.95em]; }
+  .prose-maxims pre { @apply bg-charcoal text-cream-soft p-4 overflow-x-auto text-sm; }
+  /* In the admin editor (dark surface) */
+  .prose-admin { @apply text-cream-soft; font-size: 1rem; }
+  .prose-admin h2, .prose-admin h3, .prose-admin blockquote { @apply text-gold-light; }
+  .prose-admin a { @apply text-gold; }
+  .prose-admin p.is-editor-empty:first-child::before { content: attr(data-placeholder); float: left; height: 0; pointer-events: none; @apply text-cream-soft/50; }
+}
+
+/* ============ ADMIN: tables become cards on phones ============ */
+/* AdminLayout labels every td with its column header (data-label). */
+@media (max-width: 767px) {
+  .admin-main table { display: block; width: 100%; min-width: 0 !important; }
+  .admin-main thead { display: none; }
+  .admin-main tbody { display: block; }
+  .admin-main tr { display: block; min-width: 0; padding: 0.75rem 0.25rem; border-bottom: 1px solid rgba(201, 168, 76, 0.18); }
+  .admin-main td { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.35rem 0.75rem !important; text-align: right; min-width: 0; white-space: normal !important; }
+  .admin-main td > * { max-width: 70%; }
+  .admin-main td[data-label]::before { content: attr(data-label); flex: none; text-align: left; @apply font-title text-[0.72rem] tracking-[0.12em] uppercase text-cream-soft/70; }
+  .admin-main td[data-label='']::before, .admin-main td[colspan]::before { content: none; }
+  .admin-main td[colspan] { justify-content: center; text-align: center; }
+  .admin-main td[colspan] > * { max-width: 100%; }
+  /* horizontal-scroll wrappers are not needed once rows are cards */
+  .admin-main .overflow-x-auto:has(> table) { overflow-x: visible; }
 }
 
 @layer utilities {

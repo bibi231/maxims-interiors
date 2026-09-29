@@ -43,14 +43,14 @@ function MemberForm({ initial = BLANK, onClose, onSave, profiles, profileId }) {
         initial={{ scale: 0.93, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.93, y: 20 }} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-gold/10">
           <h2 className="font-display text-xl text-cream-soft">{initial.id ? 'Edit Member' : 'New Member'}</h2>
-          <button onClick={onClose} className="text-cream-soft/30 hover:text-gold"><X size={18} /></button>
+          <button onClick={onClose} className="text-cream-soft/70 hover:text-gold"><X size={18} /></button>
         </div>
         <form onSubmit={submit} className="p-6 space-y-4">
           <div className="flex items-center gap-4">
             <div className="w-20 h-20 border border-gold/15 overflow-hidden bg-charcoal grid place-items-center shrink-0">
               {form.photo_url ? <img src={form.photo_url} className="w-full h-full object-cover" /> : <span className="text-2xl opacity-30">👤</span>}
             </div>
-            <label className="btn-outline-gold cursor-pointer text-[0.6rem]"><Upload size={13} /> {imgBusy ? 'Uploading…' : 'Upload Photo'}<input type="file" accept="image/*" className="hidden" onChange={upload} disabled={imgBusy} /></label>
+            <label className="btn-outline-gold cursor-pointer text-[0.74rem]"><Upload size={13} /> {imgBusy ? 'Uploading…' : 'Upload Photo'}<input type="file" accept="image/*" className="hidden" onChange={upload} disabled={imgBusy} /></label>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <Lbl label="Full Name"><input className="lux-input" value={form.full_name} onChange={(e) => set('full_name', e.target.value)} required /></Lbl>
@@ -71,12 +71,12 @@ function MemberForm({ initial = BLANK, onClose, onSave, profiles, profileId }) {
             </Lbl>
           </div>
           <button type="button" onClick={() => set('is_published', !form.is_published)} className="flex items-center gap-2.5">
-            {form.is_published ? <ToggleRight size={22} className="text-gold" /> : <ToggleLeft size={22} className="text-cream-soft/25" />}
-            <span className="font-title text-[0.6rem] tracking-[0.15em] uppercase text-cream-soft/45">Published</span>
+            {form.is_published ? <ToggleRight size={22} className="text-gold" /> : <ToggleLeft size={22} className="text-cream-soft/60" />}
+            <span className="font-title text-[0.74rem] tracking-[0.15em] uppercase text-cream-soft/75">Published</span>
           </button>
           <div className="flex gap-3">
-            <button type="submit" disabled={saving} className="flex-1 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.65rem] tracking-[0.18em] uppercase py-3 disabled:opacity-50">{saving ? 'Saving…' : initial.id ? 'Update' : 'Create'}</button>
-            <button type="button" onClick={onClose} className="px-6 border border-gold/15 text-cream-soft/40 hover:text-cream-soft/70 font-title text-[0.62rem] uppercase">Cancel</button>
+            <button type="submit" disabled={saving} className="flex-1 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.76rem] tracking-[0.18em] uppercase py-3 disabled:opacity-50">{saving ? 'Saving…' : initial.id ? 'Update' : 'Create'}</button>
+            <button type="button" onClick={onClose} className="px-6 border border-gold/15 text-cream-soft/75 hover:text-cream-soft/70 font-title text-[0.74rem] uppercase">Cancel</button>
           </div>
         </form>
       </motion.div>
@@ -84,7 +84,7 @@ function MemberForm({ initial = BLANK, onClose, onSave, profiles, profileId }) {
   )
 }
 const Lbl = ({ label, children }) => (
-  <div><label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/35 block mb-2">{label}</label>{children}</div>
+  <div><label className="font-title text-[0.72rem] tracking-[0.2em] uppercase text-cream-soft/70 block mb-2">{label}</label>{children}</div>
 )
 
 export default function Team() {
@@ -104,11 +104,11 @@ export default function Team() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="font-title text-xl text-cream-soft tracking-wide">Team</h1>
-          <p className="font-body text-[0.75rem] text-cream-soft/30 mt-0.5">{members.length} members</p>
+          <p className="font-body text-[0.84rem] text-cream-soft/70 mt-0.5">{members.length} members</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          {isOwner && <Link to="/admin/settings?tab=team&invite=1" className="min-h-[44px] flex items-center gap-2 border border-gold/40 text-gold font-title text-[0.7rem] tracking-[0.14em] uppercase px-4 hover:bg-gold/10"><UserPlus size={14} /> Invite team member</Link>}
-          {canWrite('team') && <button onClick={() => setForm({})} className="min-h-[44px] flex items-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.7rem] font-bold tracking-[0.14em] uppercase px-5"><Plus size={14} /> Add profile</button>}
+          {isOwner && <Link to="/admin/settings?tab=team&invite=1" className="min-h-[44px] flex items-center gap-2 border border-gold/40 text-gold font-title text-[0.8rem] tracking-[0.14em] uppercase px-4 hover:bg-gold/10"><UserPlus size={14} /> Invite team member</Link>}
+          {canWrite('team') && <button onClick={() => setForm({})} className="min-h-[44px] flex items-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.8rem] font-bold tracking-[0.14em] uppercase px-5"><Plus size={14} /> Add profile</button>}
         </div>
       </div>
       <p className="font-body text-[0.88rem] text-cream-soft/75 -mt-3 mb-5">
@@ -121,20 +121,20 @@ export default function Team() {
             <div key={m.id} className="bg-charcoal border border-gold/8 group hover:border-gold/22 transition-all">
               <div className="aspect-[3/4] relative overflow-hidden bg-charcoal-mid">
                 {m.photo_url ? <img src={m.photo_url} className="w-full h-full object-cover" /> : <div className="w-full h-full grid place-items-center text-3xl opacity-20">👤</div>}
-                {!m.is_published && <span className="absolute top-2 right-2 bg-charcoal/80 text-cream-soft/60 font-title text-[0.45rem] uppercase px-2 py-0.5">Hidden</span>}
+                {!m.is_published && <span className="absolute top-2 right-2 bg-charcoal/80 text-cream-soft/85 font-title text-[0.72rem] uppercase px-2 py-0.5">Hidden</span>}
                 {canWrite('team') && (
                   <div className="absolute top-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => setForm(m)} className="w-7 h-7 bg-charcoal/80 border border-gold/15 text-cream-soft/60 hover:text-gold grid place-items-center"><Edit2 size={11} /></button>
+                    <button onClick={() => setForm(m)} className="w-7 h-7 bg-charcoal/80 border border-gold/15 text-cream-soft/85 hover:text-gold grid place-items-center"><Edit2 size={11} /></button>
                     {isOwner && <button onClick={() => remove(m.id)} className="w-7 h-7 bg-charcoal/80 border border-red-500/20 text-red-500/50 hover:text-red-400 grid place-items-center"><Trash2 size={11} /></button>}
                   </div>
                 )}
               </div>
               <div className="p-4">
                 <h3 className="font-editorial text-[0.9rem] text-cream-soft/80">{m.full_name}</h3>
-                <p className="font-title text-[0.6rem] tracking-wide uppercase text-gold/70 mt-0.5">{m.title}</p>
+                <p className="font-title text-[0.74rem] tracking-wide uppercase text-gold/70 mt-0.5">{m.title}</p>
                 {canWrite('team') && (
-                  <button onClick={() => togglePublish(m)} className="mt-3 flex items-center gap-1.5 font-body text-[0.62rem] text-cream-soft/35">
-                    {m.is_published ? <ToggleRight size={15} className="text-green-400" /> : <ToggleLeft size={15} className="text-cream-soft/20" />} {m.is_published ? 'Visible' : 'Hidden'}
+                  <button onClick={() => togglePublish(m)} className="mt-3 flex items-center gap-1.5 font-body text-[0.74rem] text-cream-soft/70">
+                    {m.is_published ? <ToggleRight size={15} className="text-green-400" /> : <ToggleLeft size={15} className="text-cream-soft/60" />} {m.is_published ? 'Visible' : 'Hidden'}
                   </button>
                 )}
               </div>

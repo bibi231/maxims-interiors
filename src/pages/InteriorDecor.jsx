@@ -41,7 +41,7 @@ export default function InteriorDecor() {
                 <div className="page-hero-pattern" />
                 <motion.div className="relative z-10 px-6 py-24 text-center max-w-[850px] mx-auto"
                     initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75 }}>
-                    <p className="eyebrow mb-4" style={{ color: 'rgba(201,168,76,0.65)' }}>Expert Services</p>
+                    <p className="eyebrow mb-4 text-gold">Expert Services</p>
                     <h1 className="text-display-lg text-cream-soft font-display mb-6">Interior Décor<br /><em className="text-gold-light italic">& Design</em></h1>
                     <div className="flex gap-4 justify-center flex-wrap">
                         <Link to="/contact" className="btn-maxims btn-gold-solid">Book Consultation</Link>
@@ -67,7 +67,7 @@ export default function InteriorDecor() {
                             <h3 className="font-title text-[0.9rem] font-bold tracking-[0.14em] uppercase text-purple-rich dark:text-gold-light mb-3">{s.title}</h3>
                             <p className="font-body text-[0.98rem] text-charcoal-muted leading-relaxed mb-4">{s.description}</p>
                             {s.price_from ? <p className="font-body text-[0.95rem] font-bold text-gold-deep dark:text-gold mb-4">From {formatNaira(s.price_from)}</p> : null}
-                            <button onClick={() => quote(s.title)} className="inline-flex items-center min-h-[44px] font-title text-[0.72rem] font-bold tracking-[0.16em] uppercase text-gold-deep dark:text-gold hover:text-purple-rich transition-colors">Request a Quote <ArrowRight size={13} className="inline ml-1.5" /></button>
+                            <button onClick={() => quote(s.title)} className="inline-flex items-center min-h-[44px] font-title text-[0.8rem] font-bold tracking-[0.16em] uppercase text-gold-deep dark:text-gold hover:text-purple-rich transition-colors">Request a Quote <ArrowRight size={13} className="inline ml-1.5" /></button>
                         </motion.div>
                     ))}
                 </div>
@@ -76,7 +76,7 @@ export default function InteriorDecor() {
             {/* Process */}
             <section className="section-base bg-charcoal-mid">
                 <div className="section-header-center">
-                    <p className="eyebrow mb-3" style={{ color: 'rgba(201,168,76,0.65)' }}>Our Method</p>
+                    <p className="eyebrow mb-3 text-gold">Our Method</p>
                     <h2 className="text-display-md text-gold-light font-display">The Design Process</h2>
                     <div className="gold-divider" />
                 </div>
@@ -86,8 +86,8 @@ export default function InteriorDecor() {
                         <motion.div key={s.num} className="flex-1 text-center relative z-10"
                             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} viewport={{ once: true }}>
                             <div className="w-12 h-12 rounded-full border border-gold bg-charcoal-mid text-gold font-title text-sm flex items-center justify-center mx-auto mb-6">{s.num}</div>
-                            <h3 className="font-title text-[0.7rem] tracking-[0.2em] uppercase text-cream-soft mb-3">{s.title}</h3>
-                            <p className="font-body text-[0.78rem] text-cream-soft leading-relaxed">{s.desc}</p>
+                            <h3 className="font-title text-[0.8rem] tracking-[0.2em] uppercase text-cream-soft mb-3">{s.title}</h3>
+                            <p className="font-body text-[0.9rem] text-cream-soft leading-relaxed">{s.desc}</p>
                         </motion.div>
                     ))}
                 </div>
@@ -104,7 +104,7 @@ export default function InteriorDecor() {
                     {STYLES.map(s => (
                         <div key={s.name} className="p-6 border border-purple-rich/10 hover:border-gold hover:bg-gold/5 transition-all text-center group cursor-default">
                             <h3 className="font-editorial text-xl text-purple-rich dark:text-gold-light mb-2 group-hover:text-gold transition-colors">{s.name}</h3>
-                            <p className="font-body text-[0.8rem] text-charcoal-muted">{s.desc}</p>
+                            <p className="font-body text-[0.9rem] text-charcoal-muted">{s.desc}</p>
                         </div>
                     ))}
                 </div>
@@ -121,7 +121,7 @@ export default function InteriorDecor() {
                     {PACKAGES.map(p => (
                         <motion.div key={p.name} className={`relative p-7 sm:p-10 lg:p-12 border flex flex-col ${p.featured ? 'bg-purple-rich border-gold shadow-gold-lg' : 'bg-card border-purple-rich/10'}`}
                             initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                            {p.featured && <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gold text-purple-darkest font-title text-[0.7rem] font-bold tracking-[0.22em] uppercase py-2 px-4 whitespace-nowrap">Most Popular</div>}
+                            {p.featured && <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gold text-purple-darkest font-title text-[0.8rem] font-bold tracking-[0.22em] uppercase py-2 px-4 whitespace-nowrap">Most Popular</div>}
                             <h3 className={`font-title text-[0.9rem] font-bold tracking-[0.24em] uppercase mb-2 ${p.featured ? 'text-gold' : 'text-purple-rich dark:text-gold-light'}`}>{p.name}</h3>
                             <div className={`font-editorial font-bold text-4xl mb-8 ${p.featured ? 'text-cream-soft' : 'text-charcoal'}`}>{priceLabel(p)}</div>
                             <ul className="space-y-3.5 mb-10 flex-1">

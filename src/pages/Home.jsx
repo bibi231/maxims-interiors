@@ -38,7 +38,7 @@ function MarqueeStrip() {
             <VelocityScroll
                 text="✦ MAXIMS INTERIORS ✦ LUXURY LIVING ✦ CUSTOM DÉCOR ✦ SPACE PLANNING ✦ "
                 default_velocity={3}
-                className="font-title text-2xl md:text-4xl tracking-[0.2em] uppercase text-gold/30"
+                className="font-title text-2xl md:text-4xl tracking-[0.2em] uppercase text-gold/75"
             />
         </div>
     )
@@ -113,7 +113,7 @@ export default function Home() {
                         transition={{ delay: 1.3, duration: 0.7 }}
                     >
                         <Link to="/gallery">
-                            <ShinyButton className="bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest dark:text-cream-soft hover:shadow-gold rounded-none">
+                            <ShinyButton className="min-h-[48px] bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest dark:text-cream-soft hover:shadow-gold rounded-none">
                                 <span className="flex items-center gap-2">Explore Our Work <ArrowRight size={14} /></span>
                             </ShinyButton>
                         </Link>
@@ -129,7 +129,7 @@ export default function Home() {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 2.2, duration: 1 }}
                     >
-                        <span className="font-body text-[0.52rem] tracking-[0.4em] uppercase text-gold/40">Scroll</span>
+                        <span className="font-body text-[0.72rem] tracking-[0.4em] uppercase text-gold/75">Scroll</span>
                         <div className="w-px h-12 animate-scroll-pulse" style={{ background: 'linear-gradient(to bottom, #C9A84C, transparent)' }} />
                     </motion.div>
                 </div>
@@ -147,7 +147,7 @@ export default function Home() {
                         transition={{ delay, duration: 0.7 }}
                     >
                         <div className="font-title text-xl text-gold font-semibold">{val}</div>
-                        <div className="font-body text-[0.58rem] tracking-[0.2em] uppercase text-cream-soft mt-0.5">{lbl}</div>
+                        <div className="font-body text-[0.76rem] tracking-[0.2em] uppercase text-cream-soft mt-0.5">{lbl}</div>
                     </motion.div>
                 ))}
             </section>
@@ -175,9 +175,9 @@ export default function Home() {
                         >
                             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-gold-deep via-gold to-gold-bright scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                             <span className="text-3xl block mb-4">{s.icon}</span>
-                            <h3 className="font-title text-[0.78rem] tracking-[0.18em] uppercase text-purple-rich dark:text-gold-light mb-2.5">{s.label}</h3>
-                            <p className="font-body text-[0.84rem] text-charcoal-muted leading-relaxed mb-4">{s.desc}</p>
-                            <Link to="/interior-decor" className="inline-flex items-center gap-1.5 font-title text-[0.6rem] tracking-[0.15em] uppercase text-gold opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            <h3 className="font-title text-[0.9rem] tracking-[0.18em] uppercase text-purple-rich dark:text-gold-light mb-2.5">{s.label}</h3>
+                            <p className="font-body text-[0.95rem] text-charcoal-muted leading-relaxed mb-4">{s.desc}</p>
+                            <Link to="/interior-decor" className="inline-flex items-center gap-1.5 min-h-[44px] font-title text-[0.76rem] font-bold tracking-[0.15em] uppercase text-gold-deep dark:text-gold lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200">
                                 Enquire <ArrowRight size={11} />
                             </Link>
                         </motion.div>
@@ -253,7 +253,7 @@ export default function Home() {
                         {/* Badge */}
                         <div className="absolute -bottom-5 -right-5 bg-gold p-5 text-center">
                             <span className="font-title text-3xl text-purple-darkest dark:text-cream-soft font-bold block leading-none">8</span>
-                            <span className="font-body text-[0.55rem] tracking-widest uppercase text-purple-rich dark:text-gold-light font-bold block mt-1">Years of<br />Excellence</span>
+                            <span className="font-body text-[0.76rem] tracking-widest uppercase text-purple-rich dark:text-gold-light font-bold block mt-1">Years of<br />Excellence</span>
                         </div>
                     </motion.div>
 
@@ -294,7 +294,7 @@ export default function Home() {
                             viewport={{ once: true }}
                         >
                             <div className="font-title text-[clamp(1.8rem,3vw,2.5rem)] text-gold font-semibold mb-1">{n}</div>
-                            <div className="font-body text-[0.65rem] tracking-[0.18em] uppercase text-cream-soft">{l}</div>
+                            <div className="font-body text-[0.76rem] tracking-[0.18em] uppercase text-cream-soft">{l}</div>
                         </motion.div>
                     ))}
                 </div>
@@ -307,7 +307,7 @@ export default function Home() {
                 }} />
 
                 <div className="section-header-center relative z-10">
-                    <p className="eyebrow mb-3" style={{ color: 'rgba(201,168,76,0.65)' }}>Client Words</p>
+                    <p className="eyebrow mb-3 text-gold">Client Words</p>
                     <h2 className="text-display-md text-gold-light font-display">What Our Clients Say</h2>
                     <div className="gold-divider" />
                 </div>
@@ -333,7 +333,7 @@ export default function Home() {
                         <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display">Shop Our Collection</h2>
                         <div className="gold-divider-left" />
                     </div>
-                    <Link to="/shop" className="hidden sm:inline-flex btn-maxims btn-outline-gold text-[0.62rem]">
+                    <Link to="/shop" className="hidden sm:inline-flex btn-maxims btn-outline-gold text-[0.74rem]">
                         Full Shop <ArrowRight size={13} />
                     </Link>
                 </div>
@@ -357,19 +357,19 @@ export default function Home() {
                                     <span className="text-5xl group-hover:scale-110 transition-transform duration-400">🛋️</span>
                                 )}
                                 {p.badge && (
-                                    <div className="absolute top-3 left-3 bg-gold text-purple-darkest dark:text-cream-soft font-body font-black text-[0.5rem] tracking-[0.12em] uppercase px-2 py-0.5">
+                                    <div className="absolute top-3 left-3 bg-gold text-purple-darkest dark:text-cream-soft font-body font-black text-[0.72rem] tracking-[0.12em] uppercase px-2 py-0.5">
                                         {p.badge}
                                     </div>
                                 )}
                                 <div className="absolute inset-0 bg-purple-rich/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    <button onClick={(e) => { e.stopPropagation(); addToCart(p); openDrawer() }} className="btn-maxims btn-gold-solid text-[0.58rem] px-4 py-2">Add to Cart</button>
+                                    <button onClick={(e) => { e.stopPropagation(); addToCart(p); openDrawer() }} className="btn-maxims btn-gold-solid text-[0.76rem] px-4 py-2">Add to Cart</button>
                                 </div>
                             </div>
                             <div className="p-4">
-                                <p className="eyebrow text-[0.52rem] mb-1.5">{p.category}</p>
+                                <p className="eyebrow text-[0.72rem] mb-1.5">{p.category}</p>
                                 <h3 className="font-editorial text-[0.88rem] text-charcoal mb-3">{p.name}</h3>
                                 <div className="flex items-center justify-between">
-                                    <span className="font-title text-[0.82rem] text-purple-rich dark:text-gold-light font-semibold">{formatPrice(p.price)}</span>
+                                    <span className="font-title text-[0.95rem] text-purple-rich dark:text-gold-light font-semibold">{formatPrice(p.price)}</span>
                                     <button className="text-charcoal-muted hover:text-gold transition-colors text-base">♡</button>
                                 </div>
                             </div>
@@ -392,7 +392,7 @@ export default function Home() {
                     transition={{ duration: 0.8 }}
                     viewport={{ once: true }}
                 >
-                    <p className="eyebrow mb-6" style={{ color: 'rgba(201,168,76,0.6)' }}>Ready to Begin?</p>
+                    <p className="eyebrow mb-6 text-gold">Ready to Begin?</p>
                     <h2 className="text-display-lg text-cream-soft font-display mb-4">
                         Transform Your Space<br /><em className="text-gold-light italic">Into a Masterpiece</em>
                     </h2>

@@ -60,7 +60,7 @@ export default function BulkOrders() {
             <section className="page-hero min-h-[380px]">
                 <div className="page-hero-overlay" /><div className="page-hero-pattern" />
                 <motion.div className="relative z-10 px-6 py-24 text-center" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75 }}>
-                    <p className="eyebrow mb-4" style={{ color: 'rgba(201,168,76,0.65)' }}>Commercial Program</p>
+                    <p className="eyebrow mb-4 text-gold">Commercial Program</p>
                     <h1 className="text-display-lg text-cream-soft font-display mb-4">Bulk & Trade Orders</h1>
                     <div className="flex items-center justify-center gap-4 my-3">
                         <div className="h-px w-16" style={{ background: 'linear-gradient(to right, transparent, #C9A84C)' }} /><span className="text-gold text-xs">✦</span>
@@ -81,7 +81,7 @@ export default function BulkOrders() {
                     {SERVE.map(s => (
                         <div key={s.label} className="bg-card border border-purple-rich/5 p-6 text-center hover:border-gold transition-all group">
                             <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{s.icon}</div>
-                            <h3 className="font-title text-[0.62rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light">{s.label}</h3>
+                            <h3 className="font-title text-[0.74rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light">{s.label}</h3>
                         </div>
                     ))}
                 </div>
@@ -90,7 +90,7 @@ export default function BulkOrders() {
             {/* How it Works */}
             <section className="section-base bg-charcoal-mid">
                 <div className="section-header-center">
-                    <p className="eyebrow mb-3" style={{ color: 'rgba(201,168,76,0.6)' }}>Simple Workflow</p>
+                    <p className="eyebrow mb-3 text-gold">Simple Workflow</p>
                     <h2 className="text-display-md text-gold-light font-display">How It Works</h2>
                     <div className="gold-divider" />
                 </div>
@@ -103,8 +103,8 @@ export default function BulkOrders() {
                     ].map((s, i) => (
                         <div key={s.n} className="flex-1 relative z-10">
                             <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold text-gold font-title text-xl flex items-center justify-center mx-auto mb-6">{s.n}</div>
-                            <h4 className="font-title text-[0.75rem] tracking-[0.2em] uppercase text-cream-soft mb-3">{s.t}</h4>
-                            <p className="font-body text-[0.82rem] text-cream-soft leading-relaxed">{s.d}</p>
+                            <h4 className="font-title text-[0.84rem] tracking-[0.2em] uppercase text-cream-soft mb-3">{s.t}</h4>
+                            <p className="font-body text-[0.95rem] text-cream-soft leading-relaxed">{s.d}</p>
                         </div>
                     ))}
                 </div>
@@ -122,8 +122,8 @@ export default function BulkOrders() {
                         <div key={b.title} className="card-luxury p-10 text-center relative group overflow-hidden">
                             <div className="absolute inset-0 bg-gold/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                             <b.icon size={28} className="text-gold mx-auto mb-5 relative z-10" />
-                            <h3 className="font-title text-[0.7rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light mb-3 relative z-10">{b.title}</h3>
-                            <p className="font-body text-[0.8rem] text-charcoal-muted leading-relaxed relative z-10">{b.desc}</p>
+                            <h3 className="font-title text-[0.8rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light mb-3 relative z-10">{b.title}</h3>
+                            <p className="font-body text-[0.9rem] text-charcoal-muted leading-relaxed relative z-10">{b.desc}</p>
                         </div>
                     ))}
                 </div>
@@ -139,23 +139,23 @@ export default function BulkOrders() {
                     </div>
                     <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
                         <div className="flex flex-col gap-2">
-                            <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-gold">Full Name</label>
+                            <label className="font-title text-[0.76rem] tracking-[0.2em] uppercase text-gold">Full Name</label>
                             <input type="text" required value={reqData.name} onChange={e => setReqData({ ...reqData, name: e.target.value })} className="w-full bg-cream-soft/30 border border-purple-rich/10 px-4 py-3 font-body text-sm focus:border-gold outline-none transition-colors disabled:opacity-50" disabled={reqStatus === 'submitting'} placeholder="John Doe" />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-gold">Company Name</label>
+                            <label className="font-title text-[0.76rem] tracking-[0.2em] uppercase text-gold">Company Name</label>
                             <input type="text" value={reqData.company} onChange={e => setReqData({ ...reqData, company: e.target.value })} className="w-full bg-cream-soft/30 border border-purple-rich/10 px-4 py-3 font-body text-sm focus:border-gold outline-none transition-colors disabled:opacity-50" disabled={reqStatus === 'submitting'} placeholder="Luxe Properties Ltd" />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-gold">Email Address</label>
+                            <label className="font-title text-[0.76rem] tracking-[0.2em] uppercase text-gold">Email Address</label>
                             <input type="email" required value={reqData.email} onChange={e => setReqData({ ...reqData, email: e.target.value })} className="w-full bg-cream-soft/30 border border-purple-rich/10 px-4 py-3 font-body text-sm focus:border-gold outline-none transition-colors disabled:opacity-50" disabled={reqStatus === 'submitting'} placeholder="john@company.com" />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-gold">Phone Number</label>
+                            <label className="font-title text-[0.76rem] tracking-[0.2em] uppercase text-gold">Phone Number</label>
                             <input type="tel" value={reqData.phone} onChange={e => setReqData({ ...reqData, phone: e.target.value })} className="w-full bg-cream-soft/30 border border-purple-rich/10 px-4 py-3 font-body text-sm focus:border-gold outline-none transition-colors disabled:opacity-50" disabled={reqStatus === 'submitting'} placeholder="+234 ..." />
                         </div>
                         <div className="flex flex-col gap-2 md:col-span-2">
-                            <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-gold">Project Requirements</label>
+                            <label className="font-title text-[0.76rem] tracking-[0.2em] uppercase text-gold">Project Requirements</label>
                             <textarea required rows="4" value={reqData.requirements} onChange={e => setReqData({ ...reqData, requirements: e.target.value })} className="w-full bg-cream-soft/30 border border-purple-rich/10 px-4 py-3 font-body text-sm focus:border-gold outline-none transition-colors resize-none disabled:opacity-50" disabled={reqStatus === 'submitting'} placeholder="Tell us about your project and product needs..." />
                         </div>
                         {reqStatus === 'error' && <p className="md:col-span-2 font-body text-[0.95rem] text-red-700 dark:text-red-400">{reqError}</p>}
@@ -178,8 +178,8 @@ export default function BulkOrders() {
                     <div className="space-y-4">
                         {FAQS.map(q => (
                             <div key={q.q} className="border-b border-purple-rich/10 pb-6 group cursor-pointer">
-                                <h4 className="font-title text-[0.75rem] tracking-[0.1em] text-purple-rich dark:text-gold-light mb-3 group-hover:text-gold transition-colors">{q.q}</h4>
-                                <p className="font-body text-[0.82rem] text-charcoal-muted leading-relaxed">{q.a}</p>
+                                <h4 className="font-title text-[0.84rem] tracking-[0.1em] text-purple-rich dark:text-gold-light mb-3 group-hover:text-gold transition-colors">{q.q}</h4>
+                                <p className="font-body text-[0.95rem] text-charcoal-muted leading-relaxed">{q.a}</p>
                             </div>
                         ))}
                     </div>

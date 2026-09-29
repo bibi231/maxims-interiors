@@ -30,7 +30,7 @@ export default function Gallery() {
             <section className="page-hero min-h-[380px]">
                 <div className="page-hero-overlay" /><div className="page-hero-pattern" />
                 <motion.div className="relative z-10 px-6 py-24 text-center" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75 }}>
-                    <p className="eyebrow mb-4" style={{ color: 'rgba(201,168,76,0.65)' }}>Our Portfolio</p>
+                    <p className="eyebrow mb-4 text-gold">Our Portfolio</p>
                     <h1 className="text-display-lg text-cream-soft font-display mb-4">Gallery</h1>
                     <div className="flex items-center justify-center gap-4 my-3">
                         <div className="h-px w-16" style={{ background: 'linear-gradient(to right, transparent, #C9A84C)' }} /><span className="text-gold text-xs">✦</span>
@@ -44,7 +44,7 @@ export default function Gallery() {
                 <div className="flex flex-wrap gap-2 justify-center mb-10">
                     {uniqueCats.map(fi => (
                         <button key={fi} onClick={() => setF(fi)}
-                            className={`font-title text-[0.58rem] tracking-[0.18em] uppercase px-4 py-2 border transition-all duration-200
+                            className={`font-title text-[0.76rem] tracking-[0.18em] uppercase px-4 py-2 border transition-all duration-200
                 ${f === fi ? 'bg-purple-rich text-gold-light border-purple-rich' : 'border-purple-rich/12 text-charcoal-muted hover:border-gold hover:text-gold'}`}>
                             {fi}
                         </button>
@@ -71,7 +71,7 @@ export default function Gallery() {
                                     <p className="eyebrow text-gold mb-1">{p.category}</p>
                                     <h3 className="font-editorial text-base text-white font-normal mb-1">{p.title}</h3>
                                     <div className="flex items-center justify-between">
-                                        <p className="font-body text-[0.68rem] text-cream-soft">📍 {p.location} · {p.year}</p>
+                                        <p className="font-body text-[0.76rem] text-cream-soft">📍 {p.location} · {p.year}</p>
                                         <ExternalLink size={13} className="text-gold/80" />
                                     </div>
                                 </div>
@@ -97,7 +97,7 @@ export default function Gallery() {
                             <p className="font-body text-[0.88rem] text-charcoal-muted leading-relaxed mb-6">{spotlight.description || 'A comprehensive interior redesign spanning living, dining, and suite spaces. A cohesive statement of modern Nigerian luxury.'}</p>
                             <div className="grid grid-cols-2 gap-4">
                                 {[['Location', spotlight.location || '-'], ['Size', spotlight.sqft || '-'], ['Duration', spotlight.duration || '-'], ['Year', spotlight.year || '-']].map(([l, v]) => (
-                                    <div key={l}><p className="font-title text-[0.5rem] tracking-[0.25em] uppercase text-gold mb-0.5">{l}</p><p className="font-body text-[0.85rem] text-charcoal font-bold">{v}</p></div>
+                                    <div key={l}><p className="font-title text-[0.72rem] tracking-[0.25em] uppercase text-gold mb-0.5">{l}</p><p className="font-body text-[0.95rem] text-charcoal font-bold">{v}</p></div>
                                 ))}
                             </div>
                         </div>
@@ -154,7 +154,7 @@ export default function Gallery() {
                                 <p className="eyebrow text-gold mb-1">{lb.category}</p>
                                 <h3 className="text-display-md text-cream-soft font-display mb-2">{lb.title}</h3>
                                 <p className="font-body text-cream-soft">📍 {lb.location} · Completed {lb.year}</p>
-                                <button className="absolute top-4 right-4 text-gold/60 hover:text-gold" onClick={() => setLb(null)}><X size={24} /></button>
+                                <button className="absolute top-4 right-4 text-gold/85 hover:text-gold" onClick={() => setLb(null)}><X size={24} /></button>
                             </div>
                             <div className="absolute top-1/2 -left-16 -translate-y-1/2 hidden lg:block">
                                 <button onClick={prev} className="w-12 h-12 rounded-full border border-gold/20 text-gold flex items-center justify-center hover:bg-gold/10 hover:border-gold transition-all"><ChevronLeft size={20} /></button>

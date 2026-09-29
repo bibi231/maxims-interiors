@@ -8,7 +8,7 @@ import { formatNaira } from '@/lib/utils'
 
 const SERVICES = ['Full Room Design', 'Design Package', 'Bulk & Trade Order', 'Home Staging', 'Shop / Product Enquiry', 'Other']
 const TIMES = ['09:00 AM', '11:00 AM', '02:00 PM', '04:00 PM']
-const fieldLabel = 'font-title text-[0.72rem] font-bold tracking-[0.16em] uppercase text-gold-deep dark:text-gold'
+const fieldLabel = 'font-title text-[0.8rem] font-bold tracking-[0.16em] uppercase text-gold-deep dark:text-gold'
 const fieldCls = 'min-h-[48px] bg-cream-soft/40 border border-purple-rich/20 px-4 py-3 font-body text-base text-charcoal focus:border-gold outline-none disabled:opacity-50'
 
 export default function Contact() {
@@ -94,7 +94,7 @@ export default function Contact() {
                     {METHODS.map(m => (
                         <div key={m.title} className="card-luxury p-7 sm:p-9 text-center flex flex-col">
                             <m.icon size={28} className="text-gold mx-auto mb-5" />
-                            <h3 className="font-title text-[0.85rem] font-bold tracking-[0.16em] uppercase text-purple-rich dark:text-gold-light mb-3">{m.title}</h3>
+                            <h3 className="font-title text-[0.95rem] font-bold tracking-[0.16em] uppercase text-purple-rich dark:text-gold-light mb-3">{m.title}</h3>
                             <p className="font-body text-[0.95rem] text-charcoal-muted leading-relaxed mb-6 flex-1">{m.desc}</p>
                             {m.href
                                 ? <a href={m.href} {...(m.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})} className="btn-maxims btn-outline-gold justify-center self-center">{m.cta}</a>
@@ -168,7 +168,7 @@ export default function Contact() {
                                     <input type="date" required aria-label="Preferred date" value={apptDate} onChange={e => setApptDate(e.target.value)} min={new Date().toISOString().split('T')[0]} className="min-h-[48px] w-full bg-transparent border-b border-gold/40 px-2 py-2 text-base text-cream-soft focus:border-gold outline-none" disabled={apptStatus === 'submitting'} />
                                     <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label="Preferred time">
                                         {TIMES.map(t => (
-                                            <button type="button" role="radio" aria-checked={t === apptTime} key={t} onClick={() => setApptTime(t)} className={`min-h-[48px] border text-[0.85rem] font-title font-semibold transition-all ${t === apptTime ? 'border-gold text-gold bg-gold/10' : 'border-gold/35 text-cream-soft/85 hover:border-gold hover:text-gold'}`} disabled={apptStatus === 'submitting'}>{t}</button>
+                                            <button type="button" role="radio" aria-checked={t === apptTime} key={t} onClick={() => setApptTime(t)} className={`min-h-[48px] border text-[0.95rem] font-title font-semibold transition-all ${t === apptTime ? 'border-gold text-gold bg-gold/10' : 'border-gold/35 text-cream-soft/85 hover:border-gold hover:text-gold'}`} disabled={apptStatus === 'submitting'}>{t}</button>
                                         ))}
                                     </div>
                                     {!avail && <p className="text-red-400 text-[0.9rem]">This slot is taken. Please pick another time.</p>}
@@ -184,7 +184,7 @@ export default function Contact() {
                             <address className="not-italic space-y-4 mb-8">
                                 <a href={mapsUrl(ci)} target="_blank" rel="noopener noreferrer" className="flex gap-4 items-start group">
                                     <MapPin className="text-gold shrink-0 mt-1" size={18} />
-                                    <span className="font-body text-base text-cream-soft leading-relaxed group-hover:text-gold">{ci.address}<span className="block text-[0.85rem] text-gold/90 underline underline-offset-4 mt-1">Open in Google Maps</span></span>
+                                    <span className="font-body text-base text-cream-soft leading-relaxed group-hover:text-gold">{ci.address}<span className="block text-[0.95rem] text-gold/90 underline underline-offset-4 mt-1">Open in Google Maps</span></span>
                                 </a>
                                 {ci.phone && (
                                     <a href={telHref(ci.phone)} className="flex gap-4 items-center min-h-[44px] hover:text-gold">
@@ -197,7 +197,7 @@ export default function Contact() {
                                     <div className="space-y-2 min-w-0">
                                         {[['General', ci.email || 'info@maximsinterior.com.ng'], ['Support', 'support@maximsinterior.com.ng'], ['Owner', 'christinegadzama@maximsinterior.com.ng']].map(([label, addr]) => (
                                             <a key={label} href={`mailto:${addr}`} className="block font-body text-base text-cream-soft break-all hover:text-gold">
-                                                <span className="text-gold font-title text-[0.7rem] font-bold tracking-wider uppercase block">{label}</span>{addr}
+                                                <span className="text-gold font-title text-[0.8rem] font-bold tracking-wider uppercase block">{label}</span>{addr}
                                             </a>
                                         ))}
                                     </div>

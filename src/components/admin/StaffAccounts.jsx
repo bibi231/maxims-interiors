@@ -11,7 +11,7 @@ import { useAuth, ROLE_PERMISSIONS } from '@/context/AuthContext'
 import { cn } from '@/lib/utils'
 
 const ROLE_OPTS = ['owner', 'senior_designer', 'project_manager', 'shop_manager', 'content_editor']
-const labelCls = 'font-title text-[0.68rem] tracking-[0.16em] uppercase text-cream-soft/75 block mb-1.5'
+const labelCls = 'font-title text-[0.76rem] tracking-[0.16em] uppercase text-cream-soft/75 block mb-1.5'
 const inputCls = 'w-full min-h-[44px] bg-charcoal border border-gold/20 px-3 py-2.5 font-body text-[0.95rem] text-cream-soft placeholder:text-cream-soft/40 focus:outline-none focus:border-gold/60 transition-colors'
 const fmtDate = (d) => (d ? new Date(d).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' }) : '')
 
@@ -44,15 +44,15 @@ export function InviteResult({ result, onClose }) {
               ? `${result.user.full_name} will get a link to choose a password (valid 72 hours, single use). You can also copy the link and send it by WhatsApp.`
               : `${result.user.full_name}'s account exists and is waiting for them. Send this link by WhatsApp or text. It is valid for 72 hours and works once.`}
           </p>
-          {!ok && result.email_error && <p className="font-body text-[0.8rem] text-cream-soft/60 mt-1 break-words">Mail server said: {result.email_error}</p>}
+          {!ok && result.email_error && <p className="font-body text-[0.9rem] text-cream-soft/85 mt-1 break-words">Mail server said: {result.email_error}</p>}
           <div className="mt-3 flex flex-col sm:flex-row gap-2">
-            <input readOnly value={result.setup_url} onFocus={(e) => e.target.select()} className={cn(inputCls, 'text-[0.8rem] flex-1')} aria-label="Set-up link" />
-            <button type="button" onClick={copy} className="min-h-[44px] inline-flex items-center justify-center gap-2 border border-gold/40 text-gold font-title text-[0.7rem] tracking-[0.14em] uppercase px-4 hover:bg-gold/10">
+            <input readOnly value={result.setup_url} onFocus={(e) => e.target.select()} className={cn(inputCls, 'text-[0.9rem] flex-1')} aria-label="Set-up link" />
+            <button type="button" onClick={copy} className="min-h-[44px] inline-flex items-center justify-center gap-2 border border-gold/40 text-gold font-title text-[0.8rem] tracking-[0.14em] uppercase px-4 hover:bg-gold/10">
               {copied ? <Check size={14} /> : <Copy size={14} />}{copied ? 'Copied' : 'Copy link'}
             </button>
           </div>
         </div>
-        <button type="button" onClick={onClose} aria-label="Dismiss" className="w-11 h-11 -mr-2 -mt-2 grid place-items-center text-cream-soft/60 hover:text-gold"><X size={18} /></button>
+        <button type="button" onClick={onClose} aria-label="Dismiss" className="w-11 h-11 -mr-2 -mt-2 grid place-items-center text-cream-soft/85 hover:text-gold"><X size={18} /></button>
       </div>
     </div>
   )
@@ -78,7 +78,7 @@ function InviteForm({ onDone, onCancel }) {
 
   return (
     <form onSubmit={submit} className="bg-charcoal border border-gold/20 p-4 sm:p-5 mb-5">
-      <h3 className="font-title text-[0.8rem] tracking-[0.16em] uppercase text-gold mb-1">Invite a team member</h3>
+      <h3 className="font-title text-[0.9rem] tracking-[0.16em] uppercase text-gold mb-1">Invite a team member</h3>
       <p className="font-body text-[0.88rem] text-cream-soft/75 mb-4">They get an email with a link to choose their own password. No password is set by you.</p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -102,10 +102,10 @@ function InviteForm({ onDone, onCancel }) {
       </div>
       {error && <p className="font-body text-[0.88rem] text-amber-400 mt-3">{error}</p>}
       <div className="flex flex-col sm:flex-row gap-3 mt-5">
-        <button type="submit" disabled={busy} className="min-h-[44px] inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.72rem] font-bold tracking-[0.16em] uppercase px-6 disabled:opacity-50">
+        <button type="submit" disabled={busy} className="min-h-[44px] inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.8rem] font-bold tracking-[0.16em] uppercase px-6 disabled:opacity-50">
           <UserPlus size={15} />{busy ? 'Sending invite...' : 'Send invite'}
         </button>
-        <button type="button" onClick={onCancel} className="min-h-[44px] px-6 border border-gold/25 text-cream-soft/80 font-title text-[0.7rem] tracking-[0.14em] uppercase hover:text-gold">Cancel</button>
+        <button type="button" onClick={onCancel} className="min-h-[44px] px-6 border border-gold/25 text-cream-soft/80 font-title text-[0.8rem] tracking-[0.14em] uppercase hover:text-gold">Cancel</button>
       </div>
     </form>
   )
@@ -144,12 +144,12 @@ export default function StaffAccounts({ startOpen = false }) {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div>
-          <h2 className="font-title text-[0.85rem] tracking-[0.16em] uppercase text-cream-soft">Team members ({profiles.filter((p) => p.is_active).length})</h2>
-          {pendingCount > 0 && <p className="font-body text-[0.85rem] text-amber-400 mt-0.5">{pendingCount} invite{pendingCount > 1 ? 's' : ''} waiting to be accepted</p>}
+          <h2 className="font-title text-[0.95rem] tracking-[0.16em] uppercase text-cream-soft">Team members ({profiles.filter((p) => p.is_active).length})</h2>
+          {pendingCount > 0 && <p className="font-body text-[0.95rem] text-amber-400 mt-0.5">{pendingCount} invite{pendingCount > 1 ? 's' : ''} waiting to be accepted</p>}
         </div>
         {isOwner && !showInvite && (
           <button onClick={() => { setShowInvite(true); setResult(null) }}
-            className="min-h-[44px] inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.72rem] font-bold tracking-[0.16em] uppercase px-5">
+            className="min-h-[44px] inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.8rem] font-bold tracking-[0.16em] uppercase px-5">
             <UserPlus size={15} /> Invite team member
           </button>
         )}
@@ -173,23 +173,23 @@ export default function StaffAccounts({ startOpen = false }) {
                 </div>
                 <div className="min-w-0">
                   <div className="font-body text-[0.95rem] font-semibold text-cream-soft truncate">
-                    {p.full_name} {self && <span className="font-title text-[0.6rem] tracking-wider uppercase text-gold bg-gold/10 px-1.5 py-0.5 ml-1">you</span>}
+                    {p.full_name} {self && <span className="font-title text-[0.74rem] tracking-wider uppercase text-gold bg-gold/10 px-1.5 py-0.5 ml-1">you</span>}
                   </div>
-                  <div className="font-body text-[0.85rem] text-cream-soft/70 truncate">{p.email}</div>
+                  <div className="font-body text-[0.95rem] text-cream-soft/70 truncate">{p.email}</div>
                 </div>
               </div>
 
               <div className="flex flex-wrap items-center gap-2 md:w-[36%]">
                 {canManage && p.is_active ? (
                   <select aria-label={`Role for ${p.full_name}`} value={p.role} disabled={busyId === p.id} onChange={(e) => changeRole(p, e.target.value)}
-                    className="min-h-[44px] bg-charcoal-mid border border-gold/20 px-2 font-body text-[0.85rem] text-cream-soft focus:outline-none focus:border-gold/60">
+                    className="min-h-[44px] bg-charcoal-mid border border-gold/20 px-2 font-body text-[0.95rem] text-cream-soft focus:outline-none focus:border-gold/60">
                     {ROLE_OPTS.map((r) => <option key={r} value={r}>{ROLE_PERMISSIONS[r].label}</option>)}
                   </select>
                 ) : (
-                  <span className="font-body text-[0.85rem] text-cream-soft/85">{ROLE_PERMISSIONS[p.role]?.label}</span>
+                  <span className="font-body text-[0.95rem] text-cream-soft/85">{ROLE_PERMISSIONS[p.role]?.label}</span>
                 )}
-                <span className={cn('font-body text-[0.75rem] font-bold tracking-wide uppercase border px-2 py-1', st.cls)}>{st.label}</span>
-                <span className="font-body text-[0.78rem] text-cream-soft/60">
+                <span className={cn('font-body text-[0.84rem] font-bold tracking-wide uppercase border px-2 py-1', st.cls)}>{st.label}</span>
+                <span className="font-body text-[0.9rem] text-cream-soft/85">
                   {st.key === 'pending' ? `Invited ${fmtDate(p.invited_at || p.created_at)}` : p.last_seen ? `Last seen ${fmtDate(p.last_seen)}` : 'Never signed in'}
                 </span>
               </div>
@@ -197,14 +197,14 @@ export default function StaffAccounts({ startOpen = false }) {
               {canManage && (
                 <div className="flex flex-wrap gap-2 md:ml-auto">
                   {st.key === 'pending' && (
-                    <button onClick={() => resend(p)} disabled={busyId === p.id} className="min-h-[44px] inline-flex items-center gap-2 border border-gold/35 text-gold font-title text-[0.66rem] tracking-[0.12em] uppercase px-3 hover:bg-gold/10 disabled:opacity-50">
+                    <button onClick={() => resend(p)} disabled={busyId === p.id} className="min-h-[44px] inline-flex items-center gap-2 border border-gold/35 text-gold font-title text-[0.76rem] tracking-[0.12em] uppercase px-3 hover:bg-gold/10 disabled:opacity-50">
                       <RefreshCw size={13} className={busyId === p.id ? 'animate-spin' : ''} /> Resend invite
                     </button>
                   )}
                   {st.key === 'inactive' ? (
-                    <button onClick={() => reactivate(p)} disabled={busyId === p.id} className="min-h-[44px] border border-green-400/40 text-green-400 font-title text-[0.66rem] tracking-[0.12em] uppercase px-3 hover:bg-green-400/10">Reactivate</button>
+                    <button onClick={() => reactivate(p)} disabled={busyId === p.id} className="min-h-[44px] border border-green-400/40 text-green-400 font-title text-[0.76rem] tracking-[0.12em] uppercase px-3 hover:bg-green-400/10">Reactivate</button>
                   ) : p.role !== 'owner' && (
-                    <button onClick={() => remove(p)} disabled={busyId === p.id} className="min-h-[44px] border border-red-400/35 text-red-400 font-title text-[0.66rem] tracking-[0.12em] uppercase px-3 hover:bg-red-400/10">
+                    <button onClick={() => remove(p)} disabled={busyId === p.id} className="min-h-[44px] border border-red-400/35 text-red-400 font-title text-[0.76rem] tracking-[0.12em] uppercase px-3 hover:bg-red-400/10">
                       {st.key === 'pending' && !p.last_seen ? 'Cancel invite' : 'Remove'}
                     </button>
                   )}
@@ -214,7 +214,7 @@ export default function StaffAccounts({ startOpen = false }) {
           )
         })}
       </ul>
-      <p className="font-body text-[0.82rem] text-cream-soft/60 mt-3">
+      <p className="font-body text-[0.95rem] text-cream-soft/85 mt-3">
         Remove deactivates an account (history is kept; you can reactivate it). Cancelling a pending invite deletes it.
         Invite emails are sent from the Maxims mail server; use Settings &gt; Email to send yourself a test.
       </p>

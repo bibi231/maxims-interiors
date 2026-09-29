@@ -35,7 +35,7 @@ export const BentoGridItem = ({
       {header}
       <div className="group-hover/bento:translate-x-2 transition duration-200">
         {badge && (
-          <div className="mb-2 inline-block px-2 py-0.5 text-[10px] uppercase tracking-widest bg-gold text-purple-darkest dark:text-cream-soft font-bold">
+          <div className="mb-2 inline-block px-2 py-0.5 text-[0.72rem] font-bold uppercase tracking-widest bg-gold text-purple-darkest dark:text-cream-soft font-bold">
             {badge}
           </div>
         )}
@@ -47,7 +47,7 @@ export const BentoGridItem = ({
           {description}
         </div>
         {location && (
-          <div className="font-body text-[10px] text-gold/60 mt-2">
+          <div className="font-body text-[0.8rem] text-gold mt-2">
             📍 {location}
           </div>
         )}

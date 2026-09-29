@@ -13,7 +13,7 @@ const STYLE = {
   pending:   'text-yellow-400 bg-yellow-400/10 border-yellow-400/20',
   success:   'text-green-400 bg-green-400/10 border-green-400/20',
   failed:    'text-red-400 bg-red-400/10 border-red-400/20',
-  abandoned: 'text-cream-soft/40 bg-cream-soft/5 border-cream-soft/10',
+  abandoned: 'text-cream-soft/75 bg-cream-soft/5 border-cream-soft/10',
   refunded:  'text-purple-light bg-purple-light/10 border-purple-light/20',
 }
 const DEFAULT_PROVIDER = import.meta.env.VITE_PAYMENT_PROVIDER || 'squad'
@@ -52,14 +52,14 @@ function PaymentLinkModal({ onClose }) {
         initial={{ scale: 0.93, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.93, y: 20 }} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-gold/10">
           <h2 className="font-display text-xl text-cream-soft flex items-center gap-2"><Link2 size={18} className="text-gold" /> Create Payment Link</h2>
-          <button onClick={onClose} className="text-cream-soft/30 hover:text-gold"><X size={18} /></button>
+          <button onClick={onClose} className="text-cream-soft/70 hover:text-gold"><X size={18} /></button>
         </div>
 
         {link ? (
           <div className="p-6">
             <div className="notice-success mb-4 flex items-center gap-2"><Check size={16} /> Link created — share it with your customer.</div>
             <div className="flex items-stretch border border-gold/20">
-              <input readOnly value={link} className="flex-1 bg-charcoal px-3 py-3 font-body text-[0.75rem] text-cream-soft/70 outline-none" />
+              <input readOnly value={link} className="flex-1 bg-charcoal px-3 py-3 font-body text-[0.84rem] text-cream-soft/70 outline-none" />
               <button onClick={copy} className="px-4 bg-gold/10 text-gold hover:bg-gold/20 transition-colors">{copied ? <Check size={16} /> : <Copy size={16} />}</button>
             </div>
             <div className="flex gap-2 mt-4">
@@ -77,7 +77,7 @@ function PaymentLinkModal({ onClose }) {
             <input type="email" className="lux-input" placeholder="Customer email *" value={form.email} onChange={set('email')} />
             <input type="number" className="lux-input" placeholder="Amount (₦) *" value={form.amount} onChange={set('amount')} />
             <input className="lux-input" placeholder="Description (e.g. Sofa deposit)" value={form.description} onChange={set('description')} />
-            <p className="font-body text-[0.85rem] text-cream-soft/70">Paid through the gateway set on the server (GTCO Squad by default). The transaction is marked paid only after the gateway confirms it.</p>
+            <p className="font-body text-[0.95rem] text-cream-soft/70">Paid through the gateway set on the server (GTCO Squad by default). The transaction is marked paid only after the gateway confirms it.</p>
             <button type="submit" disabled={busy} className="btn-gold-solid w-full justify-center disabled:opacity-60">{busy ? 'Generating…' : 'Generate Link'}</button>
           </form>
         )}
@@ -93,7 +93,7 @@ function StatCard({ icon: Icon, label, value, tone = 'gold' }) {
         <span className={cn('grid place-items-center w-9 h-9', tone === 'green' ? 'text-green-400 bg-green-400/10' : tone === 'yellow' ? 'text-yellow-400 bg-yellow-400/10' : 'text-gold bg-gold/10')}><Icon size={16} /></span>
       </div>
       <div className="font-title text-2xl text-cream-soft mt-3">{value}</div>
-      <div className="font-body text-[0.65rem] tracking-[0.12em] uppercase text-cream-soft/35 mt-1">{label}</div>
+      <div className="font-body text-[0.76rem] tracking-[0.12em] uppercase text-cream-soft/70 mt-1">{label}</div>
     </div>
   )
 }
@@ -117,10 +117,10 @@ export default function Transactions() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-title text-xl text-cream-soft tracking-wide">Transactions</h1>
-          <p className="font-body text-[0.75rem] text-cream-soft/30 mt-0.5">{rows.length} records · verified server-side</p>
+          <p className="font-body text-[0.84rem] text-cream-soft/70 mt-0.5">{rows.length} records · verified server-side</p>
         </div>
         {canWrite('transactions') && (
-          <button onClick={() => setShowLink(true)} className="flex items-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.62rem] tracking-[0.18em] uppercase px-5 py-2.5">
+          <button onClick={() => setShowLink(true)} className="flex items-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.74rem] tracking-[0.18em] uppercase px-5 py-2.5">
             <Plus size={13} /> Payment Link
           </button>
         )}
@@ -138,29 +138,29 @@ export default function Transactions() {
       <div className="flex gap-1.5 flex-wrap mb-5">
         {STATUSES.map((s) => (
           <button key={s} onClick={() => setFilter(s)}
-            className={cn('px-3 py-1.5 font-title text-[0.55rem] tracking-[0.15em] uppercase border transition-all',
-              filter === s ? (s === 'all' ? 'bg-gold/10 border-gold/30 text-gold' : cn(STYLE[s], 'border')) : 'border-gold/8 text-cream-soft/30 hover:border-gold/20')}>{s}</button>
+            className={cn('px-3 py-1.5 font-title text-[0.76rem] tracking-[0.15em] uppercase border transition-all',
+              filter === s ? (s === 'all' ? 'bg-gold/10 border-gold/30 text-gold' : cn(STYLE[s], 'border')) : 'border-gold/8 text-cream-soft/70 hover:border-gold/20')}>{s}</button>
         ))}
       </div>
 
       <div className="bg-charcoal border border-gold/8 overflow-x-auto">
         <table className="w-full min-w-[720px]">
           <thead><tr className="border-b border-gold/8">{['Reference', 'Customer', 'Amount', 'Provider', 'Status', 'Date', ''].map((h) => (
-            <th key={h} className="px-5 py-3.5 text-left font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/22">{h}</th>))}</tr></thead>
+            <th key={h} className="px-5 py-3.5 text-left font-title text-[0.72rem] tracking-[0.2em] uppercase text-cream-soft/60">{h}</th>))}</tr></thead>
           <tbody>
             {loading ? Array(6).fill(0).map((_, i) => <tr key={i} className="border-b border-gold/5 animate-pulse">{Array(7).fill(0).map((_, j) => <td key={j} className="px-5 py-4"><div className="h-4 bg-cream-soft/5 w-20" /></td>)}</tr>)
-              : rows.length === 0 ? <tr><td colSpan={7} className="px-5 py-12 text-center font-body text-[0.8rem] text-cream-soft/20">No transactions yet</td></tr>
+              : rows.length === 0 ? <tr><td colSpan={7} className="px-5 py-12 text-center font-body text-[0.9rem] text-cream-soft/60">No transactions yet</td></tr>
               : rows.map((t) => (
                 <tr key={t.id} className="border-b border-gold/5 hover:bg-gold/[0.03]">
-                  <td className="px-5 py-4 font-title text-[0.7rem] text-gold/75">{t.reference}{t.description && <div className="font-body text-[0.62rem] text-cream-soft/30 mt-0.5">{t.description}</div>}</td>
-                  <td className="px-5 py-4"><div className="font-body text-[0.8rem] text-cream-soft/65">{t.customer_name || '—'}</div><div className="font-body text-[0.66rem] text-cream-soft/28">{t.customer_email}</div></td>
-                  <td className="px-5 py-4 font-title text-[0.82rem] text-cream-soft/75">{formatNaira(t.amount)}</td>
-                  <td className="px-5 py-4 font-body text-[0.72rem] text-cream-soft/45 capitalize">{t.provider}</td>
-                  <td className="px-5 py-4"><span className={cn('font-body text-[0.55rem] tracking-wider uppercase px-2 py-0.5 border', STYLE[t.status])}>{t.status}</span></td>
-                  <td className="px-5 py-4 font-body text-[0.7rem] text-cream-soft/35">{formatDate(t.created_at)}</td>
+                  <td className="px-5 py-4 font-title text-[0.8rem] text-gold/75">{t.reference}{t.description && <div className="font-body text-[0.74rem] text-cream-soft/70 mt-0.5">{t.description}</div>}</td>
+                  <td className="px-5 py-4"><div className="font-body text-[0.9rem] text-cream-soft/85">{t.customer_name || '—'}</div><div className="font-body text-[0.76rem] text-cream-soft/70">{t.customer_email}</div></td>
+                  <td className="px-5 py-4 font-title text-[0.95rem] text-cream-soft/75">{formatNaira(t.amount)}</td>
+                  <td className="px-5 py-4 font-body text-[0.8rem] text-cream-soft/75 capitalize">{t.provider}</td>
+                  <td className="px-5 py-4"><span className={cn('font-body text-[0.76rem] tracking-wider uppercase px-2 py-0.5 border', STYLE[t.status])}>{t.status}</span></td>
+                  <td className="px-5 py-4 font-body text-[0.8rem] text-cream-soft/70">{formatDate(t.created_at)}</td>
                   <td className="px-5 py-4">
                     {t.status === 'pending' && (
-                      <button onClick={() => recheck(t.reference)} disabled={verifying === t.reference} className="text-cream-soft/30 hover:text-gold transition-colors" title="Re-verify with gateway">
+                      <button onClick={() => recheck(t.reference)} disabled={verifying === t.reference} className="text-cream-soft/70 hover:text-gold transition-colors" title="Re-verify with gateway">
                         <RefreshCw size={13} className={verifying === t.reference ? 'animate-spin' : ''} />
                       </button>
                     )}

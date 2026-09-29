@@ -18,6 +18,7 @@ const NAV = [
     },
     { label: 'Shop', path: '/shop' },
     { label: 'Gallery', path: '/gallery' },
+    { label: 'Journal', path: '/blog' },
     { label: 'Our Team', path: '/team' },
     { label: 'Reviews', path: '/testimonials' },
 ]
@@ -44,10 +45,10 @@ function MegaDrop({ items }) {
                         className="group flex flex-col gap-0.5 px-4 py-3
                        hover:bg-gold/8 transition-colors duration-200"
                     >
-                        <span className="font-title text-[0.7rem] tracking-[0.15em] uppercase text-cream-soft group-hover:text-gold transition-colors">
+                        <span className="font-title text-[0.8rem] tracking-[0.15em] uppercase text-cream-soft group-hover:text-gold transition-colors">
                             {item.label}
                         </span>
-                        <span className="font-body text-[0.72rem] text-cream-soft group-hover:text-cream-soft transition-colors">
+                        <span className="font-body text-[0.8rem] text-cream-soft group-hover:text-cream-soft transition-colors">
                             {item.desc}
                         </span>
                     </Link>
@@ -56,7 +57,7 @@ function MegaDrop({ items }) {
             <div className="border-t border-gold/10 p-3">
                 <Link
                     to="/contact"
-                    className="flex items-center gap-2 px-4 py-2 text-[0.62rem] font-title tracking-[0.2em] uppercase text-gold hover:text-gold-light transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 text-[0.74rem] font-title tracking-[0.2em] uppercase text-gold hover:text-gold-light transition-colors"
                 >
                     Book a Consultation <ArrowRight size={12} />
                 </Link>
@@ -100,8 +101,8 @@ export default function Navbar() {
                 className={cn(
                     'fixed top-0 inset-x-0 z-[100] flex items-center justify-between transition-all duration-400',
                     transparent
-                        ? 'bg-transparent py-5 px-8 md:px-12'
-                        : 'py-3 px-8 md:px-12 bg-charcoal/95 backdrop-blur-xl shadow-[0_1px_0_rgba(201,168,76,0.12)]',
+                        ? 'bg-transparent py-4 px-4 sm:px-8 md:px-12'
+                        : 'py-2 px-4 sm:px-8 md:px-12 bg-charcoal/95 backdrop-blur-xl shadow-[0_1px_0_rgba(201,168,76,0.12)]',
                 )}
             >
                 {/* Logo */}
@@ -113,8 +114,8 @@ export default function Navbar() {
                         <span className="font-title text-lg font-bold text-gold leading-none">M</span>
                     </div>
                     <div className="hidden sm:flex flex-col gap-px">
-                        <span className="font-title text-[0.82rem] font-bold tracking-[0.28em] text-gold leading-none">MAXIMS</span>
-                        <span className="font-body text-[0.46rem] tracking-[0.22em] uppercase text-gold/45 leading-none">Interiors & Home Goods</span>
+                        <span className="font-title text-[0.95rem] font-bold tracking-[0.28em] text-gold leading-none">MAXIMS</span>
+                        <span className="font-body text-[0.72rem] tracking-[0.22em] uppercase text-gold/75 leading-none">Interiors & Home Goods</span>
                     </div>
                 </Link>
 
@@ -130,7 +131,7 @@ export default function Navbar() {
                             >
                                 <button className={cn(
                                     'flex items-center gap-1.5 px-3 py-2',
-                                    'font-body text-[0.7rem] font-bold tracking-[0.12em] uppercase transition-colors duration-200',
+                                    'font-body text-[0.8rem] font-bold tracking-[0.12em] uppercase transition-colors duration-200',
                                     transparent ? 'text-cream-soft hover:text-gold' : 'text-cream-soft hover:text-gold',
                                 )}>
                                     {item.label}
@@ -145,7 +146,7 @@ export default function Navbar() {
                                 <Link
                                     to={item.path}
                                     className={cn(
-                                        'relative px-3 py-2 font-body text-[0.7rem] font-bold tracking-[0.12em] uppercase transition-colors duration-200 block',
+                                        'relative px-3 py-2 font-body text-[0.8rem] font-bold tracking-[0.12em] uppercase transition-colors duration-200 block',
                                         'after:absolute after:bottom-0.5 after:left-1/2 after:-translate-x-1/2 after:h-px after:bg-gold',
                                         'after:transition-all after:duration-300',
                                         location.pathname === item.path
@@ -167,18 +168,18 @@ export default function Navbar() {
                     <button
                         onClick={toggleTheme}
                         aria-label="Toggle light or dark mode"
-                        className="w-9 h-9 rounded-full border border-gold/30 text-gold flex items-center justify-center hover:bg-gold/10 transition-colors"
+                        className="w-11 h-11 rounded-full border border-gold/40 text-gold flex items-center justify-center hover:bg-gold/10 transition-colors"
                     >
                         {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
                     </button>
                     <Link
                         to="/contact"
-                        className="hidden lg:inline-flex btn-maxims btn-gold-solid text-[0.62rem] px-5 py-2.5"
+                        className="hidden lg:inline-flex btn-maxims btn-gold-solid text-[0.74rem] px-5 py-2.5"
                     >
                         Book Consultation
                     </Link>
                     <button
-                        className="lg:hidden text-gold p-1"
+                        className="lg:hidden text-gold w-11 h-11 grid place-items-center -mr-2"
                         onClick={() => setMobileOpen(!mobileOpen)}
                         aria-label="Toggle menu"
                     >
@@ -203,16 +204,16 @@ export default function Navbar() {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'tween', duration: 0.3 }}
-                            className="fixed top-0 right-0 bottom-0 w-[300px] z-[99] bg-charcoal-mid
+                            className="fixed top-0 right-0 bottom-0 w-[min(300px,85vw)] z-[99] bg-charcoal-mid
                          flex flex-col overflow-y-auto lg:hidden
                          border-l border-gold/10"
                         >
                             <div className="flex items-center justify-between p-6 border-b border-gold/10">
                                 <div>
                                     <div className="font-title text-sm tracking-[0.3em] text-gold font-bold">MAXIMS</div>
-                                    <div className="font-body text-[0.5rem] tracking-[0.2em] uppercase text-gold/40 mt-0.5">Interiors & Home Goods</div>
+                                    <div className="font-body text-[0.72rem] tracking-[0.2em] uppercase text-gold/75 mt-0.5">Interiors & Home Goods</div>
                                 </div>
-                                <button onClick={() => setMobileOpen(false)} className="text-gold/60 hover:text-gold">
+                                <button onClick={() => setMobileOpen(false)} aria-label="Close menu" className="w-11 h-11 grid place-items-center text-gold/85 hover:text-gold">
                                     <X size={20} />
                                 </button>
                             </div>
@@ -221,13 +222,13 @@ export default function Navbar() {
                                 {NAV.map((item) =>
                                     item.children ? (
                                         <div key={item.label} className="mb-1">
-                                            <span className="block px-4 py-1.5 font-body text-[0.58rem] tracking-[0.3em] uppercase text-gold/40">
+                                            <span className="block px-4 py-1.5 font-body text-[0.76rem] tracking-[0.3em] uppercase text-gold/75">
                                                 {item.label}
                                             </span>
                                             {item.children.map((c) => (
                                                 <Link
                                                     key={c.path} to={c.path}
-                                                    className="block px-4 py-2.5 font-title text-[0.8rem] tracking-[0.08em] text-cream-soft hover:text-gold hover:pl-6 transition-all duration-200 border-b border-gold/5"
+                                                    className="block px-4 py-2.5 font-title text-[0.9rem] tracking-[0.08em] text-cream-soft hover:text-gold hover:pl-6 transition-all duration-200 border-b border-gold/5"
                                                 >
                                                     {c.label}
                                                 </Link>
@@ -248,7 +249,7 @@ export default function Navbar() {
                             </nav>
 
                             <div className="p-6 border-t border-gold/10">
-                                <Link to="/contact" className="btn-maxims btn-gold-solid w-full justify-center text-[0.62rem]">
+                                <Link to="/contact" className="btn-maxims btn-gold-solid w-full justify-center text-[0.74rem]">
                                     Book Consultation
                                 </Link>
                             </div>

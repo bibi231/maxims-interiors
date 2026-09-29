@@ -31,11 +31,11 @@ function CollectionCard({ c, i }) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-charcoal/85 via-transparent to-transparent opacity-80 group-hover:opacity-95 transition-opacity" />
           <div className="absolute inset-x-0 bottom-0 p-4">
-            <p className="font-title text-[0.5rem] tracking-[0.22em] uppercase text-gold/80 mb-1">Signature</p>
+            <p className="font-title text-[0.72rem] tracking-[0.22em] uppercase text-gold/80 mb-1">Signature</p>
             <h3 className="font-editorial text-lg text-cream-soft leading-tight">{c.name}</h3>
             <div className="flex items-center justify-between mt-1.5">
-              <span className="font-title text-[0.82rem] text-gold-light font-semibold">{formatNaira(c.price)}</span>
-              <span className="font-title text-[0.55rem] tracking-[0.18em] uppercase text-cream-soft/70 group-hover:text-gold transition-colors">Shop →</span>
+              <span className="font-title text-[0.95rem] text-gold-light font-semibold">{formatNaira(c.price)}</span>
+              <span className="font-title text-[0.76rem] tracking-[0.18em] uppercase text-cream-soft/70 group-hover:text-gold transition-colors">Shop →</span>
             </div>
           </div>
         </div>
@@ -54,7 +54,7 @@ export default function CollectionShowcase({
   return (
     <section className={`section-base ${className}`}>
       <div className="section-header-center">
-        <p className="eyebrow mb-3" style={{ color: 'rgba(201,168,76,0.6)' }}>{eyebrow}</p>
+        <p className="eyebrow mb-3 text-gold">{eyebrow}</p>
         <h2 className="text-display-md text-gold-light font-display">{title}</h2>
         <div className="gold-divider" />
         <p className="font-body text-[0.88rem] text-cream-soft/70 max-w-md mx-auto mt-2">{subtitle}</p>

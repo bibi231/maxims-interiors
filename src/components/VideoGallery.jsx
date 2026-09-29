@@ -38,7 +38,7 @@ function VideoCard({ v, i }) {
         className="w-full h-full object-cover"
       />
       <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-charcoal/80 to-transparent pointer-events-none">
-        <p className="font-title text-[0.5rem] tracking-[0.2em] uppercase text-gold/80">{v.tag}</p>
+        <p className="font-title text-[0.72rem] tracking-[0.2em] uppercase text-gold/80">{v.tag}</p>
         <h3 className="font-editorial text-sm text-cream-soft">{v.title}</h3>
       </div>
       <button
@@ -62,7 +62,7 @@ export default function VideoGallery({
   return (
     <section className={`section-base ${className}`}>
       <div className="section-header-center">
-        <p className="eyebrow mb-3" style={{ color: 'rgba(201,168,76,0.6)' }}>{eyebrow}</p>
+        <p className="eyebrow mb-3 text-gold">{eyebrow}</p>
         <h2 className="text-display-md text-gold-light font-display">{title}</h2>
         <div className="gold-divider" />
         <p className="font-body text-[0.88rem] text-cream-soft/70 max-w-md mx-auto mt-2">{subtitle}</p>

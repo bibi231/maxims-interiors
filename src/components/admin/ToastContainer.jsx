@@ -23,12 +23,12 @@ export default function ToastContainer() {
           >
             {t.icon && <span className="text-lg leading-none mt-0.5">{t.icon}</span>}
             <div className="flex-1 min-w-0">
-              {t.title && <div className="font-title text-[0.65rem] tracking-[0.15em] uppercase text-gold">{t.title}</div>}
+              {t.title && <div className="font-title text-[0.76rem] tracking-[0.15em] uppercase text-gold">{t.title}</div>}
               <div className="font-body text-sm text-cream-soft/80 mt-0.5">{t.message}</div>
             </div>
             <button
               onClick={(e) => { e.stopPropagation(); removeToast(t.id) }}
-              className="text-cream-soft/30 hover:text-gold transition-colors shrink-0"
+              className="text-cream-soft/70 hover:text-gold transition-colors shrink-0"
               aria-label="Dismiss"
             >
               <X size={14} />

@@ -27,7 +27,7 @@ export default function VideoShowcase({
   return (
     <section className={`section-base ${className}`}>
       <div className="section-header-center">
-        <p className="eyebrow mb-3" style={{ color: 'rgba(201,168,76,0.6)' }}>{eyebrow}</p>
+        <p className="eyebrow mb-3 text-gold">{eyebrow}</p>
         <h2 className="text-display-md text-gold-light font-display">{title}</h2>
         <div className="gold-divider" />
         <p className="font-body text-[0.88rem] text-cream-soft/70 max-w-md mx-auto mt-2">{subtitle}</p>

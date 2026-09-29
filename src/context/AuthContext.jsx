@@ -124,7 +124,7 @@ export function RequireAuth({ children, section }) {
       <div>
         <div className="text-4xl mb-4">🔒</div>
         <h2 className="font-title text-lg text-gold tracking-widest mb-2">ACCESS RESTRICTED</h2>
-        <p className="font-body text-cream-soft/40 text-sm">
+        <p className="font-body text-cream-soft/75 text-sm">
           Your role ({profile.role.replace('_', ' ')}) does not have access to this section.
         </p>
       </div>

@@ -11,10 +11,10 @@ import { useSiteSettings } from '@/hooks/useData'
 import { DEFAULT_PRICING } from '@/lib/siteDefaults'
 import { formatNaira, cn } from '@/lib/utils'
 
-const labelCls = 'font-title text-[0.68rem] tracking-[0.16em] uppercase text-cream-soft/75 block mb-1.5'
+const labelCls = 'font-title text-[0.76rem] tracking-[0.16em] uppercase text-cream-soft/75 block mb-1.5'
 const inputCls = 'w-full min-h-[44px] bg-charcoal border border-gold/20 px-3 py-2.5 font-body text-[0.95rem] text-cream-soft placeholder:text-cream-soft/40 focus:outline-none focus:border-gold/60 transition-colors'
 const card = 'bg-charcoal border border-gold/15 p-4 sm:p-5'
-const smallBtn = 'min-h-[44px] min-w-[44px] inline-flex items-center justify-center gap-1.5 border border-gold/25 text-cream-soft/80 hover:text-gold hover:border-gold/60 px-2 font-body text-[0.85rem]'
+const smallBtn = 'min-h-[44px] min-w-[44px] inline-flex items-center justify-center gap-1.5 border border-gold/25 text-cream-soft/80 hover:text-gold hover:border-gold/60 px-2 font-body text-[0.95rem]'
 
 // Money input: shows digits, stores a number (or null when empty).
 function MoneyInput({ value, onChange, placeholder = 'e.g. 150000', id }) {
@@ -76,7 +76,7 @@ export default function Pricing() {
 
   const SaveBar = () => (
     <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-      <button onClick={save} disabled={saving} className="min-h-[44px] inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.72rem] font-bold tracking-[0.16em] uppercase px-6 disabled:opacity-50">
+      <button onClick={save} disabled={saving} className="min-h-[44px] inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.8rem] font-bold tracking-[0.16em] uppercase px-6 disabled:opacity-50">
         <Save size={14} /> {saving ? 'Saving...' : 'Save all prices'}
       </button>
       {msg && <span className={cn('font-body text-[0.9rem]', msg.ok ? 'text-green-400' : 'text-amber-400')}>{msg.text}</span>}
@@ -98,22 +98,22 @@ export default function Pricing() {
       <div className="space-y-6">
         {/* Consultation */}
         <section className={card}>
-          <h2 className="font-title text-[0.8rem] tracking-[0.16em] uppercase text-gold mb-4">Design consultation</h2>
+          <h2 className="font-title text-[0.9rem] tracking-[0.16em] uppercase text-gold mb-4">Design consultation</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div><label className={labelCls} htmlFor="c-title">Name</label><input id="c-title" className={inputCls} value={p.consultation.title} onChange={(e) => setC('title', e.target.value)} /></div>
             <div><label className={labelCls} htmlFor="c-fee">Fee (0 = complimentary)</label><MoneyInput id="c-fee" value={p.consultation.fee} onChange={(v) => setC('fee', v ?? 0)} placeholder="0" /></div>
             <div><label className={labelCls} htmlFor="c-dur">Duration</label><input id="c-dur" className={inputCls} value={p.consultation.duration} onChange={(e) => setC('duration', e.target.value)} placeholder="60 minutes" /></div>
             <div className="md:col-span-3"><label className={labelCls} htmlFor="c-desc">Short description</label><input id="c-desc" className={inputCls} value={p.consultation.description} onChange={(e) => setC('description', e.target.value)} /></div>
           </div>
-          <p className="font-body text-[0.85rem] text-cream-soft/65 mt-3">Shown on the Contact page and home page: {Number(p.consultation.fee) > 0 ? formatNaira(p.consultation.fee) : 'Complimentary'}.</p>
+          <p className="font-body text-[0.95rem] text-cream-soft/85 mt-3">Shown on the Contact page and home page: {Number(p.consultation.fee) > 0 ? formatNaira(p.consultation.fee) : 'Complimentary'}.</p>
         </section>
 
         {/* Packages */}
         <section className={card}>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
             <div>
-              <h2 className="font-title text-[0.8rem] tracking-[0.16em] uppercase text-gold">Design packages</h2>
-              <p className="font-body text-[0.85rem] text-cream-soft/65 mt-1">Leave the price empty for “Custom / on request”. A package with a price can be paid online after the customer requests it (when payments are on).</p>
+              <h2 className="font-title text-[0.9rem] tracking-[0.16em] uppercase text-gold">Design packages</h2>
+              <p className="font-body text-[0.95rem] text-cream-soft/85 mt-1">Leave the price empty for “Custom / on request”. A package with a price can be paid online after the customer requests it (when payments are on).</p>
             </div>
             <button onClick={() => setP((s) => ({ ...s, packages: [...s.packages, { name: '', price: null, price_note: '', featured: false, featuresText: '' }] }))} className={smallBtn}><Plus size={15} /> Add package</button>
           </div>
@@ -144,8 +144,8 @@ export default function Pricing() {
         <section className={card}>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
             <div>
-              <h2 className="font-title text-[0.8rem] tracking-[0.16em] uppercase text-gold">Services</h2>
-              <p className="font-body text-[0.85rem] text-cream-soft/65 mt-1">Listed on the Interior Décor page and in the footer. “From” price is optional.</p>
+              <h2 className="font-title text-[0.9rem] tracking-[0.16em] uppercase text-gold">Services</h2>
+              <p className="font-body text-[0.95rem] text-cream-soft/85 mt-1">Listed on the Interior Décor page and in the footer. “From” price is optional.</p>
             </div>
             <button onClick={() => setP((s) => ({ ...s, services: [...s.services, { key: '', title: '', description: '', price_from: null }] }))} className={smallBtn}><Plus size={15} /> Add service</button>
           </div>
@@ -167,7 +167,7 @@ export default function Pricing() {
 
         {/* Bulk + delivery */}
         <section className={card}>
-          <h2 className="font-title text-[0.8rem] tracking-[0.16em] uppercase text-gold mb-4">Trade & delivery</h2>
+          <h2 className="font-title text-[0.9rem] tracking-[0.16em] uppercase text-gold mb-4">Trade & delivery</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div><label className={labelCls} htmlFor="b-items">Bulk order: minimum identical items</label><input id="b-items" inputMode="numeric" className={inputCls} value={p.bulk.min_items ?? ''} onChange={(e) => setP((s) => ({ ...s, bulk: { ...s.bulk, min_items: Number(e.target.value.replace(/\D/g, '')) || 0 } }))} /></div>
             <div><label className={labelCls} htmlFor="b-value">Bulk order: or project value over</label><MoneyInput id="b-value" value={p.bulk.min_value} onChange={(v) => setP((s) => ({ ...s, bulk: { ...s.bulk, min_value: v ?? 0 } }))} /></div>

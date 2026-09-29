@@ -53,7 +53,7 @@ export default function NewsletterSignup({ variant = 'dark', source = 'footer' }
           placeholder="Your email address"
           aria-label="Email address"
           className={cn(
-            'flex-1 bg-transparent py-2.5 font-body text-sm outline-none placeholder:text-cream-soft/30',
+            'flex-1 bg-transparent py-2.5 font-body text-sm outline-none placeholder:text-cream-soft/45',
             light ? 'text-charcoal placeholder:text-charcoal/40' : 'text-cream-soft',
           )}
         />
@@ -64,7 +64,7 @@ export default function NewsletterSignup({ variant = 'dark', source = 'footer' }
           aria-label="Subscribe"
         >
           {status === 'loading'
-            ? <span className="font-title text-[0.6rem] tracking-widest uppercase">…</span>
+            ? <span className="font-title text-[0.74rem] tracking-widest uppercase">…</span>
             : <ArrowRight size={18} />}
         </button>
       </div>

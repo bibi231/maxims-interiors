@@ -36,7 +36,7 @@ export default function Footer() {
                         </div>
                         <div>
                             <div className="font-title text-base font-bold tracking-[0.3em] text-gold leading-none">MAXIMS</div>
-                            <div className="font-body text-[0.68rem] font-bold tracking-[0.18em] uppercase text-gold/80 mt-1">Interiors & Home Goods</div>
+                            <div className="font-body text-[0.76rem] font-bold tracking-[0.18em] uppercase text-gold/80 mt-1">Interiors & Home Goods</div>
                         </div>
                     </Link>
                     <p className="font-body text-[0.95rem] text-cream-soft/90 leading-relaxed mb-6">
@@ -56,7 +56,7 @@ export default function Footer() {
 
                 {/* Navigate */}
                 <div>
-                    <h4 className="font-title text-[0.78rem] font-bold tracking-[0.25em] uppercase text-gold pb-3 mb-3 border-b border-gold/20">Navigate</h4>
+                    <h4 className="font-title text-[0.9rem] font-bold tracking-[0.25em] uppercase text-gold pb-3 mb-3 border-b border-gold/20">Navigate</h4>
                     <ul className="grid grid-cols-2 sm:grid-cols-1 gap-x-4">
                         {NAV.map(([path, name]) => (
                             <li key={path}><Link to={path} className={linkCls}>{name}</Link></li>
@@ -66,7 +66,7 @@ export default function Footer() {
 
                 {/* Services */}
                 <div>
-                    <h4 className="font-title text-[0.78rem] font-bold tracking-[0.25em] uppercase text-gold pb-3 mb-3 border-b border-gold/20">Services</h4>
+                    <h4 className="font-title text-[0.9rem] font-bold tracking-[0.25em] uppercase text-gold pb-3 mb-3 border-b border-gold/20">Services</h4>
                     <ul>
                         {services.map((s) => (
                             <li key={s}>
@@ -78,7 +78,7 @@ export default function Footer() {
 
                 {/* Contact */}
                 <div>
-                    <h4 className="font-title text-[0.78rem] font-bold tracking-[0.25em] uppercase text-gold pb-3 mb-4 border-b border-gold/20">Visit & Contact</h4>
+                    <h4 className="font-title text-[0.9rem] font-bold tracking-[0.25em] uppercase text-gold pb-3 mb-4 border-b border-gold/20">Visit & Contact</h4>
                     <address className="not-italic space-y-3 mb-6">
                         {CONTACT.map(({ icon: Icon, text, href, external }) => {
                             const body = (<><Icon size={16} className="text-gold mt-1 shrink-0" /><span className="font-body text-[0.95rem] text-cream-soft/90 leading-relaxed break-words">{text}</span></>)
@@ -87,17 +87,17 @@ export default function Footer() {
                                 : <div key={text} className="flex gap-3 items-start">{body}</div>
                         })}
                     </address>
-                    <h4 className="font-title text-[0.72rem] font-bold tracking-[0.22em] uppercase text-gold mb-3">Stay Inspired</h4>
+                    <h4 className="font-title text-[0.8rem] font-bold tracking-[0.22em] uppercase text-gold mb-3">Stay Inspired</h4>
                     <NewsletterSignup variant="dark" source="footer" />
                 </div>
             </div>
 
             <div className="border-t border-gold/15 mx-5 sm:mx-8 md:mx-16">
                 <div className="max-w-screen-xl mx-auto py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-                    <p className="font-body text-[0.85rem] text-cream-soft/80 tracking-wide text-center sm:text-left">
+                    <p className="font-body text-[0.95rem] text-cream-soft/80 tracking-wide text-center sm:text-left">
                         © {new Date().getFullYear()} Maxims Interiors & Home Goods. All Rights Reserved.
                     </p>
-                    <div className="flex flex-wrap items-center justify-center gap-x-4 text-[0.85rem] text-cream-soft/80">
+                    <div className="flex flex-wrap items-center justify-center gap-x-4 text-[0.95rem] text-cream-soft/80">
                         <a href="mailto:support@maximsinterior.com.ng" className="hover:text-gold transition-colors inline-flex items-center min-h-[44px]">Support</a>
                         <span aria-hidden>·</span>
                         <Link to="/contact" className="hover:text-gold transition-colors inline-flex items-center min-h-[44px]">Contact</Link>
@@ -107,7 +107,7 @@ export default function Footer() {
                 </div>
                 <div className="max-w-screen-xl mx-auto pb-5 text-center">
                     <a href="https://trueweb.com.ng" target="_blank" rel="noopener noreferrer"
-                        className="font-body text-[0.78rem] tracking-wide text-cream-soft/60 hover:text-gold transition-colors">
+                        className="inline-flex items-center min-h-[44px] font-body text-[0.85rem] tracking-wide text-cream-soft/80 hover:text-gold transition-colors">
                         Crafted by TrueWeb Network
                     </a>
                 </div>

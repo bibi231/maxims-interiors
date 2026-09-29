@@ -10,7 +10,7 @@ export default function Testimonials() {
             <section className="page-hero min-h-[400px]">
                 <div className="page-hero-overlay" /><div className="page-hero-pattern" />
                 <motion.div className="relative z-10 px-6 py-24 text-center" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75 }}>
-                    <p className="eyebrow mb-4" style={{ color: 'rgba(201,168,76,0.65)' }}>Client Love</p>
+                    <p className="eyebrow mb-4 text-gold">Client Love</p>
                     <h1 className="text-display-lg text-cream-soft font-display mb-4">Reviews & Stories</h1>
                     <div className="gold-divider" />
                     <p className="font-body text-cream-soft text-sm mt-4">Hear from the people who live in the spaces we create</p>
@@ -44,8 +44,8 @@ export default function Testimonials() {
                             <Quote className="text-gold opacity-10 mb-4" size={32} />
                             <p className="font-editorial text-[0.95rem] italic text-charcoal leading-relaxed mb-8">"{r.quote}"</p>
                             <div className="flex flex-col">
-                                <span className="font-title text-[0.65rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light">{r.client_name}</span>
-                                <span className="font-body text-[0.65rem] text-charcoal-muted mt-1">{r.client_role}</span>
+                                <span className="font-title text-[0.76rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light">{r.client_name}</span>
+                                <span className="font-body text-[0.76rem] text-charcoal-muted mt-1">{r.client_role}</span>
                             </div>
                         </motion.div>
                     ))}

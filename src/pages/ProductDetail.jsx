@@ -51,7 +51,7 @@ export default function ProductDetail() {
     <div className="bg-cream-soft">
       <section className="section-base">
         <div className="max-w-[1150px] mx-auto">
-          <Link to="/shop" className="inline-flex items-center gap-2 font-title text-[0.6rem] tracking-[0.2em] uppercase text-charcoal-muted hover:text-gold transition-colors mb-8">
+          <Link to="/shop" className="inline-flex items-center gap-2 min-h-[44px] font-bold font-title text-[0.74rem] tracking-[0.2em] uppercase text-charcoal-muted hover:text-gold transition-colors mb-8">
             <ArrowLeft size={13} /> Back to Shop
           </Link>
 
@@ -64,7 +64,7 @@ export default function ProductDetail() {
                 ) : images[active] ? (
                   <img src={getStorageUrl(BUCKETS.products, images[active])} alt={product.name} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full grid place-items-center"><ShoppingBag size={72} strokeWidth={1} className="text-gold/40" /></div>
+                  <div className="w-full h-full grid place-items-center"><ShoppingBag size={72} strokeWidth={1} className="text-gold/75" /></div>
                 )}
               </div>
               {!collection && images.length > 1 && (
@@ -81,19 +81,19 @@ export default function ProductDetail() {
 
             {/* Info */}
             <motion.div initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}>
-              {product.badge && <span className="inline-block bg-gold text-purple-darkest font-body font-black text-[0.55rem] tracking-[0.12em] uppercase px-2.5 py-1 mb-4">{product.badge}</span>}
+              {product.badge && <span className="inline-block bg-gold text-purple-darkest font-body font-black text-[0.76rem] tracking-[0.12em] uppercase px-2.5 py-1 mb-4">{product.badge}</span>}
               <p className="eyebrow mb-2">{product.category}</p>
               <h1 className="font-display text-4xl text-purple-rich mb-4">{product.name}</h1>
               <div className="font-title text-2xl text-gold-deep font-semibold mb-6">{formatNaira(product.price)}</div>
               <p className="font-body text-[0.92rem] text-charcoal-muted leading-[1.9] mb-6">{product.description || 'A signature Maxims piece, crafted with care.'}</p>
 
-              <div className="flex items-center gap-2 mb-8 font-body text-[0.8rem] text-charcoal-muted">
+              <div className="flex items-center gap-2 mb-8 font-body text-[0.9rem] text-charcoal-muted">
                 <Check size={15} className="text-green-600" />
                 {product.stock_qty > 0 ? `In stock${product.stock_qty <= 10 ? ` — only ${product.stock_qty} left` : ''}` : 'Made to order'}
               </div>
 
               <div className="flex items-center gap-3 mb-4">
-                <span className="font-title text-[0.56rem] tracking-[0.18em] uppercase text-charcoal-muted">Quantity</span>
+                <span className="font-title text-[0.76rem] tracking-[0.18em] uppercase text-charcoal-muted">Quantity</span>
                 <div className="flex items-center border border-gold/30">
                   <button onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label="Decrease quantity" className="w-9 h-9 flex items-center justify-center hover:text-gold"><Minus size={13} /></button>
                   <span className="w-9 text-center font-body text-sm">{qty}</span>
@@ -110,7 +110,7 @@ export default function ProductDetail() {
                 {added && <button onClick={openDrawer} className="btn-maxims btn-outline-gold justify-center">View cart</button>}
               </div>
 
-              <p className="font-body text-[0.72rem] text-charcoal-muted/70 mt-6 leading-relaxed">
+              <p className="font-body text-[0.8rem] text-charcoal-muted/85 mt-6 leading-relaxed">
                 No payment is taken online yet: add to cart and send an order request, or ask for a quote. Our team will call to confirm availability, delivery and payment.
               </p>
             </motion.div>

@@ -35,7 +35,7 @@ export default function About() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.75 }}
                 >
-                    <p className="eyebrow mb-4" style={{ color: 'rgba(201,168,76,0.65)' }}>Who We Are</p>
+                    <p className="eyebrow mb-4 text-gold">Who We Are</p>
                     <h1 className="text-display-lg text-cream-soft font-display mb-4">
                         <AnimatedGradientText speed={1.5} colorFrom="#E4C56A" colorTo="#FFFFFF">Our Story</AnimatedGradientText>
                     </h1>
@@ -80,7 +80,7 @@ export default function About() {
                         </p>
                         <blockquote className="border-l-2 border-gold pl-5 font-editorial text-[1rem] italic text-purple-mid leading-relaxed">
                             "The more value you add to others and your work, the more valuable you become."
-                            <cite className="block mt-2 font-title text-[0.62rem] not-italic tracking-[0.2em] text-gold">— Christine J-K Gadzama, Founder & CEO</cite>
+                            <cite className="block mt-2 font-title text-[0.74rem] not-italic tracking-[0.2em] text-gold">— Christine J-K Gadzama, Founder & CEO</cite>
                         </blockquote>
                     </motion.div>
                 </div>
@@ -106,8 +106,8 @@ export default function About() {
                         >
                             <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-gold-deep via-gold to-gold-bright scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
                             <Icon size={22} className="text-gold mx-auto mb-4" />
-                            <h3 className="font-title text-[0.72rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light mb-3">{title}</h3>
-                            <p className="font-body text-[0.82rem] text-charcoal-muted leading-relaxed">{desc}</p>
+                            <h3 className="font-title text-[0.8rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light mb-3">{title}</h3>
+                            <p className="font-body text-[0.95rem] text-charcoal-muted leading-relaxed">{desc}</p>
                         </motion.div>
                     ))}
                 </div>
@@ -116,7 +116,7 @@ export default function About() {
             {/* Timeline */}
             <section className="section-base bg-charcoal-mid">
                 <div className="section-header-center">
-                    <p className="eyebrow mb-3" style={{ color: 'rgba(201,168,76,0.6)' }}>The Founder's Journey</p>
+                    <p className="eyebrow mb-3 text-gold">The Founder's Journey</p>
                     <h2 className="text-display-md text-gold-light font-display">Three Decades of Vision</h2>
                     <div className="gold-divider" />
                 </div>
@@ -135,7 +135,7 @@ export default function About() {
                             <div className={`w-[calc(50%-2rem)] ${i % 2 === 0 ? 'pr-8 text-right' : 'pl-8 text-left'}`}>
                                 <div className="border border-gold/15 bg-card/4 p-5 hover:border-gold/35 transition-colors">
                                     <div className="font-title text-lg text-gold font-semibold mb-2">{item.year}</div>
-                                    <p className="font-body text-[0.82rem] text-cream-soft leading-relaxed">{item.event}</p>
+                                    <p className="font-body text-[0.95rem] text-cream-soft leading-relaxed">{item.event}</p>
                                 </div>
                             </div>
                             <div className="w-3 h-3 rounded-full bg-gold border-2 border-charcoal-mid z-10 shrink-0 mx-[calc(1rem-1.5px)]" />
@@ -170,7 +170,7 @@ export default function About() {
             <section className="section-base bg-purple-rich relative overflow-hidden text-center">
                 <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, rgba(201,168,76,0.08), transparent 65%)' }} />
                 <motion.div className="relative z-10" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-                    <p className="eyebrow mb-5" style={{ color: 'rgba(201,168,76,0.55)' }}>Work With Us</p>
+                    <p className="eyebrow mb-5 text-gold">Work With Us</p>
                     <h2 className="text-display-md text-cream-soft font-display mb-8">
                         Ready to Start<br /><em className="text-gold-light italic">Your Project?</em>
                     </h2>

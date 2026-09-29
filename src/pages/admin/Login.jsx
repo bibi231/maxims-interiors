@@ -61,41 +61,41 @@ export default function AdminLogin() {
             <span className="font-title text-2xl text-gold font-bold">M</span>
           </div>
           <div className="font-title text-lg tracking-[0.3em] text-gold font-bold">MAXIMS</div>
-          <div className="font-body text-[0.55rem] tracking-[0.25em] uppercase text-gold/35 mt-1">Admin Portal</div>
+          <div className="font-body text-[0.76rem] tracking-[0.25em] uppercase text-gold/75 mt-1">Admin Portal</div>
         </div>
 
         {/* Card */}
         <div className="bg-charcoal-mid border border-gold/12 p-8">
           <h1 className="font-display text-2xl text-cream-soft mb-1">{mode === 'login' ? 'Welcome back' : 'Reset password'}</h1>
-          <p className="font-body text-[0.8rem] text-cream-soft/35 mb-8">{mode === 'login' ? 'Sign in with your Maxims staff email' : 'We will email you a link to choose a new password'}</p>
+          <p className="font-body text-[0.9rem] text-cream-soft/70 mb-8">{mode === 'login' ? 'Sign in with your Maxims staff email' : 'We will email you a link to choose a new password'}</p>
 
           {error && (
             <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 px-4 py-3 mb-5">
               <AlertCircle size={14} className="text-red-400 shrink-0" />
-              <span className="font-body text-[0.8rem] text-red-400">{error}</span>
+              <span className="font-body text-[0.9rem] text-red-400">{error}</span>
             </div>
           )}
 
           {resetSent && (
             <div className="bg-green-500/10 border border-green-500/20 px-4 py-3 mb-5">
-              <span className="font-body text-[0.8rem] text-green-400">{resetSent}</span>
+              <span className="font-body text-[0.9rem] text-green-400">{resetSent}</span>
             </div>
           )}
 
           <form onSubmit={mode === 'login' ? handleSubmit : handleForgotPassword} className="space-y-4">
             <div>
-              <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-cream-soft/40 block mb-2">
+              <label className="font-title text-[0.76rem] tracking-[0.2em] uppercase text-cream-soft/75 block mb-2">
                 Email Address
               </label>
               <input
                 type="email" value={email} onChange={e => setEmail(e.target.value)} required
                 className="w-full bg-charcoal border border-gold/12 px-4 py-3 font-body text-[0.88rem] text-cream-soft
-                           placeholder:text-cream-soft/20 focus:outline-none focus:border-gold/50 transition-colors"
+                           placeholder:text-cream-soft/45 focus:outline-none focus:border-gold/50 transition-colors"
                 placeholder="you@maximsinterior.com.ng"
               />
             </div>
             {mode === 'login' && <div>
-              <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-cream-soft/40 block mb-2">
+              <label className="font-title text-[0.76rem] tracking-[0.2em] uppercase text-cream-soft/75 block mb-2">
                 Password
               </label>
               <div className="relative">
@@ -103,11 +103,11 @@ export default function AdminLogin() {
                   type={showPwd ? 'text' : 'password'} value={password}
                   onChange={e => setPassword(e.target.value)} required
                   className="w-full bg-charcoal border border-gold/12 px-4 py-3 pr-11 font-body text-[0.88rem] text-cream-soft
-                             placeholder:text-cream-soft/20 focus:outline-none focus:border-gold/50 transition-colors"
+                             placeholder:text-cream-soft/45 focus:outline-none focus:border-gold/50 transition-colors"
                   placeholder="••••••••"
                 />
                 <button type="button" onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-cream-soft/30 hover:text-gold transition-colors">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-cream-soft/70 hover:text-gold transition-colors">
                   {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -116,7 +116,7 @@ export default function AdminLogin() {
             <button
               type="submit" disabled={loading}
               className="w-full bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest
-                         font-title text-[0.68rem] tracking-[0.2em] uppercase py-3.5 flex items-center justify-center gap-2
+                         font-title text-[0.76rem] tracking-[0.2em] uppercase py-3.5 flex items-center justify-center gap-2
                          hover:shadow-[0_4px_20px_rgba(201,168,76,0.35)] transition-all disabled:opacity-50 mt-2"
             >
               {loading ? (
@@ -128,12 +128,12 @@ export default function AdminLogin() {
           </form>
 
           <button type="button" onClick={() => { setMode(mode === 'login' ? 'forgot' : 'login'); setError(''); setResetSent('') }}
-            className="w-full text-center font-body text-[0.78rem] text-cream-soft/45 hover:text-gold transition-colors mt-5 py-1">
+            className="w-full text-center font-body text-[0.9rem] text-cream-soft/75 hover:text-gold transition-colors mt-5 py-1">
             {mode === 'login' ? 'Forgot your password?' : 'Back to sign in'}
           </button>
         </div>
 
-        <p className="text-center font-body text-[0.65rem] text-cream-soft/15 mt-6">
+        <p className="text-center font-body text-[0.76rem] text-cream-soft/60 mt-6">
           Maxims Interiors & Home Goods · Admin Portal
         </p>
       </motion.div>

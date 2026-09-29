@@ -19,9 +19,9 @@ const ROLE_COLORS = {
   content_editor:   'text-cream-soft/80 bg-cream-soft/10',
 }
 
-const labelCls = 'font-title text-[0.68rem] tracking-[0.16em] uppercase text-cream-soft/75 block mb-2'
+const labelCls = 'font-title text-[0.76rem] tracking-[0.16em] uppercase text-cream-soft/75 block mb-2'
 const inputCls = 'w-full min-h-[44px] bg-charcoal border border-gold/20 px-3 py-2.5 font-body text-[0.95rem] text-cream-soft placeholder:text-cream-soft/40 focus:outline-none focus:border-gold/60 transition-colors'
-const saveBtn = 'min-h-[44px] inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.72rem] font-bold tracking-[0.16em] uppercase px-6 hover:shadow-gold transition-all disabled:opacity-50'
+const saveBtn = 'min-h-[44px] inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.8rem] font-bold tracking-[0.16em] uppercase px-6 hover:shadow-gold transition-all disabled:opacity-50'
 
 // ── Change own password ───────────────────────────────────────
 function ChangePasswordForm() {
@@ -49,7 +49,7 @@ function ChangePasswordForm() {
       <input type="password" className={inputCls} value={pwd} onChange={e => setPwd(e.target.value)} placeholder="New password (min. 8 characters)" autoComplete="new-password" aria-label="New password" />
       <input type="password" className={inputCls} value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="Confirm new password" autoComplete="new-password" aria-label="Confirm new password" />
       {msg && <p className={`font-body text-[0.88rem] ${msg.ok ? 'text-green-400' : 'text-amber-400'}`}>{msg.text}</p>}
-      <button disabled={busy} className="min-h-[44px] inline-flex items-center gap-2 border border-gold/40 text-gold font-title text-[0.7rem] tracking-[0.14em] uppercase px-5 hover:bg-gold/10 disabled:opacity-40">
+      <button disabled={busy} className="min-h-[44px] inline-flex items-center gap-2 border border-gold/40 text-gold font-title text-[0.8rem] tracking-[0.14em] uppercase px-5 hover:bg-gold/10 disabled:opacity-40">
         <RefreshCw size={13} /> {busy ? 'Saving...' : 'Update password'}
       </button>
     </form>
@@ -69,7 +69,7 @@ function EmailTab() {
   return (
     <div className="max-w-[640px]">
       <div className="bg-charcoal border border-gold/15 p-5">
-        <h2 className="font-title text-[0.8rem] tracking-[0.16em] uppercase text-gold mb-2">Site email</h2>
+        <h2 className="font-title text-[0.9rem] tracking-[0.16em] uppercase text-gold mb-2">Site email</h2>
         <p className="font-body text-[0.92rem] text-cream-soft/85 leading-relaxed mb-4">
           Invites, password resets, order confirmations and staff alerts are sent through the Maxims mail server
           (mail.maximsinterior.com.ng) using the mailbox set on the server. Send yourself a test to confirm it works.
@@ -129,7 +129,7 @@ export default function Settings() {
       <div className="flex gap-1 border-b border-gold/15 mb-6 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" role="tablist">
         {TABS.map(t => (
           <button key={t.id} role="tab" aria-selected={activeTab === t.id} onClick={() => { setActiveTab(t.id); setSavedMsg('') }}
-            className={cn('min-h-[44px] px-4 font-title text-[0.7rem] tracking-[0.14em] uppercase shrink-0 border-b-2 -mb-px transition-all',
+            className={cn('min-h-[44px] px-4 font-title text-[0.8rem] tracking-[0.14em] uppercase shrink-0 border-b-2 -mb-px transition-all',
               activeTab === t.id ? 'border-gold text-gold' : 'border-transparent text-cream-soft/70 hover:text-cream-soft')}>
             {t.label}
           </button>
@@ -141,14 +141,14 @@ export default function Settings() {
           <StaffAccounts startOpen={params.get('invite') === '1'} />
 
           <div className="bg-charcoal border border-gold/15 p-4 mt-6">
-            <div className="font-title text-[0.7rem] tracking-[0.16em] uppercase text-gold mb-3 flex items-center gap-2"><Shield size={13} /> What each role can see</div>
+            <div className="font-title text-[0.8rem] tracking-[0.16em] uppercase text-gold mb-3 flex items-center gap-2"><Shield size={13} /> What each role can see</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
               {ROLE_OPTS.map(r => (
                 <div key={r} className="bg-charcoal-mid border border-gold/10 p-3">
-                  <div className={cn('font-title text-[0.66rem] tracking-wider uppercase px-2 py-0.5 inline-block mb-2', ROLE_COLORS[r])}>
+                  <div className={cn('font-title text-[0.76rem] tracking-wider uppercase px-2 py-0.5 inline-block mb-2', ROLE_COLORS[r])}>
                     {ROLE_PERMISSIONS[r].label}
                   </div>
-                  <p className="font-body text-[0.82rem] text-cream-soft/75 capitalize leading-relaxed">
+                  <p className="font-body text-[0.95rem] text-cream-soft/75 capitalize leading-relaxed">
                     {ROLE_PERMISSIONS[r].canAccess.map(s => s.replace('_', ' ')).join(', ')}
                   </p>
                 </div>
@@ -204,7 +204,7 @@ export default function Settings() {
               </div>
               <div className="min-w-0">
                 <div className="font-display text-2xl font-semibold text-cream-soft truncate">{profile?.full_name}</div>
-                <span className={cn('font-title text-[0.66rem] tracking-wider uppercase px-2 py-0.5 mt-1 inline-block', ROLE_COLORS[profile?.role])}>
+                <span className={cn('font-title text-[0.76rem] tracking-wider uppercase px-2 py-0.5 mt-1 inline-block', ROLE_COLORS[profile?.role])}>
                   {ROLE_PERMISSIONS[profile?.role]?.label}
                 </span>
               </div>
@@ -212,16 +212,16 @@ export default function Settings() {
             <div className="space-y-3">
               {[['Email', profile?.email], ['Role', ROLE_PERMISSIONS[profile?.role]?.label], ['Sections you can open', ROLE_PERMISSIONS[profile?.role]?.canAccess.map(s => s.replace('_', ' ')).join(', ')]].map(([l, v]) => (
                 <div key={l}>
-                  <div className="font-title text-[0.66rem] tracking-[0.16em] uppercase text-cream-soft/65 mb-1">{l}</div>
+                  <div className="font-title text-[0.76rem] tracking-[0.16em] uppercase text-cream-soft/85 mb-1">{l}</div>
                   <div className="font-body text-[0.95rem] text-cream-soft/90 leading-relaxed break-words">{v}</div>
                 </div>
               ))}
             </div>
           </div>
           <div className="bg-charcoal border border-gold/15 p-5">
-            <div className="font-title text-[0.72rem] tracking-[0.16em] uppercase text-cream-soft/85 mb-3">Change Password</div>
+            <div className="font-title text-[0.8rem] tracking-[0.16em] uppercase text-cream-soft/85 mb-3">Change Password</div>
             <ChangePasswordForm />
-            <p className="font-body text-[0.85rem] text-cream-soft/65 mt-3">
+            <p className="font-body text-[0.95rem] text-cream-soft/85 mt-3">
               Forgotten passwords can be reset from the sign-in page with “Forgot your password?”.
             </p>
           </div>

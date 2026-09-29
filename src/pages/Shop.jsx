@@ -36,7 +36,7 @@ export default function Shop() {
             <section className="page-hero min-h-[380px]">
                 <div className="page-hero-overlay" /><div className="page-hero-pattern" />
                 <motion.div className="relative z-10 px-6 py-24 text-center" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75 }}>
-                    <p className="eyebrow mb-4" style={{ color: 'rgba(201,168,76,0.65)' }}>Home Goods</p>
+                    <p className="eyebrow mb-4 text-gold">Home Goods</p>
                     <h1 className="text-display-lg text-cream-soft font-display mb-4">Shop Collection</h1>
                     <div className="flex items-center justify-center gap-4 my-3">
                         <div className="h-px w-16" style={{ background: 'linear-gradient(to right, transparent, #C9A84C)' }} />
@@ -53,21 +53,21 @@ export default function Shop() {
                     <div className="flex flex-wrap gap-2">
                         {uniqueCats.map(c => (
                             <button key={c} onClick={() => setCat(c)}
-                                className={`font-title text-[0.58rem] tracking-[0.15em] uppercase px-4 py-2 border transition-all duration-200
+                                className={`font-title text-[0.76rem] tracking-[0.15em] uppercase px-4 py-2 border transition-all duration-200
                   ${cat === c ? 'bg-purple-rich text-gold-light border-purple-rich' : 'border-purple-rich/15 text-charcoal-muted hover:border-gold hover:text-gold'}`}
                             >{c}</button>
                         ))}
                     </div>
                     <div className="flex items-center gap-2 border border-purple-rich/12 px-3 py-2 bg-card">
                         <Filter size={12} className="text-charcoal-muted" />
-                        <select value={sort} onChange={e => setSort(e.target.value)} className="font-body text-[0.72rem] text-charcoal-muted bg-transparent outline-none cursor-pointer">
+                        <select value={sort} onChange={e => setSort(e.target.value)} className="font-body text-[0.8rem] text-charcoal-muted bg-transparent outline-none cursor-pointer">
                             <option value="featured">Featured</option>
                             <option value="price-asc">Price: Low to High</option>
                             <option value="price-desc">Price: High to Low</option>
                         </select>
                     </div>
                 </div>
-                <p className="font-body text-[0.72rem] text-charcoal-muted mb-8 max-w-[1200px] mx-auto">{shown.length} products</p>
+                <p className="font-body text-[0.8rem] text-charcoal-muted mb-8 max-w-[1200px] mx-auto">{shown.length} products</p>
 
                 {loading ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-[1200px] mx-auto">
@@ -97,24 +97,24 @@ export default function Shop() {
                                         {p.cover_image ? (
                                             <img src={getStorageUrl(BUCKETS.products, p.cover_image)} alt={p.name} loading="lazy" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                         ) : (
-                                            <ShoppingBag size={40} strokeWidth={1} className="text-gold/50 group-hover:scale-110 transition-transform duration-400" />
+                                            <ShoppingBag size={40} strokeWidth={1} className="text-gold/85 group-hover:scale-110 transition-transform duration-400" />
                                         )}
-                                        {p.badge && <div className={`absolute top-2.5 left-2.5 font-body font-black text-[0.5rem] tracking-[0.12em] uppercase px-2 py-0.5 ${badgeClass(p.badge)}`}>{p.badge}</div>}
+                                        {p.badge && <div className={`absolute top-2.5 left-2.5 font-body font-black text-[0.72rem] tracking-[0.12em] uppercase px-2 py-0.5 ${badgeClass(p.badge)}`}>{p.badge}</div>}
                                         <button onClick={(e) => { e.stopPropagation(); setWished(w => w.includes(p.id) ? w.filter(x => x !== p.id) : [...w, p.id]) }}
                                             className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-card/85 flex items-center justify-center shadow">
                                             <Heart size={13} fill={wished.includes(p.id) ? '#C9A84C' : 'none'} color={wished.includes(p.id) ? '#C9A84C' : '#7A7890'} />
                                         </button>
                                         <div className="absolute inset-0 bg-purple-rich/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                            <button onClick={(e) => { e.stopPropagation(); addCart(p) }} className="btn-maxims btn-gold-solid text-[0.55rem] px-4 py-2">
+                                            <button onClick={(e) => { e.stopPropagation(); addCart(p) }} className="btn-maxims btn-gold-solid text-[0.76rem] px-4 py-2">
                                                 {added === p.id ? <><Check size={12} /> Added</> : 'Add to Cart'}
                                             </button>
                                         </div>
                                     </div>
                                     <div className="p-4">
-                                        <p className="eyebrow text-[0.52rem] mb-1">{p.category}</p>
+                                        <p className="eyebrow text-[0.72rem] mb-1">{p.category}</p>
                                         <h3 className="font-editorial text-[0.88rem] text-charcoal mb-2 group-hover:text-gold transition-colors">{p.name}</h3>
                                         <div className="flex items-center justify-between">
-                                            <span className="font-title text-[0.82rem] text-purple-rich dark:text-gold-light font-semibold">{fmt(p.price)}</span>
+                                            <span className="font-title text-[0.95rem] text-purple-rich dark:text-gold-light font-semibold">{fmt(p.price)}</span>
                                             <button onClick={(e) => { e.stopPropagation(); addCart(p) }} className="w-8 h-8 bg-purple-rich hover:bg-gold hover:text-purple-darkest dark:text-cream-soft text-gold-light flex items-center justify-center transition-colors">
                                                 {added === p.id ? <Check size={13} /> : <ShoppingBag size={13} />}
                                             </button>

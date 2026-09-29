@@ -18,7 +18,7 @@ const CONTACT_OPTIONS = [
 const EMPTY = { customer_name: '', customer_phone: '', customer_email: '', delivery_address: '', city: '', notes: '', preferred_contact: 'phone', service: '' }
 
 const inputCls = 'w-full bg-card border border-purple-rich/15 dark:border-gold/20 px-3.5 py-3 font-body text-[0.9rem] text-charcoal dark:text-cream-soft placeholder:text-charcoal-muted/60 focus:outline-none focus:border-gold transition-colors'
-const labelCls = 'font-title text-[0.56rem] tracking-[0.18em] uppercase text-charcoal-muted block mb-1.5'
+const labelCls = 'font-title text-[0.76rem] tracking-[0.18em] uppercase text-charcoal-muted block mb-1.5'
 
 export default function RequestModal() {
   const { request, closeRequest, items: cartItems, subtotal: cartSubtotal, clear, paymentsEnabled } = useCart()
@@ -93,7 +93,7 @@ export default function RequestModal() {
 
           <div className="sticky top-0 bg-cream-soft dark:bg-charcoal flex items-start justify-between px-5 sm:px-7 pt-5 pb-3 border-b border-gold/15 z-10">
             <div>
-              <p className="eyebrow text-[0.55rem] mb-1">{isQuote ? 'No obligation' : 'No payment needed now'}</p>
+              <p className="eyebrow text-[0.76rem] mb-1">{isQuote ? 'No obligation' : 'No payment needed now'}</p>
               <h2 className="font-display text-2xl text-purple-rich dark:text-gold-light">{state === 'done' ? 'Request received' : title}</h2>
             </div>
             <button onClick={closeRequest} aria-label="Close" className="p-2 -mr-2 text-charcoal-muted hover:text-gold"><X size={20} /></button>
@@ -106,11 +106,11 @@ export default function RequestModal() {
                 Thank you, {form.customer_name.split(' ')[0]}. We have received your {isQuote ? 'quote request' : 'order request'} and will contact you by {CONTACT_OPTIONS.find((c) => c.value === form.preferred_contact)?.label.toLowerCase()} shortly.
               </p>
               <div className="inline-block bg-card border-l-2 border-gold px-5 py-3 mb-4 text-left">
-                <div className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-charcoal-muted">Your reference</div>
+                <div className="font-title text-[0.76rem] tracking-[0.2em] uppercase text-charcoal-muted">Your reference</div>
                 <div className="font-display text-2xl text-purple-rich dark:text-gold-light tracking-wide">{result.order_number}</div>
               </div>
-              <p className="font-body text-[0.78rem] text-charcoal-muted mb-6">A confirmation has been sent to {form.customer_email}. Please keep your reference number.</p>
-              {error && <p className="font-body text-[0.8rem] text-red-600 mb-3">{error}</p>}
+              <p className="font-body text-[0.9rem] text-charcoal-muted mb-6">A confirmation has been sent to {form.customer_email}. Please keep your reference number.</p>
+              {error && <p className="font-body text-[0.9rem] text-red-600 mb-3">{error}</p>}
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 {paymentsEnabled && result.payable && (
                   <button onClick={payNow} disabled={paying} className="btn-maxims btn-gold-solid justify-center disabled:opacity-50">
@@ -125,12 +125,12 @@ export default function RequestModal() {
               {lineItems.length > 0 && (
                 <div className="bg-card border border-gold/15 divide-y divide-gold/10">
                   {lineItems.map((i) => (
-                    <div key={i.id} className="flex justify-between gap-3 px-4 py-2.5 font-body text-[0.84rem]">
+                    <div key={i.id} className="flex justify-between gap-3 px-4 py-2.5 font-body text-[0.95rem]">
                       <span className="text-charcoal dark:text-cream-soft truncate">{i.name} <span className="text-charcoal-muted">x {i.qty}</span></span>
                       <span className="text-charcoal-muted whitespace-nowrap">{formatNaira(Number(i.price) * i.qty)}</span>
                     </div>
                   ))}
-                  <div className="flex justify-between px-4 py-2.5 font-body text-[0.86rem]">
+                  <div className="flex justify-between px-4 py-2.5 font-body text-[0.95rem]">
                     <span className="font-semibold text-purple-rich dark:text-gold-light">Estimated total</span>
                     <span className="font-semibold text-purple-rich dark:text-gold-light">{formatNaira(request.source === 'cart' ? cartSubtotal : total)}</span>
                   </div>
@@ -173,7 +173,7 @@ export default function RequestModal() {
                   {CONTACT_OPTIONS.map(({ value, label, Icon }) => (
                     <button type="button" key={value} onClick={() => setForm((f) => ({ ...f, preferred_contact: value }))}
                       aria-pressed={form.preferred_contact === value}
-                      className={cn('flex flex-col sm:flex-row items-center justify-center gap-1.5 py-2.5 border font-body text-[0.75rem] transition-colors',
+                      className={cn('flex flex-col sm:flex-row items-center justify-center gap-1.5 py-2.5 border font-body text-[0.84rem] transition-colors',
                         form.preferred_contact === value ? 'border-gold bg-gold/10 text-purple-rich dark:text-gold-light' : 'border-purple-rich/15 dark:border-gold/20 text-charcoal-muted hover:border-gold/60')}>
                       <Icon size={14} /> {label}
                     </button>
@@ -190,14 +190,14 @@ export default function RequestModal() {
               {error && (
                 <div className="flex items-start gap-2 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/25 px-3.5 py-2.5">
                   <AlertCircle size={15} className="text-red-600 shrink-0 mt-0.5" />
-                  <span className="font-body text-[0.82rem] text-red-700 dark:text-red-400">{error}</span>
+                  <span className="font-body text-[0.95rem] text-red-700 dark:text-red-400">{error}</span>
                 </div>
               )}
 
               <button type="submit" disabled={state === 'sending'} className="btn-maxims btn-gold-solid w-full justify-center disabled:opacity-50">
                 <Send size={14} /> {state === 'sending' ? 'Sending...' : isQuote ? 'Send quote request' : 'Send order request'}
               </button>
-              <p className="font-body text-[0.7rem] text-charcoal-muted text-center">
+              <p className="font-body text-[0.8rem] text-charcoal-muted text-center">
                 No payment is taken now. Our team will confirm {isQuote ? 'your quote' : 'availability, delivery and payment'} with you directly.
               </p>
             </form>

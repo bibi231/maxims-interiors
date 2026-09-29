@@ -26,9 +26,9 @@ export default function CartDrawer() {
           >
             <span className="relative">
               <ShoppingBag size={18} className="text-gold" />
-              <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 bg-gold text-purple-darkest rounded-full text-[0.6rem] font-black flex items-center justify-center">{count}</span>
+              <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 bg-gold text-purple-darkest rounded-full text-[0.74rem] font-black flex items-center justify-center">{count}</span>
             </span>
-            <span className="font-title text-[0.6rem] tracking-[0.18em] uppercase">Cart</span>
+            <span className="font-title text-[0.74rem] tracking-[0.18em] uppercase">Cart</span>
             <span className="font-body text-sm font-semibold text-gold-light">{formatNaira(subtotal)}</span>
           </motion.button>
         )}
@@ -45,7 +45,7 @@ export default function CartDrawer() {
             >
               <div className="flex items-center justify-between px-5 py-4 border-b border-gold/20">
                 <div>
-                  <p className="eyebrow text-[0.55rem]">Your selection</p>
+                  <p className="eyebrow text-[0.76rem]">Your selection</p>
                   <h2 className="font-display text-2xl text-purple-rich dark:text-gold-light">Cart</h2>
                 </div>
                 <button onClick={closeDrawer} aria-label="Close cart" className="p-2 text-charcoal-muted hover:text-gold"><X size={20} /></button>
@@ -59,11 +59,11 @@ export default function CartDrawer() {
                     <div className="w-16 h-16 shrink-0 bg-gradient-to-br from-cream to-cream-dark overflow-hidden flex items-center justify-center">
                       {i.cover_image
                         ? <img src={getStorageUrl(BUCKETS.products, i.cover_image)} alt="" className="w-full h-full object-cover" />
-                        : <ShoppingBag size={18} className="text-gold/60" />}
+                        : <ShoppingBag size={18} className="text-gold/85" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-editorial text-[0.9rem] text-charcoal dark:text-cream-soft truncate">{i.name}</p>
-                      <p className="font-title text-[0.75rem] text-purple-rich dark:text-gold-light mt-0.5">{formatNaira(i.price)}</p>
+                      <p className="font-title text-[0.84rem] text-purple-rich dark:text-gold-light mt-0.5">{formatNaira(i.price)}</p>
                       <div className="flex items-center gap-2 mt-2">
                         <button onClick={() => setQty(i.id, i.qty - 1)} aria-label="Decrease quantity" className="w-7 h-7 border border-gold/25 flex items-center justify-center hover:border-gold"><Minus size={12} /></button>
                         <span className="font-body text-sm w-6 text-center">{i.qty}</span>
@@ -81,7 +81,7 @@ export default function CartDrawer() {
                     <span className="text-charcoal-muted">Subtotal</span>
                     <span className="font-title text-purple-rich dark:text-gold-light font-semibold">{formatNaira(subtotal)}</span>
                   </div>
-                  <p className="font-body text-[0.72rem] text-charcoal-muted leading-relaxed">
+                  <p className="font-body text-[0.8rem] text-charcoal-muted leading-relaxed">
                     Delivery is confirmed by our team. No payment is taken now: send your request and we will contact you to confirm availability, delivery and payment.
                   </p>
                   <button onClick={() => openRequest({ kind: 'order', source: 'cart' })} className="btn-maxims btn-gold-solid w-full justify-center">

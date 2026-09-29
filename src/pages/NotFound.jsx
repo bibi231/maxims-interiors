@@ -8,9 +8,9 @@ export default function NotFound() {
       <Meta title="Page Not Found — Maxims Interiors" noindex />
       <section className="min-h-[70vh] grid place-items-center bg-charcoal bg-lux-radial px-5 pt-28 pb-16 text-center">
         <div>
-          <div className="font-display text-7xl sm:text-9xl text-gold/30">404</div>
+          <div className="font-display text-7xl sm:text-9xl text-gold/75">404</div>
           <h1 className="text-display-md mt-2">This page has moved house</h1>
-          <p className="mt-4 font-body text-cream-soft/55 max-w-md mx-auto">
+          <p className="mt-4 font-body text-cream-soft/80 max-w-md mx-auto">
             The page you're looking for doesn't exist or has been relocated. Let's get you back to something beautiful.
           </p>
           <div className="mt-8 flex gap-3 justify-center">

@@ -12,7 +12,7 @@ export default function Team() {
             <section className="page-hero min-h-[400px]">
                 <div className="page-hero-overlay" /><div className="page-hero-pattern" />
                 <motion.div className="relative z-10 px-6 py-24 text-center" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75 }}>
-                    <p className="eyebrow mb-4" style={{ color: 'rgba(201,168,76,0.65)' }}>The Visionaries</p>
+                    <p className="eyebrow mb-4 text-gold">The Visionaries</p>
                     <h1 className="text-display-lg text-cream-soft font-display mb-4">Our Team</h1>
                     <div className="gold-divider" />
                     <p className="font-body text-cream-soft text-sm mt-4">The artisans and experts behind the Maxims brand</p>
@@ -57,8 +57,8 @@ export default function Team() {
                                 </div>
                             </div>
                             <h3 className="font-editorial text-2xl text-charcoal mb-1">{t.name}</h3>
-                            <p className="font-title text-[0.6rem] tracking-[0.25em] uppercase text-gold mb-4">{t.role}</p>
-                            <p className="font-body text-[0.82rem] text-charcoal-muted leading-relaxed">{t.bio}</p>
+                            <p className="font-title text-[0.74rem] tracking-[0.25em] uppercase text-gold mb-4">{t.role}</p>
+                            <p className="font-body text-[0.95rem] text-charcoal-muted leading-relaxed">{t.bio}</p>
                         </motion.div>
                     ))}
                 </div>

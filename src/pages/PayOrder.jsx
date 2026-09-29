@@ -58,7 +58,7 @@ export default function PayOrder() {
                 </div>
               )}
               <div className="flex justify-between items-baseline border-t-2 border-gold pt-4 mb-6">
-                <span className="font-title text-[0.85rem] font-bold tracking-[0.16em] uppercase text-charcoal">Total</span>
+                <span className="font-title text-[0.95rem] font-bold tracking-[0.16em] uppercase text-charcoal">Total</span>
                 <span className="font-display text-3xl font-bold text-purple-rich dark:text-gold-light">{formatNaira(order.total)}</span>
               </div>
               {order.payment_status === 'paid' ? (

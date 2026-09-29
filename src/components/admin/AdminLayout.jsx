@@ -1,5 +1,5 @@
 // src/components/admin/AdminLayout.jsx
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { getTheme, applyTheme, setTheme } from '@/lib/theme'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Package, ShoppingBag, Users, Calendar,
   MessageSquare, Images, Star, Settings, Activity,
   LogOut, Menu, X, ChevronRight, Bell, User, Building2,
-  CreditCard, Mail, Sun, Moon, ExternalLink, Tags,
+  CreditCard, Mail, Sun, Moon, ExternalLink, Tags, PenSquare,
 } from 'lucide-react'
 import { useAuth, ROLE_PERMISSIONS } from '@/context/AuthContext'
 import { cn } from '@/lib/utils'
@@ -24,6 +24,7 @@ const ALL_NAV = [
   { section: 'bulk_requests',icon: Building2,       label: 'Bulk Requests', path: '/admin/bulk-requests', badge: 'bulk' },
   { section: 'messages',     icon: MessageSquare,   label: 'Messages',      path: '/admin/messages',      badge: 'messages' },
   { section: 'gallery',      icon: Images,          label: 'Gallery',       path: '/admin/gallery' },
+  { section: 'blog',         icon: PenSquare,       label: 'Journal',       path: '/admin/blog' },
   { section: 'testimonials', icon: Star,            label: 'Testimonials',  path: '/admin/testimonials' },
   { section: 'team',         icon: Users,           label: 'Team',          path: '/admin/team' },
   { section: 'newsletter',   icon: Mail,            label: 'Newsletter',    path: '/admin/newsletter' },
@@ -37,10 +38,40 @@ const ROLE_BADGES = {
   senior_designer:  'bg-purple-light/15 text-purple-light',
   project_manager:  'bg-blue-400/15 text-blue-400',
   shop_manager:     'bg-green-400/15 text-green-400',
-  content_editor:   'bg-cream-soft/10 text-cream-soft/60',
+  content_editor:   'bg-cream-soft/10 text-cream-soft/85',
+}
+
+// Give every table cell its column header as data-label, so the CSS in
+// index.css (.admin-main) can show tables as stacked cards on phones.
+function useResponsiveTables(ref) {
+  useEffect(() => {
+    const root = ref.current
+    if (!root) return
+    const label = () => {
+      root.querySelectorAll('table').forEach((table) => {
+        const heads = [...table.querySelectorAll('thead th')].map((th) => th.textContent.trim())
+        if (!heads.length) return
+        table.querySelectorAll('tbody tr').forEach((tr) => {
+          let col = 0
+          ;[...tr.children].forEach((td) => {
+            const span = Number(td.getAttribute('colspan') || 1)
+            const want = span > 1 ? null : (heads[col] ?? '')
+            if (want !== null && td.getAttribute('data-label') !== want) td.setAttribute('data-label', want)
+            col += span
+          })
+        })
+      })
+    }
+    label()
+    const mo = new MutationObserver(label)
+    mo.observe(root, { childList: true, subtree: true })
+    return () => mo.disconnect()
+  }, [ref])
 }
 
 export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) {
+  const mainRef = useRef(null)
+  useResponsiveTables(mainRef)
   // Live counts for the bell + sidebar badges, polled from the server so the
   // bell works on every admin page (page-supplied counts are a fallback).
   const [serverCounts, setServerCounts] = useState(null)
@@ -87,9 +118,9 @@ export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) 
       <div className="px-5 py-5 border-b border-gold/10 flex items-center justify-between">
         <div>
           <div className="font-title text-[0.9rem] tracking-[0.28em] text-gold font-bold leading-none">MAXIMS</div>
-          <div className="font-body text-[0.42rem] tracking-[0.2em] uppercase text-gold/30 mt-1">Admin Dashboard</div>
+          <div className="font-body text-[0.72rem] tracking-[0.2em] uppercase text-gold/75 mt-1">Admin Dashboard</div>
         </div>
-        <button onClick={() => setSidebarOpen(false)} className="text-cream-soft/20 hover:text-gold transition-colors hidden lg:block">
+        <button onClick={() => setSidebarOpen(false)} className="text-cream-soft/60 hover:text-gold transition-colors hidden lg:block">
           <ChevronRight size={14} />
         </button>
       </div>
@@ -104,10 +135,10 @@ export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) 
             }
           </div>
           <div className="min-w-0">
-            <div className="font-title text-[0.68rem] tracking-wide text-cream-soft/80 truncate leading-none mb-1">
+            <div className="font-title text-[0.76rem] tracking-wide text-cream-soft/80 truncate leading-none mb-1">
               {profile?.full_name}
             </div>
-            <span className={cn('font-body text-[0.5rem] tracking-[0.1em] uppercase px-1.5 py-0.5', ROLE_BADGES[profile?.role])}>
+            <span className={cn('font-body text-[0.72rem] tracking-[0.1em] uppercase px-1.5 py-0.5', ROLE_BADGES[profile?.role])}>
               {ROLE_PERMISSIONS[profile?.role]?.label}
             </span>
           </div>
@@ -124,18 +155,18 @@ export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) 
           return (
             <Link key={item.path} to={item.path}
               className={cn(
-                'flex items-center gap-3 px-3 py-2.5 mb-0.5 font-body text-[0.75rem] transition-all duration-200 group relative',
+                'flex items-center gap-3 px-3 min-h-[44px] mb-0.5 font-body text-[0.92rem] transition-all duration-200 group relative',
                 isActive
                   ? 'bg-gold/10 text-gold'
-                  : 'text-cream-soft/45 hover:text-gold hover:bg-gold/5',
+                  : 'text-cream-soft/85 hover:text-gold hover:bg-gold/5',
               )}
               onClick={() => setMobileSidebar(false)}
             >
               {isActive && <div className="absolute left-0 top-1 bottom-1 w-0.5 bg-gold" />}
-              <item.icon size={15} className={isActive ? 'text-gold' : 'text-cream-soft/30 group-hover:text-gold'} />
+              <item.icon size={15} className={isActive ? 'text-gold' : 'text-cream-soft/70 group-hover:text-gold'} />
               <span className="flex-1">{item.label}</span>
               {count > 0 && (
-                <span className="bg-gold text-purple-darkest font-body font-black text-[0.5rem] leading-none px-1.5 py-0.5 min-w-[18px] text-center">
+                <span className="bg-gold text-purple-darkest font-body font-black text-[0.72rem] leading-none px-1.5 py-0.5 min-w-[18px] text-center">
                   {count > 99 ? '99+' : count}
                 </span>
               )}
@@ -147,11 +178,11 @@ export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) 
       {/* Bottom actions */}
       <div className="px-3 py-3 border-t border-gold/8 space-y-0.5">
         <Link to="/" target="_blank"
-          className="flex items-center gap-3 px-3 py-2 font-body text-[0.72rem] text-cream-soft/25 hover:text-gold transition-colors">
+          className="flex items-center gap-3 px-3 py-2 font-body text-[0.8rem] text-cream-soft/60 hover:text-gold transition-colors">
           <ExternalLink size={13} /> View Live Site
         </Link>
         <button onClick={handleSignOut}
-          className="w-full flex items-center gap-3 px-3 py-2 font-body text-[0.72rem] text-cream-soft/25 hover:text-red-400 transition-colors">
+          className="w-full flex items-center gap-3 px-3 py-2 font-body text-[0.8rem] text-cream-soft/60 hover:text-red-400 transition-colors">
           <LogOut size={13} /> Sign Out
         </button>
       </div>
@@ -179,14 +210,14 @@ export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) 
       {/* Collapsed sidebar toggle */}
       {!sidebarOpen && (
         <div className="hidden lg:flex flex-col items-center py-5 w-14 bg-purple-darkest border-r border-gold/10 shrink-0">
-          <button onClick={() => setSidebarOpen(true)} className="text-gold/40 hover:text-gold transition-colors mb-6">
+          <button onClick={() => setSidebarOpen(true)} className="text-gold/75 hover:text-gold transition-colors mb-6">
             <Menu size={18} />
           </button>
           {visibleNav.map(item => {
             const isActive = location.pathname === item.path
             return (
               <Link key={item.path} to={item.path}
-                className={cn('p-2.5 mb-0.5 transition-colors', isActive ? 'text-gold' : 'text-cream-soft/25 hover:text-gold')}>
+                className={cn('p-2.5 mb-0.5 transition-colors', isActive ? 'text-gold' : 'text-cream-soft/60 hover:text-gold')}>
                 <item.icon size={16} />
               </Link>
             )
@@ -207,7 +238,7 @@ export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) 
               className="fixed top-0 left-0 bottom-0 w-[260px] z-[201] bg-purple-darkest border-r border-gold/10 flex flex-col lg:hidden"
             >
               <div className="flex justify-end p-4">
-                <button onClick={() => setMobileSidebar(false)} className="text-gold/40 hover:text-gold">
+                <button onClick={() => setMobileSidebar(false)} aria-label="Close menu" className="w-11 h-11 grid place-items-center text-gold/85 hover:text-gold">
                   <X size={18} />
                 </button>
               </div>
@@ -220,13 +251,13 @@ export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
-        <header className="h-14 bg-charcoal border-b border-gold/8 flex items-center justify-between px-5 shrink-0">
+        <header className="h-14 bg-charcoal border-b border-gold/15 flex items-center justify-between px-3 sm:px-5 shrink-0">
           <div className="flex items-center gap-3">
-            <button onClick={() => { setSidebarOpen(s => !s); setMobileSidebar(s => !s) }}
-              className="text-cream-soft/30 hover:text-gold transition-colors">
+            <button onClick={() => { setSidebarOpen(s => !s); setMobileSidebar(s => !s) }} aria-label="Menu"
+              className="w-11 h-11 -ml-2 grid place-items-center text-cream-soft/85 hover:text-gold transition-colors">
               <Menu size={18} />
             </button>
-            <div className="hidden sm:flex items-center gap-1 text-cream-soft/25 font-body text-[0.72rem]">
+            <div className="hidden sm:flex items-center gap-1 text-cream-soft/60 font-body text-[0.8rem]">
               <span>Admin</span>
               {location.pathname !== '/admin' && (
                 <>
@@ -238,21 +269,22 @@ export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) 
               )}
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1 sm:gap-2">
             {/* Dark / Light toggle */}
             <button onClick={toggleAdminTheme}
               title={adminTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-              className="text-cream-soft/30 hover:text-gold transition-colors">
+              aria-label="Toggle light or dark mode"
+              className="w-11 h-11 grid place-items-center text-cream-soft/85 hover:text-gold transition-colors">
               {adminTheme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
             </button>
 
             {/* Notification bell */}
             <div className="relative">
-              <button onClick={() => setNotifOpen(o => !o)}
-                className="relative text-cream-soft/30 hover:text-gold transition-colors">
+              <button onClick={() => setNotifOpen(o => !o)} aria-label="Notifications"
+                className="relative w-11 h-11 grid place-items-center text-cream-soft/85 hover:text-gold transition-colors">
                 <Bell size={16} />
                 {(badgeCounts.total ?? 0) > 0 && (
-                  <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-gold rounded-full text-[0.4rem] text-purple-darkest font-black flex items-center justify-center">
+                  <span className="absolute top-1.5 right-1.5 min-w-[18px] h-[18px] px-1 bg-gold rounded-full text-[0.72rem] text-purple-darkest font-black flex items-center justify-center">
                     {badgeCounts.total > 9 ? '9+' : badgeCounts.total}
                   </span>
                 )}
@@ -260,16 +292,16 @@ export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) 
               {notifOpen && (
                 <>
                   <div className="fixed inset-0 z-[100]" onClick={() => setNotifOpen(false)} />
-                  <div className="absolute right-0 top-8 w-72 bg-purple-darkest border border-gold/15 shadow-2xl z-[101]">
+                  <div className="absolute right-0 top-12 w-[min(18rem,calc(100vw-2rem))] bg-purple-darkest border border-gold/15 shadow-2xl z-[101]">
                     <div className="px-4 py-3 border-b border-gold/10">
-                      <p className="font-title text-[0.6rem] tracking-[0.2em] uppercase text-gold/60">Notifications</p>
+                      <p className="font-title text-[0.74rem] tracking-[0.2em] uppercase text-gold/85">Notifications</p>
                     </div>
                     <div className="divide-y divide-gold/8 max-h-72 overflow-y-auto">
                       {(badgeCounts.orders ?? 0) > 0 && (
                         <Link to="/admin/orders" onClick={() => setNotifOpen(false)}
                           className="flex items-center gap-3 px-4 py-3 hover:bg-gold/5 transition-colors">
                           <span className="w-1.5 h-1.5 rounded-full bg-gold shrink-0" />
-                          <p className="font-body text-[0.78rem] text-cream-soft/70">
+                          <p className="font-body text-[0.9rem] text-cream-soft/70">
                             <span className="text-gold font-semibold">{badgeCounts.orders}</span> new order / quote request{badgeCounts.orders !== 1 ? 's' : ''}{badgeCounts.quotes ? ` (${badgeCounts.quotes} quote${badgeCounts.quotes !== 1 ? 's' : ''})` : ''}
                           </p>
                         </Link>
@@ -278,7 +310,7 @@ export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) 
                         <Link to="/admin/appointments" onClick={() => setNotifOpen(false)}
                           className="flex items-center gap-3 px-4 py-3 hover:bg-gold/5 transition-colors">
                           <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
-                          <p className="font-body text-[0.78rem] text-cream-soft/70">
+                          <p className="font-body text-[0.9rem] text-cream-soft/70">
                             <span className="text-blue-400 font-semibold">{badgeCounts.appointments}</span> unconfirmed appointment{badgeCounts.appointments !== 1 ? 's' : ''}
                           </p>
                         </Link>
@@ -287,7 +319,7 @@ export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) 
                         <Link to="/admin/messages" onClick={() => setNotifOpen(false)}
                           className="flex items-center gap-3 px-4 py-3 hover:bg-gold/5 transition-colors">
                           <span className="w-1.5 h-1.5 rounded-full bg-green-400 shrink-0" />
-                          <p className="font-body text-[0.78rem] text-cream-soft/70">
+                          <p className="font-body text-[0.9rem] text-cream-soft/70">
                             <span className="text-green-400 font-semibold">{badgeCounts.messages}</span> unread message{badgeCounts.messages !== 1 ? 's' : ''}
                           </p>
                         </Link>
@@ -296,14 +328,14 @@ export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) 
                         <Link to="/admin/bulk-requests" onClick={() => setNotifOpen(false)}
                           className="flex items-center gap-3 px-4 py-3 hover:bg-gold/5 transition-colors">
                           <span className="w-1.5 h-1.5 rounded-full bg-purple-light shrink-0" />
-                          <p className="font-body text-[0.78rem] text-cream-soft/70">
+                          <p className="font-body text-[0.9rem] text-cream-soft/70">
                             <span className="text-purple-light font-semibold">{badgeCounts.bulk}</span> new bulk request{badgeCounts.bulk !== 1 ? 's' : ''}
                           </p>
                         </Link>
                       )}
                       {(badgeCounts.total ?? 0) === 0 && (
                         <div className="px-4 py-6 text-center">
-                          <p className="font-body text-[0.75rem] text-cream-soft/25">You're all caught up</p>
+                          <p className="font-body text-[0.84rem] text-cream-soft/60">You're all caught up</p>
                         </div>
                       )}
                     </div>
@@ -312,14 +344,14 @@ export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) 
               )}
             </div>
 
-            <Link to="/admin/settings" className="text-cream-soft/30 hover:text-gold transition-colors">
+            <Link to="/admin/settings?tab=account" aria-label="My account" className="w-11 h-11 grid place-items-center text-cream-soft/85 hover:text-gold transition-colors">
               <User size={16} />
             </Link>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-6">
+        <main ref={mainRef} className="admin-main flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
           {children}
         </main>
       </div>
