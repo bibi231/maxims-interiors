@@ -1,20 +1,27 @@
 // src/pages/admin/Settings.jsx
 import { useState, useEffect } from 'react'
-import { Save, UserPlus, Shield, RefreshCw } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
+import { Save, Shield, RefreshCw, Send, CheckCircle2, AlertTriangle } from 'lucide-react'
 import AdminLayout from '@/components/admin/AdminLayout'
+import StaffAccounts from '@/components/admin/StaffAccounts'
 import { api } from '@/lib/api'
-import { useProfiles, updateProfileRole, deactivateProfile, useSiteSettings, inviteStaff } from '@/hooks/useData'
+import { useSiteSettings } from '@/hooks/useData'
 import { useAuth, ROLE_PERMISSIONS } from '@/context/AuthContext'
+import { DEFAULT_CONTACT } from '@/lib/siteDefaults'
 import { cn } from '@/lib/utils'
 
-const ROLE_OPTS = ['owner','senior_designer','project_manager','shop_manager','content_editor']
+const ROLE_OPTS = ['owner', 'senior_designer', 'project_manager', 'shop_manager', 'content_editor']
 const ROLE_COLORS = {
   owner:            'text-gold bg-gold/10',
   senior_designer:  'text-purple-light bg-purple-light/10',
   project_manager:  'text-blue-400 bg-blue-400/10',
   shop_manager:     'text-green-400 bg-green-400/10',
-  content_editor:   'text-cream-soft/50 bg-cream-soft/8',
+  content_editor:   'text-cream-soft/80 bg-cream-soft/10',
 }
+
+const labelCls = 'font-title text-[0.68rem] tracking-[0.16em] uppercase text-cream-soft/75 block mb-2'
+const inputCls = 'w-full min-h-[44px] bg-charcoal border border-gold/20 px-3 py-2.5 font-body text-[0.95rem] text-cream-soft placeholder:text-cream-soft/40 focus:outline-none focus:border-gold/60 transition-colors'
+const saveBtn = 'min-h-[44px] inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.72rem] font-bold tracking-[0.16em] uppercase px-6 hover:shadow-gold transition-all disabled:opacity-50'
 
 // ── Change own password ───────────────────────────────────────
 function ChangePasswordForm() {
@@ -37,309 +44,184 @@ function ChangePasswordForm() {
     }
     setBusy(false)
   }
-  const cls = 'w-full bg-charcoal-mid border border-gold/10 px-3 py-2.5 font-body text-[0.85rem] text-cream-soft/80 placeholder:text-cream-soft/20 focus:outline-none focus:border-gold/40'
   return (
-    <form onSubmit={submit} className="space-y-2.5">
-      <input type="password" className={cls} value={pwd} onChange={e => setPwd(e.target.value)} placeholder="New password (min. 8 characters)" autoComplete="new-password" />
-      <input type="password" className={cls} value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="Confirm new password" autoComplete="new-password" />
-      {msg && <p className={`font-body text-[0.75rem] ${msg.ok ? 'text-green-400' : 'text-yellow-400'}`}>{msg.text}</p>}
-      <button disabled={busy} className="inline-flex items-center gap-2 border border-gold/30 text-gold font-title text-[0.6rem] tracking-[0.15em] uppercase px-5 py-2.5 hover:bg-gold/10 disabled:opacity-40">
-        <RefreshCw size={12} /> {busy ? 'Saving...' : 'Update password'}
+    <form onSubmit={submit} className="space-y-3">
+      <input type="password" className={inputCls} value={pwd} onChange={e => setPwd(e.target.value)} placeholder="New password (min. 8 characters)" autoComplete="new-password" aria-label="New password" />
+      <input type="password" className={inputCls} value={confirm} onChange={e => setConfirm(e.target.value)} placeholder="Confirm new password" autoComplete="new-password" aria-label="Confirm new password" />
+      {msg && <p className={`font-body text-[0.88rem] ${msg.ok ? 'text-green-400' : 'text-amber-400'}`}>{msg.text}</p>}
+      <button disabled={busy} className="min-h-[44px] inline-flex items-center gap-2 border border-gold/40 text-gold font-title text-[0.7rem] tracking-[0.14em] uppercase px-5 hover:bg-gold/10 disabled:opacity-40">
+        <RefreshCw size={13} /> {busy ? 'Saving...' : 'Update password'}
       </button>
     </form>
   )
 }
 
-// ── Invite new team member ────────────────────────────────────
-function InviteForm({ onDone }) {
-  const [email,    setEmail]    = useState('')
-  const [name,     setName]     = useState('')
-  const [password, setPassword] = useState('')
-  const [role,     setRole]     = useState('content_editor')
-  const [loading,  setLoading]  = useState(false)
-  const [success,  setSuccess]  = useState(false)
-  const [error,    setError]    = useState('')
-
-  async function send(e) {
-    e.preventDefault()
-    setLoading(true); setError('')
-    try {
-      if (password && password.length < 8) throw new Error('Temporary password must be at least 8 characters, or leave it blank to email a set-up link.')
-      await inviteStaff({ email: email.trim(), full_name: name.trim(), role, password: password || undefined })
-      setSuccess(true)
-      onDone()
-    } catch (err) {
-      setError(err.message || 'Could not create the account')
-    }
-    setLoading(false)
+// ── Email (SMTP) check ────────────────────────────────────────
+function EmailTab() {
+  const [state, setState] = useState(null)
+  const [busy, setBusy] = useState(false)
+  async function test() {
+    setBusy(true); setState(null)
+    try { const r = await api.post('/settings/test-email'); setState({ ok: true, text: `Test email sent to ${r.to} via ${r.host}. Check that inbox (and spam).` }) }
+    catch (err) { setState({ ok: false, text: err.message }) }
+    setBusy(false)
   }
-
-  if (success) return (
-    <div className="bg-green-500/10 border border-green-500/20 p-4 mt-4">
-      <p className="font-body text-[0.82rem] text-green-400">Account created for {name}. We emailed {email} a link to {password ? 'sign in (share the temporary password with them directly) or' : ''} choose their own password. Sign-in page: /admin/login</p>
-    </div>
-  )
-
-  const inputCls = "w-full bg-charcoal border border-gold/10 px-3 py-2.5 font-body text-[0.85rem] text-cream-soft/80 placeholder:text-cream-soft/15 focus:outline-none focus:border-gold/40 transition-colors"
-
   return (
-    <form onSubmit={send} className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-3">
-      <div>
-        <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/30 block mb-1.5">Full Name</label>
-        <input className={inputCls} value={name} onChange={e=>setName(e.target.value)} placeholder="Chidera Nwosu" required />
+    <div className="max-w-[640px]">
+      <div className="bg-charcoal border border-gold/15 p-5">
+        <h2 className="font-title text-[0.8rem] tracking-[0.16em] uppercase text-gold mb-2">Site email</h2>
+        <p className="font-body text-[0.92rem] text-cream-soft/85 leading-relaxed mb-4">
+          Invites, password resets, order confirmations and staff alerts are sent through the Maxims mail server
+          (mail.maximsinterior.com.ng) using the mailbox set on the server. Send yourself a test to confirm it works.
+        </p>
+        <button onClick={test} disabled={busy} className={saveBtn}><Send size={14} />{busy ? 'Sending...' : 'Send me a test email'}</button>
+        {state && (
+          <div className={cn('mt-4 flex items-start gap-2 border p-3', state.ok ? 'border-green-500/30 bg-green-500/10' : 'border-amber-500/40 bg-amber-500/10')}>
+            {state.ok ? <CheckCircle2 size={17} className="text-green-400 shrink-0 mt-0.5" /> : <AlertTriangle size={17} className="text-amber-400 shrink-0 mt-0.5" />}
+            <p className={cn('font-body text-[0.88rem] break-words', state.ok ? 'text-green-400' : 'text-amber-400')}>{state.text}</p>
+          </div>
+        )}
       </div>
-      <div>
-        <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/30 block mb-1.5">Email Address</label>
-        <input className={inputCls} type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="chidera@maximsinterior.com.ng" required />
-      </div>
-      <div>
-        <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/30 block mb-1.5">Temporary Password (optional)</label>
-        <input className={inputCls} type="text" value={password} onChange={e=>setPassword(e.target.value)} placeholder="Leave blank to email a set-up link" autoComplete="new-password" />
-      </div>
-      <div>
-        <label className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/30 block mb-1.5">Role</label>
-        <select className={inputCls} value={role} onChange={e=>setRole(e.target.value)}>
-          {ROLE_OPTS.filter(r => r !== 'owner').map(r => (
-            <option key={r} value={r}>{ROLE_PERMISSIONS[r].label}</option>
-          ))}
-        </select>
-      </div>
-      {error && <div className="md:col-span-3 font-body text-[0.75rem] text-yellow-400">{error}</div>}
-      <div className="md:col-span-3">
-        <button type="submit" disabled={loading}
-          className="bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.62rem] tracking-[0.18em] uppercase px-6 py-2.5 flex items-center gap-2 hover:shadow-gold transition-all disabled:opacity-50">
-          <UserPlus size={13} />{loading ? 'Sending...' : 'Invite Team Member'}
-        </button>
-      </div>
-    </form>
+    </div>
   )
 }
 
 export default function Settings() {
   const { profile, isOwner } = useAuth()
-  const { data: profiles, refresh: refreshProfiles } = useProfiles()
   const { settings, updateSetting, loading: settingsLoading } = useSiteSettings()
+  const [params] = useSearchParams()
 
-  const [activeTab,   setActiveTab]   = useState(() => (isOwner ? 'team' : 'account'))
-  const [showInvite,  setShowInvite]  = useState(false)
+  const [activeTab,   setActiveTab]   = useState(() => params.get('tab') || (isOwner ? 'team' : 'account'))
   const [contactForm, setContactForm] = useState(null)
   const [socialForm,  setSocialForm]  = useState(null)
   const [saving,      setSaving]      = useState(false)
+  const [savedMsg,    setSavedMsg]    = useState('')
 
-  // Sync form values with settings when loaded
   useEffect(() => {
     if (!settingsLoading) {
-      setContactForm(settings.contact_info || {})
+      setContactForm({ ...DEFAULT_CONTACT, ...(settings.contact_info || {}) })
       setSocialForm(settings.social_links || {})
     }
   }, [settingsLoading, settings])
 
-  async function saveContact() {
-    setSaving(true)
-    await updateSetting('contact_info', contactForm)
+  async function save(key, value) {
+    setSaving(true); setSavedMsg('')
+    try { await updateSetting(key, value); setSavedMsg('Saved. The website now shows the new details.') }
+    catch (err) { setSavedMsg(err.message || 'Could not save.') }
     setSaving(false)
-  }
-
-  async function saveSocial() {
-    setSaving(true)
-    await updateSetting('social_links', socialForm)
-    setSaving(false)
-  }
-
-  async function changeRole(id, role) {
-    if (id === profile.id) { alert("You cannot change your own role."); return }
-    await updateProfileRole(id, role)
-    refreshProfiles()
-  }
-
-  async function toggleActive(p) {
-    if (p.id === profile.id) { alert("You cannot deactivate your own account."); return }
-    await deactivateProfile(p.id)
-    refreshProfiles()
   }
 
   const TABS = [
     { id: 'team',     label: 'Team & Roles',    visible: isOwner },
-    { id: 'contact',  label: 'Contact Info',    visible: isOwner },
+    { id: 'contact',  label: 'Contact & Address', visible: isOwner },
     { id: 'social',   label: 'Social Media',    visible: isOwner },
-    { id: 'hours',    label: 'Business Hours',  visible: isOwner },
+    { id: 'email',    label: 'Email',           visible: isOwner },
     { id: 'account',  label: 'My Account',      visible: true },
   ].filter(t => t.visible)
-
-  const inputCls = "w-full bg-charcoal border border-gold/10 px-3 py-2.5 font-body text-[0.85rem] text-cream-soft/70 placeholder:text-cream-soft/15 focus:outline-none focus:border-gold/40 transition-colors"
 
   return (
     <AdminLayout>
       <div className="mb-6">
         <h1 className="font-title text-xl text-cream-soft tracking-wide">Settings</h1>
-        <p className="font-body text-[0.75rem] text-cream-soft/30 mt-0.5">Manage your team, site content, and account</p>
+        <p className="font-body text-[0.9rem] text-cream-soft/70 mt-0.5">Manage your team, site details, and account</p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 border-b border-gold/8 mb-6 overflow-x-auto">
+      <div className="flex gap-1 border-b border-gold/15 mb-6 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0" role="tablist">
         {TABS.map(t => (
-          <button key={t.id} onClick={() => setActiveTab(t.id)}
-            className={cn('px-4 py-2.5 font-title text-[0.6rem] tracking-[0.15em] uppercase shrink-0 border-b-2 -mb-px transition-all',
-              activeTab === t.id ? 'border-gold text-gold' : 'border-transparent text-cream-soft/35 hover:text-cream-soft/55')}>
+          <button key={t.id} role="tab" aria-selected={activeTab === t.id} onClick={() => { setActiveTab(t.id); setSavedMsg('') }}
+            className={cn('min-h-[44px] px-4 font-title text-[0.7rem] tracking-[0.14em] uppercase shrink-0 border-b-2 -mb-px transition-all',
+              activeTab === t.id ? 'border-gold text-gold' : 'border-transparent text-cream-soft/70 hover:text-cream-soft')}>
             {t.label}
           </button>
         ))}
       </div>
 
-      {/* TEAM TAB */}
       {activeTab === 'team' && (
         <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-title text-[0.72rem] tracking-[0.2em] uppercase text-cream-soft/50">Team Members ({profiles.length})</h2>
-            <button onClick={() => setShowInvite(s => !s)}
-              className="flex items-center gap-2 border border-gold/20 text-gold font-title text-[0.58rem] tracking-[0.15em] uppercase px-4 py-2 hover:bg-gold/8 transition-all">
-              <UserPlus size={12} />{showInvite ? 'Cancel' : 'Invite Member'}
-            </button>
-          </div>
+          <StaffAccounts startOpen={params.get('invite') === '1'} />
 
-          {showInvite && <InviteForm onDone={() => { setShowInvite(false); refreshProfiles() }} />}
-
-          {/* Role permission reference */}
-          <div className="bg-charcoal border border-gold/8 p-4 mb-5 mt-4">
-            <div className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-gold/50 mb-3 flex items-center gap-2"><Shield size={11} /> Role Permissions</div>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
+          <div className="bg-charcoal border border-gold/15 p-4 mt-6">
+            <div className="font-title text-[0.7rem] tracking-[0.16em] uppercase text-gold mb-3 flex items-center gap-2"><Shield size={13} /> What each role can see</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2">
               {ROLE_OPTS.map(r => (
-                <div key={r} className="bg-charcoal-mid border border-gold/8 p-3">
-                  <div className={cn('font-title text-[0.55rem] tracking-wider uppercase px-2 py-0.5 inline-block mb-2', ROLE_COLORS[r])}>
+                <div key={r} className="bg-charcoal-mid border border-gold/10 p-3">
+                  <div className={cn('font-title text-[0.66rem] tracking-wider uppercase px-2 py-0.5 inline-block mb-2', ROLE_COLORS[r])}>
                     {ROLE_PERMISSIONS[r].label}
                   </div>
-                  <ul className="space-y-0.5">
-                    {ROLE_PERMISSIONS[r].canAccess.slice(0,5).map(s => (
-                      <li key={s} className="font-body text-[0.62rem] text-cream-soft/30 capitalize">{s.replace('_',' ')}</li>
-                    ))}
-                    {ROLE_PERMISSIONS[r].canAccess.length > 5 && <li className="font-body text-[0.6rem] text-cream-soft/18">+{ROLE_PERMISSIONS[r].canAccess.length - 5} more</li>}
-                  </ul>
+                  <p className="font-body text-[0.82rem] text-cream-soft/75 capitalize leading-relaxed">
+                    {ROLE_PERMISSIONS[r].canAccess.map(s => s.replace('_', ' ')).join(', ')}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
-
-          {/* Team list */}
-          <div className="bg-charcoal border border-gold/8 overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gold/8">
-                  {['Member','Email','Role','Status','Last Seen','Actions'].map(h=>(
-                    <th key={h} className="px-5 py-3 text-left font-title text-[0.5rem] tracking-[0.2em] uppercase text-cream-soft/20">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {profiles.map(p => (
-                  <tr key={p.id} className="border-b border-gold/5 hover:bg-gold/3 transition-colors">
-                    <td className="px-5 py-3.5">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-full bg-purple-rich border border-gold/15 flex items-center justify-center shrink-0">
-                          <span className="font-title text-xs text-gold">{p.full_name?.[0]}</span>
-                        </div>
-                        <span className="font-body text-[0.82rem] text-cream-soft/65">{p.full_name}</span>
-                        {p.id === profile.id && <span className="font-title text-[0.45rem] tracking-wider uppercase text-gold/40 bg-gold/8 px-1.5 py-0.5">you</span>}
-                      </div>
-                    </td>
-                    <td className="px-5 py-3.5 font-body text-[0.75rem] text-cream-soft/35">{p.email}</td>
-                    <td className="px-5 py-3.5">
-                      {isOwner && p.id !== profile.id ? (
-                        <select value={p.role} onChange={e => changeRole(p.id, e.target.value)}
-                          className="bg-charcoal border border-gold/10 px-2 py-1 font-title text-[0.55rem] tracking-wider uppercase focus:outline-none focus:border-gold/35 cursor-pointer transition-colors"
-                          style={{ color: p.role === 'owner' ? '#C9A84C' : '' }}>
-                          {ROLE_OPTS.map(r => <option key={r} value={r}>{ROLE_PERMISSIONS[r].label}</option>)}
-                        </select>
-                      ) : (
-                        <span className={cn('font-title text-[0.55rem] tracking-wider uppercase px-2 py-0.5', ROLE_COLORS[p.role])}>
-                          {ROLE_PERMISSIONS[p.role]?.label}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <span className={cn('font-body text-[0.6rem] tracking-wider uppercase px-1.5 py-0.5', p.is_active ? 'text-green-400 bg-green-400/10' : 'text-red-400 bg-red-400/10')}>
-                        {p.is_active ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5 font-body text-[0.7rem] text-cream-soft/25">
-                      {p.last_seen ? new Date(p.last_seen).toLocaleDateString('en-NG', {month:'short',day:'numeric'}) : 'Never'}
-                    </td>
-                    <td className="px-5 py-3.5">
-                      {isOwner && p.id !== profile.id && p.role !== 'owner' && (
-                        <button onClick={() => toggleActive(p)} className="font-title text-[0.55rem] tracking-wider uppercase text-cream-soft/25 hover:text-red-400 transition-colors">
-                          {p.is_active ? 'Deactivate' : 'Reactivate'}
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </div>
       )}
 
-      {/* CONTACT INFO TAB */}
       {activeTab === 'contact' && contactForm && (
-        <div className="max-w-[600px]">
+        <div className="max-w-[640px]">
+          <p className="font-body text-[0.9rem] text-cream-soft/75 mb-5">These details appear in the website footer, the Contact page, search-engine business data, and appointment emails.</p>
           <div className="grid grid-cols-1 gap-4 mb-5">
-            {[['Phone Number','phone','+234 800 000 0000'],['Email Address','email','info@maximsinterior.com.ng'],['Physical Address','address','123 Design Blvd, Wuse 2, Abuja'],['Business Hours','hours','Mon–Sat: 9am–7pm WAT']].map(([label,key,ph])=>(
+            {[['Phone Number', 'phone', '+234 ...'], ['WhatsApp Number (optional)', 'whatsapp', '+234 ...'], ['Email Address', 'email', 'info@maximsinterior.com.ng'], ['Physical Address', 'address', DEFAULT_CONTACT.address], ['Business Hours', 'hours', 'Mon–Sat: 9am–6pm WAT'], ['Google Maps link (optional)', 'map_url', 'https://maps.google.com/?q=...']].map(([label, key, ph]) => (
               <div key={key}>
-                <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-cream-soft/35 block mb-2">{label}</label>
-                <input className={inputCls} value={contactForm[key]||''} onChange={e=>setContactForm(f=>({...f,[key]:e.target.value}))} placeholder={ph} />
+                <label className={labelCls} htmlFor={`ci-${key}`}>{label}</label>
+                <input id={`ci-${key}`} className={inputCls} value={contactForm[key] || ''} onChange={e => setContactForm(f => ({ ...f, [key]: e.target.value }))} placeholder={ph} />
               </div>
             ))}
           </div>
-          <button onClick={saveContact} disabled={saving} className="flex items-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.62rem] tracking-[0.18em] uppercase px-6 py-2.5 hover:shadow-gold transition-all disabled:opacity-50">
-            <Save size={13} />{saving ? 'Saving...' : 'Save Contact Info'}
+          <button onClick={() => save('contact_info', contactForm)} disabled={saving} className={saveBtn}>
+            <Save size={14} />{saving ? 'Saving...' : 'Save contact details'}
           </button>
+          {savedMsg && <p className="font-body text-[0.88rem] text-green-400 mt-3">{savedMsg}</p>}
         </div>
       )}
 
-      {/* SOCIAL MEDIA TAB */}
       {activeTab === 'social' && socialForm && (
-        <div className="max-w-[500px]">
+        <div className="max-w-[560px]">
           <div className="grid grid-cols-1 gap-4 mb-5">
-            {[['Instagram','instagram'],['Facebook','facebook'],['LinkedIn','linkedin'],['YouTube','youtube'],['Pinterest','pinterest']].map(([label,key])=>(
+            {[['Instagram', 'instagram'], ['Facebook', 'facebook'], ['LinkedIn', 'linkedin'], ['YouTube', 'youtube'], ['Pinterest', 'pinterest']].map(([label, key]) => (
               <div key={key}>
-                <label className="font-title text-[0.55rem] tracking-[0.2em] uppercase text-cream-soft/35 block mb-2">{label}</label>
-                <input className={inputCls} value={socialForm[key]||''} onChange={e=>setSocialForm(f=>({...f,[key]:e.target.value}))} placeholder={`https://${key}.com/maximsinteriors`} />
+                <label className={labelCls} htmlFor={`so-${key}`}>{label}</label>
+                <input id={`so-${key}`} className={inputCls} value={socialForm[key] || ''} onChange={e => setSocialForm(f => ({ ...f, [key]: e.target.value }))} placeholder={`https://${key}.com/maximsinteriors`} />
               </div>
             ))}
           </div>
-          <button onClick={saveSocial} disabled={saving} className="flex items-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.62rem] tracking-[0.18em] uppercase px-6 py-2.5 hover:shadow-gold transition-all disabled:opacity-50">
-            <Save size={13} />{saving ? 'Saving...' : 'Save Social Links'}
+          <button onClick={() => save('social_links', socialForm)} disabled={saving} className={saveBtn}>
+            <Save size={14} />{saving ? 'Saving...' : 'Save social links'}
           </button>
+          {savedMsg && <p className="font-body text-[0.88rem] text-green-400 mt-3">{savedMsg}</p>}
         </div>
       )}
 
-      {/* MY ACCOUNT TAB */}
+      {activeTab === 'email' && <EmailTab />}
+
       {activeTab === 'account' && (
-        <div className="max-w-[500px]">
-          <div className="bg-charcoal border border-gold/8 p-6 mb-5">
+        <div className="max-w-[560px]">
+          <div className="bg-charcoal border border-gold/15 p-5 sm:p-6 mb-5">
             <div className="flex items-center gap-4 mb-5">
-              <div className="w-14 h-14 rounded-full bg-purple-rich border-2 border-gold/20 flex items-center justify-center">
+              <div className="w-14 h-14 rounded-full bg-purple-rich border-2 border-gold/30 flex items-center justify-center shrink-0">
                 <span className="font-title text-xl text-gold">{profile?.full_name?.[0]}</span>
               </div>
-              <div>
-                <div className="font-display text-xl text-cream-soft">{profile?.full_name}</div>
-                <span className={cn('font-title text-[0.55rem] tracking-wider uppercase px-2 py-0.5 mt-1 inline-block', ROLE_COLORS[profile?.role])}>
+              <div className="min-w-0">
+                <div className="font-display text-2xl font-semibold text-cream-soft truncate">{profile?.full_name}</div>
+                <span className={cn('font-title text-[0.66rem] tracking-wider uppercase px-2 py-0.5 mt-1 inline-block', ROLE_COLORS[profile?.role])}>
                   {ROLE_PERMISSIONS[profile?.role]?.label}
                 </span>
               </div>
             </div>
             <div className="space-y-3">
-              {[['Email', profile?.email],['Role', ROLE_PERMISSIONS[profile?.role]?.label],['Sections Access', ROLE_PERMISSIONS[profile?.role]?.canAccess.join(', ')]].map(([l,v])=>(
+              {[['Email', profile?.email], ['Role', ROLE_PERMISSIONS[profile?.role]?.label], ['Sections you can open', ROLE_PERMISSIONS[profile?.role]?.canAccess.map(s => s.replace('_', ' ')).join(', ')]].map(([l, v]) => (
                 <div key={l}>
-                  <div className="font-title text-[0.52rem] tracking-[0.2em] uppercase text-cream-soft/28 mb-1">{l}</div>
-                  <div className="font-body text-[0.85rem] text-cream-soft/60 leading-relaxed">{v}</div>
+                  <div className="font-title text-[0.66rem] tracking-[0.16em] uppercase text-cream-soft/65 mb-1">{l}</div>
+                  <div className="font-body text-[0.95rem] text-cream-soft/90 leading-relaxed break-words">{v}</div>
                 </div>
               ))}
             </div>
           </div>
-          <div className="bg-charcoal border border-gold/8 p-5">
-            <div className="font-title text-[0.62rem] tracking-[0.18em] uppercase text-cream-soft/40 mb-3">Change Password</div>
+          <div className="bg-charcoal border border-gold/15 p-5">
+            <div className="font-title text-[0.72rem] tracking-[0.16em] uppercase text-cream-soft/85 mb-3">Change Password</div>
             <ChangePasswordForm />
-            <p className="font-body text-[0.72rem] text-cream-soft/30 mt-3">
+            <p className="font-body text-[0.85rem] text-cream-soft/65 mt-3">
               Forgotten passwords can be reset from the sign-in page with “Forgot your password?”.
             </p>
           </div>

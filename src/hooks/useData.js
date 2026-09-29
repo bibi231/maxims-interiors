@@ -7,6 +7,7 @@
 // ============================================================
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { api, qs } from '@/lib/api'
+import { DEFAULT_CONTACT, DEFAULT_PRICING } from '@/lib/siteDefaults'
 
 // ── Generic fetch hook (optional polling for near-realtime views) ──
 function useApi(path, { poll = 0 } = {}) {
@@ -148,17 +149,47 @@ export async function deleteTeamMember(id) { return api.del(`/team/${id}`) }
 // ============================================================
 // SITE SETTINGS
 // ============================================================
+// One shared fetch per page load: Footer, Contact, JSON-LD and pricing all
+// read the same settings map.
+let settingsCache = null
+let settingsPromise = null
+const settingsListeners = new Set()
+function loadSettings(force = false) {
+  if (force || !settingsPromise) {
+    settingsPromise = api.get('/settings')
+      .then((map) => { settingsCache = map || {}; settingsListeners.forEach((fn) => fn(settingsCache)); return settingsCache })
+      .catch(() => { settingsPromise = null; return settingsCache || {} })
+  }
+  return settingsPromise
+}
+
 export function useSiteSettings() {
-  const [settings, setSettings] = useState({})
-  const [loading, setLoading] = useState(true)
+  const [settings, setSettings] = useState(settingsCache || {})
+  const [loading, setLoading] = useState(!settingsCache)
   useEffect(() => {
-    api.get('/settings').then((map) => setSettings(map || {})).catch(() => setSettings({})).finally(() => setLoading(false))
+    let alive = true
+    settingsListeners.add(setSettings)
+    loadSettings().then((map) => { if (alive) { setSettings(map); setLoading(false) } })
+    return () => { alive = false; settingsListeners.delete(setSettings) }
   }, [])
   async function updateSetting(key, value) {
-    await api.put(`/settings/${key}`, { value })
-    setSettings((prev) => ({ ...prev, [key]: value }))
+    const row = await api.put(`/settings/${key}`, { value })
+    settingsCache = { ...(settingsCache || {}), [key]: row?.value ?? value }
+    settingsListeners.forEach((fn) => fn(settingsCache))
   }
-  return { settings, loading, updateSetting }
+  return { settings, loading, updateSetting, reload: () => loadSettings(true) }
+}
+
+/** contact_info merged over defaults (address, phone, email, hours). */
+export function useContactInfo() {
+  const { settings, loading } = useSiteSettings()
+  return { contact: { ...DEFAULT_CONTACT, ...(settings.contact_info || {}) }, social: settings.social_links || {}, loading }
+}
+
+/** Pricing & services (admin-editable) merged over defaults. */
+export function usePricing() {
+  const { settings, loading } = useSiteSettings()
+  return { pricing: { ...DEFAULT_PRICING, ...(settings.pricing || {}) }, loading }
 }
 
 // ============================================================

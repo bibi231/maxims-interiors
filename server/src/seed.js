@@ -8,13 +8,15 @@
 import 'dotenv/config'
 import { closeDB } from './config/db.js'
 import { Setting, Product, Gallery, Testimonial } from './models.js'
+import { DEFAULT_CONTACT, DEFAULT_PRICING } from './utils/siteSettings.js'
 
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 
 async function run() {
   // ── Site settings ──
   const settings = {
-    contact_info: { phone: '+234 800 000 0000', email: 'info@maximsinterior.com.ng', address: '123 Design Boulevard, Wuse 2, Abuja, FCT', hours: 'Mon–Sat: 9am–7pm WAT' },
+    contact_info: DEFAULT_CONTACT,
+    pricing: DEFAULT_PRICING,
     social_links: { instagram: '', facebook: '', linkedin: '', youtube: '' },
     hero_content: { headline: 'Where Luxury Meets Living', subtext: 'Transforming spaces into timeless experiences' },
     delivery_fee: 5000,

@@ -10,6 +10,7 @@ import SupportChat from '@/components/SupportChat'
 import { CartProvider } from '@/context/CartContext'
 import CartDrawer from '@/components/CartDrawer'
 import RequestModal from '@/components/RequestModal'
+import SiteJsonLd from '@/components/SiteJsonLd'
 
 // Public Layout
 import Navbar from '@/components/layout/Navbar'
@@ -61,6 +62,7 @@ const pageTransition = {
 function PublicLayout({ children }) {
   return (
     <>
+      <SiteJsonLd />
       <Navbar />
       {children}
       <Footer />

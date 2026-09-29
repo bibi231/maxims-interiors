@@ -5,7 +5,8 @@ import { Appointment } from '../models.js'
 import { requireAuth, canAccess, canWrite } from '../middleware/auth.js'
 import { logActivity } from '../utils/activity.js'
 import { sendMail } from '../utils/mailer.js'
-import { emailShell, detailsTable } from '../utils/templates.js'
+import { emailShell, detailsTable, esc } from '../utils/templates.js'
+import { getSetting } from '../utils/siteSettings.js'
 import { notifyStaff } from '../utils/notify.js'
 import { forwardLead } from '../utils/supportai.js'
 
@@ -58,13 +59,15 @@ router.patch('/:id', requireAuth, canWrite('appointments'), async (req, res) => 
   await logActivity({ userId: req.user.id, action: 'status_changed', resourceType: 'appointment', resourceId: appt.id, description: `Appointment for ${appt.client_name} → ${appt.status}` })
 
   if (appt.status === 'confirmed' && !wasConfirmed) {
+    const { address } = await getSetting('contact_info')
+    const where = !appt.location || appt.location === 'showroom' ? `Our showroom, ${address}` : appt.location
     await sendMail({
       to: appt.client_email,
       subject: 'Your Consultation is Confirmed — Maxims Interiors',
       html: emailShell({
         heading: 'Your Consultation is Confirmed',
-        body: `<p>Dear ${String(appt.client_name).split(' ')[0]},</p><p>We're delighted to confirm your consultation.</p>
-          <p style="background:#FAF7F2;padding:14px;border-left:3px solid #C9A84C;"><strong>Date:</strong> ${appt.preferred_date}<br><strong>Time:</strong> ${appt.preferred_time}<br><strong>Location:</strong> ${appt.location || 'Our Showroom, Wuse 2, Abuja'}${appt.meeting_link ? `<br><strong>Link:</strong> ${appt.meeting_link}` : ''}</p>
+        body: `<p>Dear ${esc(String(appt.client_name).split(' ')[0])},</p><p>We're delighted to confirm your consultation.</p>
+          <p style="background:#FAF7F2;padding:14px;border-left:3px solid #C9A84C;"><strong>Date:</strong> ${esc(appt.preferred_date)}<br><strong>Time:</strong> ${esc(appt.preferred_time)}<br><strong>Location:</strong> ${esc(where)}${appt.meeting_link ? `<br><strong>Link:</strong> ${esc(appt.meeting_link)}` : ''}</p>
           <p>We look forward to seeing you. To reschedule, just reply to this email.</p>`,
       }),
     })
