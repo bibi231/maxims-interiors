@@ -234,6 +234,16 @@ try {
     assert.equal((await call('POST', '/auth/forgot-password', { email }, null)).status, 200)
   })
 
+  await step('rate limits: forgot-password is per IP+email, reset-password has its own budget', async () => {
+    const email = `limit.${tag}@example.com`
+    for (let i = 0; i < 5; i++) assert.equal((await call('POST', '/auth/forgot-password', { email }, null)).status, 200)
+    assert.equal((await call('POST', '/auth/forgot-password', { email }, null)).status, 429)
+    // a different email from the same IP still has its own budget
+    assert.equal((await call('POST', '/auth/forgot-password', { email: 'other.' + email }, null)).status, 200)
+    // holding a link: reset-password is not blocked by the forgot limiter
+    for (let i = 0; i < 6; i++) assert.equal((await call('POST', '/auth/reset-password', { token: 'bad', password: 'abcdefgh1' }, null)).status, 400)
+  })
+
   await step('activity log with populated profile', async () => {
     const a = await call('GET', '/activity?limit=5')
     assert.equal(a.status, 200); assert.ok(a.body.length > 0 && a.body.length <= 5)

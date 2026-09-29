@@ -17,9 +17,17 @@ const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, max: 10, standardHeaders: true, legacyHeaders: false,
   message: { error: 'Too many sign-in attempts. Please wait 15 minutes and try again, or reset your password.' },
 })
-const resetLimiter = rateLimit({
+// Forgot-password and reset-password have separate budgets: a person holding a
+// valid link must never be locked out because someone (or they) asked for
+// several links. Forgot: 5 per 15 min per IP + email. Reset: 20 per 15 min per IP.
+const forgotLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, max: 5, standardHeaders: true, legacyHeaders: false,
-  message: { error: 'Too many reset requests. Please wait a few minutes and try again.' },
+  keyGenerator: (req) => `${req.ip}|${String(req.body?.email || '').trim().toLowerCase()}`,
+  message: { error: 'Too many reset requests for this email. Please wait 15 minutes and try again.' },
+})
+const resetPasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, max: 20, standardHeaders: true, legacyHeaders: false,
+  message: { error: 'Too many attempts. Please wait a few minutes and try again.' },
 })
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -60,7 +68,7 @@ router.put('/me', requireAuth, safe(async (req, res) => {
 }))
 
 // PUBLIC — request a reset link. Same answer whether or not the email exists.
-router.post('/forgot-password', resetLimiter, safe(async (req, res) => {
+router.post('/forgot-password', forgotLimiter, safe(async (req, res) => {
   const email = String(req.body?.email || '').trim().toLowerCase()
   if (!EMAIL_RE.test(email)) return res.status(400).json({ error: 'Please enter a valid email address.' })
   const user = await User.findOne({ email })
@@ -80,7 +88,7 @@ router.post('/forgot-password', resetLimiter, safe(async (req, res) => {
 }))
 
 // PUBLIC — set a new password from a reset / set-up link. Signs the user in.
-router.post('/reset-password', resetLimiter, safe(async (req, res) => {
+router.post('/reset-password', resetPasswordLimiter, safe(async (req, res) => {
   const { token, password } = req.body || {}
   if (!token) return res.status(400).json({ error: 'This link is incomplete. Please request a new one.' })
   if (!password || String(password).length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters.' })
