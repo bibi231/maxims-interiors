@@ -46,7 +46,7 @@ export function defineModel(name, table, fields, hooks = {}) {
   const typeOf = (c) => (c === 'id' ? 'id' : c === 'created_at' || c === 'updated_at' ? 'date' : fields[c].type)
 
   // JS value -> SQL parameter (with Mongoose-style casting + validation)
-  function castIn(c, v) {
+  function castIn(c, v, strict = true) {
     const f = fields[c]
     if (v === undefined || v === null) v = null
     else {
@@ -88,8 +88,8 @@ export function defineModel(name, table, fields, hooks = {}) {
       }
     }
     if (v === null && f.type === 'json' && f.default !== undefined) v = JSON.stringify(f.default)
-    if (f.required && (v === null || v === '')) throw new ValidationError(`${c} is required`)
-    if (f.enum && v !== null && !f.enum.includes(v)) throw new ValidationError(`${c}: "${v}" is not a valid value`)
+    if (strict && f.required && (v === null || v === '')) throw new ValidationError(`${c} is required`)
+    if (strict && f.enum && v !== null && !f.enum.includes(v)) throw new ValidationError(`${c}: "${v}" is not a valid value`)
     return v
   }
 
@@ -379,6 +379,23 @@ export function defineModel(name, table, fields, hooks = {}) {
       const { sql, params } = buildWhere(filter)
       const r = await query(`DELETE FROM ${qi(table)}${sql ? ` WHERE ${sql}` : ''}`, params)
       return { deletedCount: r.affectedRows || 0 }
+    },
+    columns: cols,
+    /**
+     * Converts a plain object to a SQL row { id, ...cols, created_at, updated_at }
+     * using the same casting as save(). Missing (undefined) fields get defaults.
+     * strict=false skips required/enum checks (NOT NULL columns still apply).
+     */
+    toRow(data, { strict = true } = {}) {
+      const row = { id: String(data.id) }
+      for (const c of cols) {
+        let v = data[c]
+        if (v === undefined) { const d = fields[c].default; v = typeof d === 'function' ? d() : clone(d) }
+        row[c] = castIn(c, v, strict)
+      }
+      row.created_at = data.created_at ? new Date(data.created_at) : new Date()
+      row.updated_at = data.updated_at ? new Date(data.updated_at) : row.created_at
+      return row
     },
     // exposed for tests
     _buildWhere: buildWhere,

@@ -12,7 +12,9 @@
     "seed:photos": "node ../scripts/attach-photos.mjs",
     "seed:reviews": "node src/seedReviews.js",
     "staff": "node src/migrate-users.js",
-    "test:db": "node test/db.smoke.js"
+    "test:db": "node test/db.smoke.js",
+    "db:copy-from-mongo": "node scripts/copy-from-mongo.js",
+    "test:copy": "node test/copy-from-mongo.test.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -28,5 +30,8 @@
     "mysql2": "^3.24.4",
     "nanoid": "^5.0.7",
     "nodemailer": "^6.10.1"
+  },
+  "optionalDependencies": {
+    "mongodb": "^6.21.0"
   }
 }

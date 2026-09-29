@@ -43,6 +43,30 @@ npm run dev                   # http://localhost:4000  (GET /api/health checks t
 ```
 
 Needs MariaDB 10.3+ or MySQL 8: `DATABASE_URL=mysql://user:pass@host:3306/dbname`.
+
+### Moving the live data from MongoDB (one-off)
+
+The production data still lives in MongoDB Atlas. Do **not** run `seed` / `staff`
+against the production MariaDB; copy the real data instead:
+
+```bash
+cd server
+npm install                                   # includes the optional `mongodb` driver used only by the copy
+# 1. Create the database + user in DirectAdmin (MySQL Management), then in server/.env:
+#    DATABASE_URL=mysql://DBUSER:DBPASS@localhost:3306/DBNAME
+#    MONGODB_URI=<the Atlas connection string>
+npm run db:schema                             # 2. tables
+npm run db:copy-from-mongo -- --dry-run       # 3. counts, unknown fields, validation failures; writes nothing
+npm run db:copy-from-mongo                    # 4. copy (upsert by id, safe to re-run); exits 1 on any mismatch
+# 5. restart the Node app, then:
+curl -s https://maximsinterior.com.ng/api/health   # expect {"ok":true,...,"db":{"ok":true}}
+```
+
+The copy keeps every Mongo ObjectId as the row id, all timestamps, and the bcrypt
+password hashes, so staff sign in with their current passwords. If a document fails
+validation (e.g. an old status value), fix it or re-run with `--lenient`. If `seed` or
+`staff` were already run on the target, add `--truncate` to empty the tables first.
+`npm run test:copy` tests the copy against throwaway Mongo + MariaDB databases.
 `npm run test:db` runs an end-to-end API smoke test; point `TEST_DATABASE_URL` at a throwaway database.
 
 ## 2. Run the frontend
@@ -92,7 +116,7 @@ Transactional email is sent inline by the API (contact auto-reply + staff alert,
 1. New **Web Service** from your GitHub repo, root directory `server`.
 2. Build `npm install`, start `npm start`.
 3. Add all `server/.env` values as environment variables (set `API_URL` to the Render URL, `APP_URL` to your Vercel URL, `CLIENT_ORIGIN` to your frontend origin).
-4. Set `DATABASE_URL` to a MariaDB/MySQL database, then run `npm run db:schema`, `npm run seed`, `npm run seed:photos`, `npm run staff` once.
+4. Set `DATABASE_URL` to a MariaDB/MySQL database and run `npm run db:schema`. Existing site: `npm run db:copy-from-mongo` (see above). Brand-new empty site only: `npm run seed`, `npm run seed:photos`, `npm run staff`.
 > Note: with `STORAGE_DRIVER=local`, uploads sit on the service disk (ephemeral on some hosts). For permanent media set `STORAGE_DRIVER=cloudinary`.
 
 ### Frontend → Vercel
