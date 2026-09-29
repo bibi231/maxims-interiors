@@ -23,6 +23,25 @@ import settingRoutes from './routes/settings.js'
 import paymentRoutes from './routes/payments.js'
 import miscRoutes from './routes/misc.js'
 import { paymentsEnabled } from './utils/config.js'
+import { pingDB } from './config/db.js'
+
+// Express 4 does not catch rejected promises from async handlers; without this
+// a failed query would crash the process. Route them to the error handler.
+import Layer from 'express/lib/router/layer.js'
+if (!Layer.prototype.__asyncPatched) {
+  // Same as Express 4's own handle_request, plus forwarding promise rejections.
+  Layer.prototype.handle_request = function handle(req, res, next) {
+    const fn = this.handle
+    if (fn.length > 3) return next() // error-handling middleware is not a request handler
+    try {
+      const ret = fn(req, res, next)
+      if (ret && typeof ret.catch === 'function') ret.catch(next)
+    } catch (err) {
+      next(err)
+    }
+  }
+  Layer.prototype.__asyncPatched = true
+}
 
 export function createApp() {
   const app = express()
@@ -43,8 +62,13 @@ export function createApp() {
   // Local-disk uploads (only used when STORAGE_DRIVER=local; on Vercel use Cloudinary)
   app.use('/uploads', express.static(path.join(process.cwd(), process.env.UPLOAD_DIR || 'uploads')))
 
-  app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'maxims-api' }))
-  app.get('/health', (_req, res) => res.json({ ok: true, service: 'maxims-api' }))
+  // Health: checks the database too. 503 when the DB is unreachable.
+  const health = async (_req, res) => {
+    const db = await pingDB()
+    res.status(db.ok ? 200 : 503).json({ ok: db.ok, service: 'maxims-api', db })
+  }
+  app.get('/api/health', health)
+  app.get('/health', health)
 
   // Public runtime config for the storefront (no secrets).
   app.get('/api/config', (_req, res) => res.json({
@@ -68,9 +92,13 @@ export function createApp() {
 
   app.use((_req, res) => res.status(404).json({ error: 'Not found' }))
   app.use((err, _req, res, _next) => {
-    console.error('[error]', err.message)
+    console.error('[error]', err.code || '', err.message)
+    if (res.headersSent) return
+    if (err.code === 'ER_DUP_ENTRY') return res.status(409).json({ error: 'A record with that value already exists.' })
+    if (err.name === 'ValidationError') return res.status(400).json({ error: err.message })
     const code = err.message?.includes('File too large') ? 413 : 500
-    res.status(code).json({ error: err.message || 'Server error' })
+    // Never leak SQL errors to clients.
+    res.status(code).json({ error: code === 413 || !err.sqlMessage ? (err.message || 'Server error') : 'Server error' })
   })
 
   return app
