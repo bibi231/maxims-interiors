@@ -1,5 +1,5 @@
 -- ============================================================
--- 004 — Business address: No. 8 Oke Agbe Street, Garki 2, Abuja
+-- 004 — Business address: No. 8 Oke Agbe Street, Garki 2, Abuja, FCT
 -- One-time data change, recorded in schema_migrations so re-running
 -- `npm run db:schema` never overwrites an address staff edit later in
 -- Admin > Settings > Contact & Address.
@@ -13,14 +13,14 @@ CREATE TABLE IF NOT EXISTS `schema_migrations` (
 
 -- Existing contact_info row: set the address (other fields untouched).
 UPDATE `settings`
-   SET `value` = JSON_SET(COALESCE(`value`, JSON_OBJECT()), '$.address', 'No. 8 Oke Agbe Street, Garki 2, Abuja'),
+   SET `value` = JSON_SET(COALESCE(`value`, JSON_OBJECT()), '$.address', 'No. 8 Oke Agbe Street, Garki 2, Abuja, FCT'),
        `updated_at` = CURRENT_TIMESTAMP(3)
  WHERE `key` = 'contact_info'
    AND NOT EXISTS (SELECT 1 FROM `schema_migrations` WHERE `name` = '004-site-address');
 
 -- No contact_info row yet: create one (the API fills the other fields with defaults).
 INSERT IGNORE INTO `settings` (`id`, `key`, `value`)
-SELECT '000000000000000000000004', 'contact_info', JSON_OBJECT('address', 'No. 8 Oke Agbe Street, Garki 2, Abuja', 'email', 'info@maximsinterior.com.ng')
+SELECT '000000000000000000000004', 'contact_info', JSON_OBJECT('address', 'No. 8 Oke Agbe Street, Garki 2, Abuja, FCT', 'email', 'info@maximsinterior.com.ng')
   FROM DUAL
  WHERE NOT EXISTS (SELECT 1 FROM `schema_migrations` WHERE `name` = '004-site-address');
 

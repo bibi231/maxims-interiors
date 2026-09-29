@@ -7,7 +7,7 @@
 import { Setting } from '../models.js'
 import { ValidationError } from '../db/model.js'
 
-export const DEFAULT_ADDRESS = 'No. 8 Oke Agbe Street, Garki 2, Abuja'
+export const DEFAULT_ADDRESS = 'No. 8 Oke Agbe Street, Garki 2, Abuja, FCT'
 
 export const DEFAULT_CONTACT = {
   address: DEFAULT_ADDRESS,

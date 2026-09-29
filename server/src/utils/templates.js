@@ -25,7 +25,7 @@ ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0;"
     </td></tr>
     <tr><td style="background:#1C0D35;padding:20px;" align="center">
       <div style="color:#C9A84C;font-family:Arial,sans-serif;font-size:11px;letter-spacing:1px;">Where Luxury Meets Living</div>
-      <div style="color:#FAF7F2;opacity:.4;font-family:Arial,sans-serif;font-size:10px;margin-top:6px;">© ${year} Maxims Interiors &amp; Home Goods · No. 8 Oke Agbe Street, Garki 2, Abuja</div>
+      <div style="color:#FAF7F2;opacity:.4;font-family:Arial,sans-serif;font-size:10px;margin-top:6px;">© ${year} Maxims Interiors &amp; Home Goods · No. 8 Oke Agbe Street, Garki 2, Abuja, FCT</div>
     </td></tr>
   </table>
 </td></tr></table></body></html>`

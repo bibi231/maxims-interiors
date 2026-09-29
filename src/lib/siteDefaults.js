@@ -2,7 +2,7 @@
 // Fallbacks shown while site settings load (or if the API is unreachable).
 // The real values are staff-editable in the admin and come from
 // GET /api/settings. Keep in sync with server/src/utils/siteSettings.js.
-export const DEFAULT_ADDRESS = 'No. 8 Oke Agbe Street, Garki 2, Abuja'
+export const DEFAULT_ADDRESS = 'No. 8 Oke Agbe Street, Garki 2, Abuja, FCT'
 
 export const DEFAULT_CONTACT = {
   address: DEFAULT_ADDRESS,
