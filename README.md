@@ -11,19 +11,19 @@ A full‑stack luxury site: public storefront + portfolio, a role‑based staff 
 ```
 maxims-production/
 ├─ src/            # Frontend — Vite + React 18 + Tailwind v3 + Framer Motion
-├─ server/         # Backend  — Node + Express + MongoDB (Mongoose)
+├─ server/         # Backend  — Node + Express + MariaDB (mysql2)
 └─ supabase/       # DEPRECATED (earlier Supabase build — kept for reference, not used)
 ```
 
 | Layer | Choice |
 |------|--------|
 | Frontend | Vite + React 18, React Router v6, Tailwind v3, Framer Motion |
-| Backend | Node + Express + MongoDB (Mongoose) |
+| Backend | Node + Express + MariaDB/MySQL (mysql2, `server/src/db/model.js`) |
 | Auth | JWT (bcrypt-hashed passwords) + role-based access |
 | Storage | Backend-provided uploads (Multer → local disk, or Cloudinary) |
 | Payments | **Squad (GTCO)** + **Paystack** — one provider abstraction, server-verified |
 | Email | **Whogohost SMTP** + **Resend** — one mailer abstraction (Nodemailer) |
-| Hosting | Frontend → Vercel · API → Render/Railway/VPS · DB → MongoDB Atlas |
+| Hosting | DirectAdmin: frontend in public_html · API as a Node app · DB → MariaDB on the same server |
 
 The frontend talks only to the Express API (`src/lib/api.js`). Image fields store full URLs. Activity is logged server-side on every write.
 
@@ -34,12 +34,16 @@ The frontend talks only to the Express API (`src/lib/api.js`). Image fields stor
 ```bash
 cd server
 npm install
-cp .env.example .env          # set MONGODB_URI, JWT_SECRET, OWNER_*, payment/email keys
-npm run seed                  # creates the owner account + sample data
-npm run dev                   # http://localhost:4000  (GET /health to check)
+cp .env.example .env          # set DATABASE_URL, JWT_SECRET, payment/email keys
+npm run db:schema             # creates the tables (sql/001-schema.sql, idempotent)
+npm run seed                  # site settings + base catalogue
+npm run seed:photos           # real catalogue photos/products (Cloudinary URLs)
+npm run staff                 # staff accounts, each emailed a 72h set-up link
+npm run dev                   # http://localhost:4000  (GET /api/health checks the DB)
 ```
 
-Needs MongoDB — local (`mongodb://127.0.0.1:27017/maxims`) or a free **MongoDB Atlas** cluster.
+Needs MariaDB 10.3+ or MySQL 8: `DATABASE_URL=mysql://user:pass@host:3306/dbname`.
+`npm run test:db` runs an end-to-end API smoke test; point `TEST_DATABASE_URL` at a throwaway database.
 
 ## 2. Run the frontend
 
@@ -50,7 +54,7 @@ cp .env.example .env          # set VITE_API_URL=http://localhost:4000
 npm run dev                   # http://localhost:5173
 ```
 
-Sign in at `/admin/login` with the `OWNER_EMAIL` / `OWNER_PASSWORD` from `server/.env`.
+Sign in at `/admin/login` after choosing a password from the set-up link `npm run staff` emails (or `npm run staff -- --print-links`).
 
 ---
 
@@ -59,7 +63,7 @@ Sign in at `/admin/login` with the `OWNER_EMAIL` / `OWNER_PASSWORD` from `server
 **Frontend (`.env`)** — browser-exposed, public only: `VITE_API_URL`, `VITE_PAYMENT_PROVIDER`, `VITE_SQUAD_PUBLIC_KEY`, `VITE_PAYSTACK_PUBLIC_KEY`.
 
 **Server (`server/.env`)** — all secrets live here. See `server/.env.example`:
-core (`PORT`, `CLIENT_ORIGIN`, `API_URL`, `APP_URL`), `MONGODB_URI`, `JWT_SECRET`, owner seed, storage (`STORAGE_DRIVER=local|cloudinary` + `CLOUDINARY_*`), payments (`SQUAD_SECRET_KEY`, `SQUAD_WEBHOOK_SECRET`, `PAYSTACK_SECRET_KEY`), email (`EMAIL_PROVIDER=smtp|resend` + `SMTP_*` / `RESEND_API_KEY`, `MAIL_FROM`, `NOTIFICATION_EMAIL`).
+core (`PORT`, `CLIENT_ORIGIN`, `API_URL`, `APP_URL`), `DATABASE_URL`, `JWT_SECRET`, storage (`STORAGE_DRIVER=local|cloudinary` + `CLOUDINARY_*`), payments (`SQUAD_SECRET_KEY`, `SQUAD_WEBHOOK_SECRET`, `PAYSTACK_SECRET_KEY`), email (`EMAIL_PROVIDER=smtp|resend` + `SMTP_*` / `RESEND_API_KEY`, `MAIL_FROM`, `NOTIFICATION_EMAIL`).
 
 ---
 
@@ -88,7 +92,7 @@ Transactional email is sent inline by the API (contact auto-reply + staff alert,
 1. New **Web Service** from your GitHub repo, root directory `server`.
 2. Build `npm install`, start `npm start`.
 3. Add all `server/.env` values as environment variables (set `API_URL` to the Render URL, `APP_URL` to your Vercel URL, `CLIENT_ORIGIN` to your frontend origin).
-4. Use **MongoDB Atlas** for `MONGODB_URI`. Run the seed once (Render Shell: `npm run seed`).
+4. Set `DATABASE_URL` to a MariaDB/MySQL database, then run `npm run db:schema`, `npm run seed`, `npm run seed:photos`, `npm run staff` once.
 > Note: with `STORAGE_DRIVER=local`, uploads sit on the service disk (ephemeral on some hosts). For permanent media set `STORAGE_DRIVER=cloudinary`.
 
 ### Frontend → Vercel
