@@ -22,7 +22,7 @@ import newsletterRoutes from './routes/newsletter.js'
 import settingRoutes from './routes/settings.js'
 import paymentRoutes from './routes/payments.js'
 import miscRoutes from './routes/misc.js'
-import { paymentsEnabled } from './utils/config.js'
+import { paymentsEnabled, paymentProvider } from './utils/config.js'
 import { pingDB } from './config/db.js'
 
 // Express 4 does not catch rejected promises from async handlers; without this
@@ -73,7 +73,7 @@ export function createApp() {
   // Public runtime config for the storefront (no secrets).
   app.get('/api/config', (_req, res) => res.json({
     payments_enabled: paymentsEnabled(),
-    payment_provider: process.env.PAYMENT_PROVIDER || 'squad',
+    payment_provider: paymentProvider(),
   }))
 
   app.use('/api/auth', authRoutes)

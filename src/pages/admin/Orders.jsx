@@ -3,7 +3,8 @@
 //   new -> contacted -> awaiting payment -> paid / confirmed -> delivered | cancelled
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Eye, X, User, Phone, Mail, MapPin, MessageCircle, FileText, ShoppingBag, StickyNote, Clock } from 'lucide-react'
+import { Search, Eye, X, User, Phone, Mail, MapPin, MessageCircle, FileText, ShoppingBag, StickyNote, Clock, Link2, Send, Copy, Check } from 'lucide-react'
+import { api } from '@/lib/api'
 import AdminLayout from '@/components/admin/AdminLayout'
 import { useOrders, updateOrder } from '@/hooks/useData'
 import { useAuth } from '@/context/AuthContext'
@@ -50,6 +51,70 @@ function KindPill({ kind }) {
       kind === 'quote' ? 'text-purple-light bg-purple-light/10' : 'text-cream-soft/60 bg-cream-soft/5')}>
       {kind === 'quote' ? <FileText size={10} /> : <ShoppingBag size={10} />} {kind}
     </span>
+  )
+}
+
+// Payment: quote amount (quotes), customer pay link (copy / email), status.
+function PaymentPanel({ order, onUpdated, canWrite }) {
+  const [quote, setQuote] = useState(order.kind === 'quote' && order.total ? String(order.total - Number(order.delivery_fee || 0)) : '')
+  const [link, setLink] = useState(null)
+  const [busy, setBusy] = useState('')
+  const [copied, setCopied] = useState(false)
+  const { addToast } = useToast()
+  const paid = order.payment_status === 'paid'
+
+  async function getLink(send) {
+    setBusy(send ? 'send' : 'link')
+    try {
+      const r = await api.post(`/orders/${order.id}/payment-link`, { send })
+      setLink(r)
+      if (send) addToast({ type: r.emailed ? 'success' : 'error', message: r.emailed ? 'Payment link emailed to the customer' : 'Email failed. Copy the link and send it by WhatsApp.' })
+      if (send) onUpdated()
+    } catch (e) { addToast({ type: 'error', message: e.message }) }
+    setBusy('')
+  }
+  async function saveQuote() {
+    setBusy('quote')
+    try { await onUpdated({ quoted_total: Number(quote) }) } finally { setBusy('') }
+  }
+  async function copy() {
+    try { await navigator.clipboard.writeText(link.url); setCopied(true); setTimeout(() => setCopied(false), 2000) } catch { window.prompt('Copy this link:', link.url) }
+  }
+
+  return (
+    <section>
+      <h3 className="font-title text-[0.7rem] tracking-[0.2em] uppercase text-gold mb-2">Payment</h3>
+      <div className="bg-charcoal border border-gold/15 p-4 space-y-3">
+        <div className="flex flex-wrap items-center gap-2 font-body text-[0.92rem] text-cream-soft/85">
+          <span className={cn('font-bold uppercase text-[0.75rem] tracking-wide px-2 py-1 border', paid ? 'text-green-400 border-green-400/40 bg-green-400/10' : 'text-amber-400 border-amber-400/40 bg-amber-400/10')}>{paid ? 'Paid' : 'Unpaid'}</span>
+          {paid && order.payment_ref && <span className="break-all">Ref {order.payment_ref}{order.payment_method ? ` · ${order.payment_method}` : ''}</span>}
+          {!paid && <span>Amount due: <strong className="text-gold">{fmt(order.total)}</strong></span>}
+        </div>
+        {canWrite && !paid && order.kind === 'quote' && (
+          <div className="flex flex-col sm:flex-row gap-2">
+            <label htmlFor="qamt" className="sr-only">Quote amount</label>
+            <input id="qamt" inputMode="numeric" value={quote} onChange={e => setQuote(e.target.value.replace(/[^\d]/g, ''))} placeholder="Quoted amount (₦)"
+              className="flex-1 min-h-[44px] bg-charcoal-mid border border-gold/20 px-3 font-body text-[0.95rem] text-cream-soft focus:outline-none focus:border-gold/60" />
+            <button onClick={saveQuote} disabled={!quote || busy === 'quote'} className="min-h-[44px] px-4 border border-gold/40 text-gold font-title text-[0.68rem] tracking-[0.12em] uppercase hover:bg-gold/10 disabled:opacity-40">{busy === 'quote' ? 'Saving...' : 'Set quote amount'}</button>
+          </div>
+        )}
+        {canWrite && !paid && (
+          <div className="flex flex-col sm:flex-row gap-2">
+            <button onClick={() => getLink(false)} disabled={!!busy} className="min-h-[44px] flex-1 inline-flex items-center justify-center gap-2 border border-gold/30 text-cream-soft/90 font-title text-[0.66rem] tracking-[0.12em] uppercase hover:text-gold"><Link2 size={14} /> Get pay link</button>
+            <button onClick={() => getLink(true)} disabled={!!busy || !(order.total > 0)} className="min-h-[44px] flex-1 inline-flex items-center justify-center gap-2 bg-gold/15 border border-gold/40 text-gold font-title text-[0.66rem] tracking-[0.12em] uppercase hover:bg-gold/25 disabled:opacity-40"><Send size={14} /> {busy === 'send' ? 'Sending...' : 'Email pay link'}</button>
+          </div>
+        )}
+        {link && (
+          <div className="space-y-1.5">
+            {!link.payments_enabled && <p className="font-body text-[0.85rem] text-amber-400">Online payments are switched off on the server (PAYMENTS_ENABLED / Squad keys). The link shows the amount but no pay button yet.</p>}
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input readOnly value={link.url} onFocus={e => e.target.select()} aria-label="Customer pay link" className="flex-1 min-h-[44px] bg-charcoal-mid border border-gold/20 px-3 font-body text-[0.8rem] text-cream-soft" />
+              <button onClick={copy} className="min-h-[44px] px-4 inline-flex items-center justify-center gap-2 border border-gold/40 text-gold font-title text-[0.66rem] tracking-[0.12em] uppercase">{copied ? <Check size={14} /> : <Copy size={14} />}{copied ? 'Copied' : 'Copy'}</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
   )
 }
 
@@ -152,6 +217,10 @@ function OrderDetailModal({ order: initial, onClose, onSaved, canWrite }) {
               </div>
             </section>
           )}
+
+          <PaymentPanel order={order} canWrite={canWrite} onUpdated={async (patch) => {
+            if (patch) { await save(patch) } else { onSaved() }
+          }} />
 
           {order.notes && (
             <section>

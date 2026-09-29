@@ -34,7 +34,7 @@ function PaymentLinkModal({ onClose }) {
     try {
       const res = await createPaymentLink({
         amount: Number(form.amount), email: form.email, name: form.name, phone: form.phone,
-        provider: form.provider, description: form.description, metadata: { type: 'admin_link' },
+        description: form.description, metadata: { type: 'admin_link' },
       })
       setLink(res.checkout_url)
     } catch (e2) { setErr(e2.message || 'Could not create link. Check your payment keys are set.') }
@@ -77,10 +77,7 @@ function PaymentLinkModal({ onClose }) {
             <input type="email" className="lux-input" placeholder="Customer email *" value={form.email} onChange={set('email')} />
             <input type="number" className="lux-input" placeholder="Amount (₦) *" value={form.amount} onChange={set('amount')} />
             <input className="lux-input" placeholder="Description (e.g. Sofa deposit)" value={form.description} onChange={set('description')} />
-            <select className="lux-input" value={form.provider} onChange={set('provider')}>
-              <option value="squad">Squad (GTCO)</option>
-              <option value="paystack">Paystack</option>
-            </select>
+            <p className="font-body text-[0.85rem] text-cream-soft/70">Paid through the gateway set on the server (GTCO Squad by default). The transaction is marked paid only after the gateway confirms it.</p>
             <button type="submit" disabled={busy} className="btn-gold-solid w-full justify-center disabled:opacity-60">{busy ? 'Generating…' : 'Generate Link'}</button>
           </form>
         )}

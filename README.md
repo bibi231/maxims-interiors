@@ -22,7 +22,7 @@ maxims-production/
 | Auth | JWT (bcrypt-hashed passwords) + role-based access |
 | Storage | Backend-provided uploads (Multer → local disk, or Cloudinary) |
 | Payments | **Squad (GTCO)** + **Paystack** — one provider abstraction, server-verified |
-| Email | **Whogohost SMTP** + **Resend** — one mailer abstraction (Nodemailer) |
+| Email | Site's own SMTP server (mail.maximsinterior.com.ng) via Nodemailer |
 | Hosting | DirectAdmin: frontend in public_html · API as a Node app · DB → MariaDB on the same server |
 
 The frontend talks only to the Express API (`src/lib/api.js`). Image fields store full URLs. Activity is logged server-side on every write.
@@ -87,26 +87,26 @@ Sign in at `/admin/login` after choosing a password from the set-up link `npm ru
 **Frontend (`.env`)** — browser-exposed, public only: `VITE_API_URL`, `VITE_PAYMENT_PROVIDER`, `VITE_SQUAD_PUBLIC_KEY`, `VITE_PAYSTACK_PUBLIC_KEY`.
 
 **Server (`server/.env`)** — all secrets live here. See `server/.env.example`:
-core (`PORT`, `CLIENT_ORIGIN`, `API_URL`, `APP_URL`), `DATABASE_URL`, `JWT_SECRET`, storage (`STORAGE_DRIVER=local|cloudinary` + `CLOUDINARY_*`), payments (`SQUAD_SECRET_KEY`, `SQUAD_WEBHOOK_SECRET`, `PAYSTACK_SECRET_KEY`), email (`EMAIL_PROVIDER=smtp|resend` + `SMTP_*` / `RESEND_API_KEY`, `MAIL_FROM`, `NOTIFICATION_EMAIL`).
+core (`PORT`, `CLIENT_ORIGIN`, `API_URL`, `APP_URL`), `DATABASE_URL`, `JWT_SECRET`, storage (`STORAGE_DRIVER=local|cloudinary` + `CLOUDINARY_*`), payments (`PAYMENTS_ENABLED`, `PAYMENT_PROVIDER=squad`, `SQUAD_SECRET_KEY`, `SQUAD_PUBLIC_KEY`, optional `PAYSTACK_SECRET_KEY`), email (`EMAIL_PROVIDER=smtp`, `SMTP_*`, `MAIL_FROM`, `BUSINESS_NOTIFY_EMAILS`).
 
 ---
 
-## 4. How payments work
+## 4. How payments work (GTCO Squad)
 
-1. Storefront/admin → `POST /api/payments/initialize` → a **pending** transaction is created and a gateway **checkout URL** returned.
-2. Customer pays, then is redirected to `/payment/callback?reference=…`.
-3. The callback calls `POST /api/payments/verify`, which confirms with the gateway **server-side** and flips the status. The signed **webhook** (`/api/payments/webhook?provider=squad|paystack`) is the authoritative settlement path.
-4. The browser can never mark a payment paid — only the server can, and the amount is re-checked against the gateway.
+Off by default. Online payment turns on only when **`PAYMENTS_ENABLED=true` and `SQUAD_SECRET_KEY` is set** (server env). Until then customers submit order/quote requests and staff follow up.
 
-**Admin payment links:** Transactions → *Payment Link* generates a shareable Squad/Paystack link for any amount (deposits, custom quotes) and tracks it.
+1. Customer submits an order (cart) or quote (service / design package). The API prices it from the database / admin pricing and returns the order id plus a pay token.
+2. Customer pays straight away (order, or priced package) or later from the pay link staff send from **Admin > Orders > Payment** (`/pay/<orderId>?t=<token>`; staff set a quote amount first).
+3. `POST /api/payments/initialize { orderId, token }` charges the order's **server-side total in kobo** and creates a pending transaction; the browser is sent to Squad's checkout.
+4. Squad calls **`POST /api/payments/webhook?provider=squad`**. The signature (`x-squad-encrypted-body` = HMAC-SHA512 of the body with `SQUAD_SECRET_KEY`) is checked in constant time; the amount (kobo) and currency must match. Settling is idempotent by transaction reference (one conditional UPDATE), so repeats and races are harmless.
+5. Squad redirects the customer to `/payment/callback?reference=…`, which calls `POST /api/payments/verify`: the server asks Squad directly (verify-on-return fallback if the webhook is late or missing).
+6. Only a verified payment sets the order to `payment_status=paid` / `status=paid` and emails the customer + staff. Staff can still record offline payments (bank transfer / cash) by setting the status to Paid in the admin; those are marked `payment_method=manual`.
 
-Configure each gateway's webhook URL to `https://<your-api-host>/api/payments/webhook?provider=squad` (and `…=paystack`).
-
----
+**Setup:** in the Squad dashboard copy the secret key into `SQUAD_SECRET_KEY`, set the webhook URL to `https://maximsinterior.com.ng/api/payments/webhook?provider=squad`, set `PAYMENTS_ENABLED=true`, restart the API. Test with sandbox keys (`sandbox_sk_…`) first. Custom-amount links (deposits) are in Admin > Transactions (staff only).
 
 ## 5. Email
 
-Transactional email is sent inline by the API (contact auto-reply + staff alert, order receipt, appointment confirmation on confirm, bulk quote on quote, newsletter welcome). Set `EMAIL_PROVIDER=smtp` with your Whogohost mailbox, or `resend` with a Resend key.
+Transactional email is sent inline by the API (contact auto-reply + staff alert, order receipt, payment receipts, staff invites, appointment confirmation, bulk quote, newsletter welcome) through the site's own mail server over SMTP (`mail.maximsinterior.com.ng`, `SMTP_*`). No third-party email service is used. The owner can send a test from Admin > Settings > Email; if a staff invite email fails, the admin shows the set-up link to copy.
 
 ---
 

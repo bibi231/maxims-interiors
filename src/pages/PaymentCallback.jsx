@@ -5,13 +5,13 @@ import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react'
 import Meta from '@/components/Meta'
-import { verifyPayment } from '@/hooks/usePayment'
+import { verifyPayment, lastPaymentReference } from '@/hooks/usePayment'
 import { formatNaira } from '@/lib/utils'
 
 export default function PaymentCallback() {
   const [params] = useSearchParams()
   // Squad uses ?reference= , Paystack uses ?reference= or ?trxref=
-  const reference = params.get('reference') || params.get('trxref')
+  const reference = params.get('reference') || params.get('trxref') || params.get('transaction_ref') || lastPaymentReference()
   const [state, setState] = useState('verifying') // verifying | success | failed
   const [txn, setTxn] = useState(null)
 
@@ -22,7 +22,7 @@ export default function PaymentCallback() {
       .then((res) => {
         if (!active) return
         setTxn(res.transaction || null)
-        setState(res.status === 'success' ? 'success' : 'failed')
+        setState(res.status === 'success' ? 'success' : res.status === 'pending' ? 'pending' : 'failed')
       })
       .catch(() => active && setState('failed'))
     return () => { active = false }
@@ -37,26 +37,36 @@ export default function PaymentCallback() {
             <>
               <Loader2 size={42} className="text-gold mx-auto animate-spin" />
               <h1 className="text-display-md mt-6">Verifying payment…</h1>
-              <p className="mt-3 font-body text-cream-soft/55">Please wait while we confirm your transaction.</p>
+              <p className="mt-3 font-body text-cream-soft/85">Please wait while we confirm your transaction.</p>
             </>
           )}
           {state === 'success' && (
             <>
               <CheckCircle2 size={48} className="text-green-400 mx-auto" />
               <h1 className="text-display-md mt-6">Payment Successful</h1>
-              <p className="mt-3 font-body text-cream-soft/60">
+              <p className="mt-3 font-body text-cream-soft/85">
                 Thank you{txn?.customer_name ? `, ${txn.customer_name.split(' ')[0]}` : ''}!
                 {txn?.amount ? ` We've received ${formatNaira(txn.amount)}.` : ''}
               </p>
-              {txn?.reference && <p className="mt-2 font-body text-xs text-cream-soft/35">Ref: {txn.reference}</p>}
+              {txn?.reference && <p className="mt-2 font-body text-xs text-cream-soft/70">Ref: {txn.reference}</p>}
               <Link to="/" className="btn-gold-solid mt-8">Back to Home</Link>
+            </>
+          )}
+          {state === 'pending' && (
+            <>
+              <Loader2 size={42} className="text-gold mx-auto" />
+              <h1 className="text-display-md mt-6">Payment Processing</h1>
+              <p className="mt-3 font-body text-cream-soft/85">
+                The payment is still being confirmed. You will get an email as soon as it clears. Please keep your reference{reference ? `: ${reference}` : ''}.
+              </p>
+              <button onClick={() => window.location.reload()} className="btn-gold-solid mt-8">Check again</button>
             </>
           )}
           {state === 'failed' && (
             <>
               <XCircle size={48} className="text-red-400 mx-auto" />
               <h1 className="text-display-md mt-6">Payment Not Confirmed</h1>
-              <p className="mt-3 font-body text-cream-soft/60">
+              <p className="mt-3 font-body text-cream-soft/85">
                 We couldn't confirm this payment. If you were charged, please contact us with your reference and we'll sort it out right away.
               </p>
               <div className="mt-8 flex gap-3 justify-center">

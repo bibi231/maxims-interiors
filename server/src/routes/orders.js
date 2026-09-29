@@ -8,10 +8,13 @@ import { Order, Product, ORDER_STATUSES, isValidId } from '../models.js'
 import { requireAuth, canAccess, canWrite, requireOwner } from '../middleware/auth.js'
 import { logActivity } from '../utils/activity.js'
 import { sendMail } from '../utils/mailer.js'
-import { emailShell, esc, detailsTable, itemsTable, refBlock } from '../utils/templates.js'
+import { emailShell, esc, detailsTable, itemsTable, refBlock, naira } from '../utils/templates.js'
 import { notifyStaff, appUrl } from '../utils/notify.js'
 import { forwardLead } from '../utils/supportai.js'
 import { getSetting } from '../utils/siteSettings.js'
+import { payToken, checkPayToken } from '../utils/payments.js'
+import { paymentsEnabled } from '../utils/config.js'
+import { orderPayable } from './payments.js'
 
 const router = Router()
 const submitLimiter = rateLimit({ windowMs: 60 * 1000, max: 6, standardHeaders: true, legacyHeaders: false })
@@ -117,9 +120,12 @@ async function createRequest(req, res) {
   const lines = itemsTable(items, { subtotal: items.length ? subtotal : undefined, total: items.length ? subtotal : undefined })
 
   // Respond first: email + SupportAI must never slow down or fail the customer.
+  const token = payToken(order.id)
   res.status(201).json({
     id: order.id, order_number: order.order_number, kind, status: order.status,
     total: order.total, items: order.items,
+    pay_token: token, pay_url: `${appUrl()}/pay/${order.id}?t=${token}`,
+    payable: paymentsEnabled() && orderPayable(order),
   })
 
   notifyStaff({
@@ -162,6 +168,49 @@ const safe = (fn) => (req, res, next) => fn(req, res).catch(next)
 router.post('/', submitLimiter, safe(createRequest))
 router.post('/request', submitLimiter, safe(createRequest))
 
+// PUBLIC (with pay token) — what the customer sees on /pay/:id
+router.get('/pay/:id', safe(async (req, res) => {
+  const id = String(req.params.id)
+  if (!isValidId(id) || !checkPayToken(id, req.query.t)) return res.status(404).json({ error: 'This payment link is not valid. Please use the link from your email or contact us.' })
+  const o = await Order.findById(id)
+  if (!o) return res.status(404).json({ error: 'Order not found' })
+  res.json({
+    id: o.id, order_number: o.order_number, kind: o.kind, status: o.status, payment_status: o.payment_status,
+    customer_name: String(o.customer_name).split(' ')[0],
+    items: (o.items || []).map((i) => ({ name: i.name, qty: i.qty, price: i.price })),
+    subtotal: o.subtotal, delivery_fee: o.delivery_fee, total: o.total,
+    payable: orderPayable(o), payments_enabled: paymentsEnabled(),
+  })
+}))
+
+// STAFF — get (and optionally email) the customer's pay link for an order.
+router.post('/:id/payment-link', requireAuth, canWrite('orders'), safe(async (req, res) => {
+  const o = await Order.findById(req.params.id)
+  if (!o) return res.status(404).json({ error: 'Order not found' })
+  const url = `${appUrl()}/pay/${o.id}?t=${payToken(o.id)}`
+  let emailed = null
+  if (req.body?.send) {
+    if (!orderPayable(o)) return res.status(409).json({ error: 'Set an amount (and make sure it is not already paid or closed) before sending a payment link.' })
+    emailed = await sendMail({
+      to: o.customer_email,
+      replyTo: process.env.MAIL_REPLY_TO || 'info@maximsinterior.com.ng',
+      subject: `Payment for ${o.order_number} - Maxims Interiors`,
+      html: emailShell({
+        heading: 'Your payment link',
+        body: `<p>Dear ${esc(String(o.customer_name).split(' ')[0])},</p><p>You can pay for ${o.kind === 'quote' ? 'your quote' : 'your order'} <strong>${esc(o.order_number)}</strong> securely online. Amount due: <strong>${naira(o.total)}</strong>.</p>${itemsTable(o.items || [], { subtotal: o.subtotal, deliveryFee: o.delivery_fee, total: o.total })}`,
+        ctaLabel: `Pay ${naira(o.total)}`, ctaUrl: url,
+      }),
+    })
+    if (emailed && ['new', 'contacted'].includes(o.status)) {
+      o.status = 'awaiting_payment'
+      o.status_history.push({ status: 'awaiting_payment', author_name: req.user.full_name || req.user.email })
+      await o.save()
+    }
+    await logActivity({ userId: req.user.id, action: 'updated', resourceType: 'order', resourceId: o.id, description: `Payment link for ${o.order_number} ${emailed ? 'emailed' : 'email failed'}` })
+  }
+  res.json({ url, payable: orderPayable(o), payments_enabled: paymentsEnabled(), emailed })
+}))
+
 // ADMIN — list
 router.get('/', requireAuth, canAccess('orders'), async (req, res) => {
   const q = {}
@@ -179,7 +228,7 @@ router.get('/', requireAuth, canAccess('orders'), async (req, res) => {
 router.patch('/:id', requireAuth, canWrite('orders'), async (req, res) => {
   const o = await Order.findById(req.params.id)
   if (!o) return res.status(404).json({ error: 'Order not found' })
-  const { status, assigned_to, payment_status, note, delivery_fee } = req.body || {}
+  const { status, assigned_to, payment_status, note, delivery_fee, quoted_total } = req.body || {}
   const author = req.user.full_name || req.user.email
   const changes = []
 
@@ -187,7 +236,9 @@ router.patch('/:id', requireAuth, canWrite('orders'), async (req, res) => {
     if (!ORDER_STATUSES.includes(status)) return res.status(400).json({ error: 'Unknown status' })
     o.status = status
     o.status_history.push({ status, author_name: author })
-    if (status === 'paid') o.payment_status = 'paid'
+    // Staff recording an offline payment (bank transfer, cash). Online payments
+    // are only ever marked paid by utils/settlePayment.js after gateway verification.
+    if (status === 'paid' && o.payment_status !== 'paid') { o.payment_status = 'paid'; o.payment_method = o.payment_method || 'manual' }
     changes.push(`status → ${STATUS_LABEL[status] || status}`)
   }
   if (payment_status !== undefined) o.payment_status = payment_status
@@ -196,6 +247,15 @@ router.patch('/:id', requireAuth, canWrite('orders'), async (req, res) => {
     o.delivery_fee = Math.max(0, Number(delivery_fee))
     o.total = Number(o.subtotal || 0) + o.delivery_fee
     changes.push(`delivery fee set`)
+  }
+  // Quotes: staff set the quoted price; the customer can then pay it online.
+  if (quoted_total !== undefined && o.kind === 'quote') {
+    const q = Number(quoted_total)
+    if (!Number.isFinite(q) || q < 0) return res.status(400).json({ error: 'Invalid quote amount' })
+    if (o.payment_status === 'paid') return res.status(409).json({ error: 'This quote has already been paid.' })
+    o.subtotal = q
+    o.total = q + Number(o.delivery_fee || 0)
+    changes.push('quote amount set')
   }
   if (typeof note === 'string' && note.trim()) {
     o.staff_notes.push({ text: note.trim().slice(0, 2000), author_name: author })

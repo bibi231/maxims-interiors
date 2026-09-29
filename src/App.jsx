@@ -28,6 +28,7 @@ import Contact       from '@/pages/Contact'
 import Testimonials  from '@/pages/Testimonials'
 import Team          from '@/pages/Team'
 import PaymentCallback from '@/pages/PaymentCallback'
+import PayOrder      from '@/pages/PayOrder'
 import NotFound      from '@/pages/NotFound'
 
 // Admin Pages (lazy-loaded for performance)
@@ -88,6 +89,7 @@ function AnimatedPublicRoutes() {
           <Route path="/testimonials" element={<PublicLayout><Testimonials /></PublicLayout>} />
           <Route path="/team" element={<PublicLayout><Team /></PublicLayout>} />
           <Route path="/payment/callback" element={<PublicLayout><PaymentCallback /></PublicLayout>} />
+          <Route path="/pay/:id" element={<PublicLayout><PayOrder /></PublicLayout>} />
           <Route path="*" element={<PublicLayout><NotFound /></PublicLayout>} />
         </Routes>
       </motion.div>

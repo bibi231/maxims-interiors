@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, CheckCircle2, AlertCircle, Send, CreditCard, Phone, Mail, MessageCircle } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 import { placeOrder, usePricing } from '@/hooks/useData'
-import { initializePayment } from '@/hooks/usePayment'
+import { payForOrder } from '@/hooks/usePayment'
 import { formatNaira, cn } from '@/lib/utils'
 
 const CONTACT_OPTIONS = [
@@ -76,7 +76,7 @@ export default function RequestModal() {
     if (!result) return
     setPaying(true)
     try {
-      await initializePayment({ orderId: result.id, amount: result.total, email: form.customer_email, name: form.customer_name, phone: form.customer_phone, description: `Order ${result.order_number}`, redirect: true })
+      await payForOrder({ orderId: result.id, token: result.pay_token })
     } catch (err) {
       setError(err.message || 'Payment could not be started. Our team will contact you instead.')
       setPaying(false)
@@ -112,12 +112,12 @@ export default function RequestModal() {
               <p className="font-body text-[0.78rem] text-charcoal-muted mb-6">A confirmation has been sent to {form.customer_email}. Please keep your reference number.</p>
               {error && <p className="font-body text-[0.8rem] text-red-600 mb-3">{error}</p>}
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                {paymentsEnabled && !isQuote && result.total > 0 && (
+                {paymentsEnabled && result.payable && (
                   <button onClick={payNow} disabled={paying} className="btn-maxims btn-gold-solid justify-center disabled:opacity-50">
                     <CreditCard size={14} /> {paying ? 'Opening payment...' : `Pay ${formatNaira(result.total)} now`}
                   </button>
                 )}
-                <button onClick={closeRequest} className={cn('btn-maxims justify-center', paymentsEnabled && !isQuote ? 'btn-outline-gold' : 'btn-gold-solid')}>Done</button>
+                <button onClick={closeRequest} className={cn('btn-maxims justify-center', paymentsEnabled && result.payable ? 'btn-outline-gold' : 'btn-gold-solid')}>Done</button>
               </div>
             </div>
           ) : (

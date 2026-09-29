@@ -304,6 +304,85 @@ try {
     assert.ok(a.body[0].profile?.full_name)
   })
 
+  await step('Squad payments: token-gated init, signed idempotent webhook, amount check, verify fallback', async () => {
+    const crypto = await import('node:crypto')
+    const SECRET = 'sandbox_sk_smoke_' + tag
+    Object.assign(process.env, { PAYMENTS_ENABLED: 'true', SQUAD_SECRET_KEY: SECRET, PAYMENT_PROVIDER: 'squad' })
+    const realFetch = globalThis.fetch
+    const squadCalls = []
+    let verifyReply = null
+    globalThis.fetch = async (url, opts = {}) => {
+      const u = String(url)
+      if (!u.includes('squadco.com')) return realFetch(url, opts)
+      squadCalls.push({ u, body: opts.body ? JSON.parse(opts.body) : null, auth: opts.headers?.Authorization })
+      const json = u.includes('/transaction/initiate')
+        ? { status: 200, data: { checkout_url: 'https://sandbox-pay.squadco.com/' + JSON.parse(opts.body).transaction_ref } }
+        : { status: 200, data: verifyReply }
+      return new Response(JSON.stringify(json), { status: 200, headers: { 'Content-Type': 'application/json' } })
+    }
+    const hook = async (body, sig) => {
+      const raw = JSON.stringify(body)
+      const res = await realFetch(base + '/payments/webhook?provider=squad', {
+        method: 'POST', body: raw,
+        headers: { 'Content-Type': 'application/json', 'x-squad-encrypted-body': sig ?? crypto.createHmac('sha512', SECRET).update(raw).digest('hex').toUpperCase() },
+      })
+      return { status: res.status, body: await res.json() }
+    }
+    try {
+      assert.equal((await call('GET', '/config', null, null)).body.payments_enabled, true)
+      const o = await call('POST', '/orders/request', { customer_name: 'Pay Smoke', customer_email: 'pay@example.com', customer_phone: '08012340000', items: [{ product_id: products[0].id, qty: 2 }] }, null)
+      assert.equal(o.status, 201); assert.ok(o.body.pay_token); assert.equal(o.body.payable, true)
+      const total = o.body.total
+      assert.equal((await call('GET', `/orders/pay/${o.body.id}?t=wrong`, null, null)).status, 404)
+      const sum = await call('GET', `/orders/pay/${o.body.id}?t=${o.body.pay_token}`, null, null)
+      assert.equal(sum.body.total, total); assert.equal(sum.body.payable, true); assert.equal(sum.body.customer_email, undefined)
+      assert.equal((await call('POST', '/payments/initialize', { orderId: o.body.id, amount: 1 }, null)).status, 403)
+      assert.equal((await call('POST', '/payments/initialize', { email: 'x@y.co', amount: 5000 }, null)).status, 401)
+      const init = await call('POST', '/payments/initialize', { orderId: o.body.id, token: o.body.pay_token, amount: 1 }, null)
+      assert.equal(init.status, 200, JSON.stringify(init.body))
+      const sent = squadCalls.find((c) => c.u.endsWith('/transaction/initiate'))
+      assert.ok(sent.u.startsWith('https://sandbox-api-d.squadco.com')); assert.equal(sent.auth, `Bearer ${SECRET}`)
+      assert.equal(sent.body.amount, Math.round(total * 100)); assert.equal(sent.body.currency, 'NGN'); assert.equal(sent.body.transaction_ref, init.body.reference)
+      const ref = init.body.reference
+      const body = (amount, status = 'Success') => ({ Event: 'charge_successful', TransactionRef: ref, Body: { amount, transaction_ref: ref, transaction_status: status, currency: 'NGN', email: 'pay@example.com' } })
+      assert.equal((await hook(body(Math.round(total * 100)), 'AB'.repeat(64))).status, 401)
+      assert.equal((await hook(body(Math.round(total * 100)), '')).status, 401)
+      assert.equal((await hook(body(100))).status, 200) // signed, wrong amount
+      let row = (await call('GET', '/orders')).body.find((x) => x.id === o.body.id)
+      assert.equal(row.payment_status, 'unpaid')
+      assert.equal((await hook(body(Math.round(total * 100)))).body.status, 'success')
+      assert.equal((await hook(body(Math.round(total * 100)))).body.status, 'success') // replay
+      row = (await call('GET', '/orders')).body.find((x) => x.id === o.body.id)
+      assert.equal(row.payment_status, 'paid'); assert.equal(row.status, 'paid'); assert.equal(row.payment_ref, ref)
+      assert.equal(row.status_history.filter((h) => h.status === 'paid').length, 1)
+      const txn = (await call('GET', '/payments/transactions')).body.find((t) => t.reference === ref)
+      assert.equal(txn.status, 'success'); assert.ok(txn.paid_at)
+      assert.equal((await call('POST', '/payments/initialize', { orderId: o.body.id, token: o.body.pay_token }, null)).status, 409)
+
+      const q = await call('POST', '/orders', { kind: 'quote', customer_name: 'Quote Pay', customer_email: 'qp@example.com', customer_phone: '08099990000', service: 'Design' }, null)
+      assert.equal(q.body.payable, false)
+      assert.equal((await call('PATCH', `/orders/${q.body.id}`, { quoted_total: 250000 })).body.total, 250000)
+      const link = await call('POST', `/orders/${q.body.id}/payment-link`, {})
+      assert.equal(link.body.payable, true); assert.match(link.body.url, /\/pay\/[a-f0-9]{24}\?t=/)
+      const t = new URL(link.body.url).searchParams.get('t')
+      const qi = await call('POST', '/payments/initialize', { orderId: q.body.id, token: t }, null)
+      assert.equal(qi.status, 200)
+      verifyReply = { transaction_status: 'pending', transaction_amount: 25000000, transaction_ref: qi.body.reference }
+      assert.equal((await call('POST', '/payments/verify', { reference: qi.body.reference }, null)).body.status, 'pending')
+      verifyReply = { transaction_status: 'success', transaction_amount: 25000000, transaction_currency_id: 'NGN', transaction_ref: qi.body.reference }
+      const v = await call('POST', '/payments/verify', { reference: qi.body.reference }, null)
+      assert.equal(v.body.status, 'success'); assert.equal(v.body.transaction.customer_email, undefined)
+      const qrow = (await call('GET', '/orders?kind=quote')).body.find((x) => x.id === q.body.id)
+      assert.equal(qrow.payment_status, 'paid'); assert.equal(qrow.status, 'paid')
+      assert.equal((await hook({ Event: 'charge_successful', TransactionRef: qi.body.reference, Body: { amount: 25000000, transaction_ref: qi.body.reference, transaction_status: 'Success', currency: 'NGN' } })).body.status, 'success')
+      assert.equal((await call('GET', '/orders?kind=quote')).body.find((x) => x.id === q.body.id).status_history.filter((h) => h.status === 'paid').length, 1)
+      assert.equal((await hook({ Event: 'charge_successful', Body: { transaction_ref: 'NOPE', amount: 1, transaction_status: 'Success' } })).body.unknown, true)
+    } finally {
+      globalThis.fetch = realFetch
+      Object.assign(process.env, { PAYMENTS_ENABLED: 'false', SQUAD_SECRET_KEY: '' })
+    }
+  })
+
   await step('payments disabled; transactions list; order delete', async () => {
     assert.equal((await call('POST', '/payments/initialize', { email: 'a@b.co', amount: 10 }, null)).status, 503)
     assert.ok(Array.isArray((await call('GET', '/payments/transactions?search=a')).body))
