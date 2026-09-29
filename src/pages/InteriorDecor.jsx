@@ -1,14 +1,15 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check } from 'lucide-react'
+import { ArrowRight, Check, Home as HomeIcon, Ruler, Palette, Sofa, Sparkles, MonitorSmartphone } from 'lucide-react'
+import { useCart } from '@/context/CartContext'
 
 const SERVICES = [
-    { icon: '🏠', title: 'Full Room Design', desc: 'Comprehensive design service for a single room, from concept to final reveal.' },
-    { icon: '📏', title: 'Space Planning', desc: 'Optimizing the layout of your furniture and fixtures for maximum flow and function.' },
-    { icon: '🎨', title: 'Color Consultation', desc: 'Expert palettes curated to set the right mood and coordinate with your existing architecture.' },
-    { icon: '🛋️', title: 'Furniture Sourcing', desc: 'Access to exclusive trade-only collections and custom artisan furniture pieces.' },
-    { icon: '✨', title: 'Home Staging', desc: 'Preparing your property for the market to maximize appeal and value.' },
-    { icon: '💻', title: 'Virtual Design', desc: 'Professional design services delivered entirely online, nationwide.' },
+    { icon: HomeIcon, title: 'Full Room Design', desc: 'Comprehensive design service for a single room, from concept to final reveal.' },
+    { icon: Ruler, title: 'Space Planning', desc: 'Optimizing the layout of your furniture and fixtures for maximum flow and function.' },
+    { icon: Palette, title: 'Color Consultation', desc: 'Expert palettes curated to set the right mood and coordinate with your existing architecture.' },
+    { icon: Sofa, title: 'Furniture Sourcing', desc: 'Access to exclusive trade-only collections and custom artisan furniture pieces.' },
+    { icon: Sparkles, title: 'Home Staging', desc: 'Preparing your property for the market to maximize appeal and value.' },
+    { icon: MonitorSmartphone, title: 'Virtual Design', desc: 'Professional design services delivered entirely online, nationwide.' },
 ]
 
 const PROCESS = [
@@ -35,6 +36,8 @@ const PACKAGES = [
 ]
 
 export default function InteriorDecor() {
+    const { openRequest } = useCart()
+    const quote = (service) => openRequest({ kind: 'quote', source: 'service', service })
     return (
         <div>
             <section className="page-hero min-h-[460px] bg-purple-darkest">
@@ -46,6 +49,7 @@ export default function InteriorDecor() {
                     <h1 className="text-display-lg text-cream-soft font-display mb-6">Interior Décor<br /><em className="text-gold-light italic">& Design</em></h1>
                     <div className="flex gap-4 justify-center flex-wrap">
                         <Link to="/contact" className="btn-maxims btn-gold-solid">Book Consultation</Link>
+                        <button onClick={() => quote('Interior design / consultation')} className="btn-maxims btn-outline-light">Request a Quote</button>
                         <a href="#packages" className="btn-maxims btn-outline-light">View Packages</a>
                     </div>
                 </motion.div>
@@ -63,10 +67,10 @@ export default function InteriorDecor() {
                         <motion.div key={s.title} className="card-luxury p-10 group"
                             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }} viewport={{ once: true }}>
                             <div className="absolute top-0 left-0 w-full h-[2px] bg-gold scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
-                            <div className="text-4xl mb-5">{s.icon}</div>
+                            <s.icon size={34} strokeWidth={1.2} className="text-gold mb-5" />
                             <h3 className="font-title text-[0.8rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light mb-3">{s.title}</h3>
                             <p className="font-body text-[0.85rem] text-charcoal-muted leading-relaxed mb-6">{s.desc}</p>
-                            <Link to="/contact" className="font-title text-[0.6rem] tracking-[0.2em] text-gold opacity-0 group-hover:opacity-100 transition-opacity">Enquire <ArrowRight size={10} className="inline ml-1" /></Link>
+                            <button onClick={() => quote(s.title)} className="font-title text-[0.6rem] tracking-[0.2em] uppercase text-gold hover:text-gold-deep transition-colors">Request a Quote <ArrowRight size={10} className="inline ml-1" /></button>
                         </motion.div>
                     ))}
                 </div>
@@ -130,7 +134,7 @@ export default function InteriorDecor() {
                                     </li>
                                 ))}
                             </ul>
-                            <Link to="/contact" className={`btn-maxims w-full justify-center ${p.featured ? 'btn-gold-solid' : 'btn-purple-solid'}`}>Get Started</Link>
+                            <button onClick={() => quote(`${p.name} package (${p.price})`)} className={`btn-maxims w-full justify-center ${p.featured ? 'btn-gold-solid' : 'btn-purple-solid'}`}>Request a Quote</button>
                         </motion.div>
                     ))}
                 </div>

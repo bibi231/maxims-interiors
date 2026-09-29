@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
+import { ArrowLeft, Check, ShoppingBag, FileText, Minus, Plus } from 'lucide-react'
+import { useCart } from '@/context/CartContext'
 import { api } from '@/lib/api'
 import { getStorageUrl, BUCKETS } from '@/lib/storage'
 import { formatNaira } from '@/lib/utils'
@@ -15,6 +16,9 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [active, setActive] = useState(0)
+  const [qty, setQty] = useState(1)
+  const [added, setAdded] = useState(false)
+  const { add, openDrawer, openRequest } = useCart()
 
   useEffect(() => {
     let alive = true
@@ -60,7 +64,7 @@ export default function ProductDetail() {
                 ) : images[active] ? (
                   <img src={getStorageUrl(BUCKETS.products, images[active])} alt={product.name} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full grid place-items-center text-7xl opacity-25">🛋️</div>
+                  <div className="w-full h-full grid place-items-center"><ShoppingBag size={72} strokeWidth={1} className="text-gold/40" /></div>
                 )}
               </div>
               {!collection && images.length > 1 && (
@@ -88,13 +92,26 @@ export default function ProductDetail() {
                 {product.stock_qty > 0 ? `In stock${product.stock_qty <= 10 ? ` — only ${product.stock_qty} left` : ''}` : 'Made to order'}
               </div>
 
-              <div className="flex flex-wrap gap-3">
-                <Link to="/contact" className="btn-maxims btn-gold-solid">Enquire to Order <ArrowRight size={14} /></Link>
-                <Link to="/shop" className="btn-maxims btn-outline-gold">Continue Shopping</Link>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="font-title text-[0.56rem] tracking-[0.18em] uppercase text-charcoal-muted">Quantity</span>
+                <div className="flex items-center border border-gold/30">
+                  <button onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label="Decrease quantity" className="w-9 h-9 flex items-center justify-center hover:text-gold"><Minus size={13} /></button>
+                  <span className="w-9 text-center font-body text-sm">{qty}</span>
+                  <button onClick={() => setQty((q) => Math.min(999, q + 1))} aria-label="Increase quantity" className="w-9 h-9 flex items-center justify-center hover:text-gold"><Plus size={13} /></button>
+                </div>
+              </div>
+              <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+                <button onClick={() => { add(product, qty); setAdded(true); setTimeout(() => setAdded(false), 2500) }} className="btn-maxims btn-gold-solid justify-center">
+                  {added ? <><Check size={14} /> Added to cart</> : <><ShoppingBag size={14} /> Add to Cart</>}
+                </button>
+                <button onClick={() => openRequest({ kind: 'quote', source: 'product', product, qty })} className="btn-maxims btn-outline-gold justify-center">
+                  <FileText size={14} /> Request a Quote
+                </button>
+                {added && <button onClick={openDrawer} className="btn-maxims btn-outline-gold justify-center">View cart</button>}
               </div>
 
               <p className="font-body text-[0.72rem] text-charcoal-muted/70 mt-6 leading-relaxed">
-                Prefer to talk it through? Message us on WhatsApp or book a consultation — we'll help you choose and arrange delivery.
+                No payment is taken online yet: add to cart and send an order request, or ask for a quote. Our team will call to confirm availability, delivery and payment.
               </p>
             </motion.div>
           </div>

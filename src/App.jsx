@@ -7,6 +7,9 @@ import { ToastProvider } from '@/context/ToastContext'
 import ToastContainer from '@/components/admin/ToastContainer'
 import ScrollToTop from '@/components/ScrollToTop'
 import SupportChat from '@/components/SupportChat'
+import { CartProvider } from '@/context/CartContext'
+import CartDrawer from '@/components/CartDrawer'
+import RequestModal from '@/components/RequestModal'
 
 // Public Layout
 import Navbar from '@/components/layout/Navbar'
@@ -97,6 +100,7 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <ToastProvider>
+          <CartProvider>
           <ScrollToTop />
           <SupportChat />
           <Routes>
@@ -119,7 +123,10 @@ export default function App() {
             {/* All public routes */}
             <Route path="/*" element={<AnimatedPublicRoutes />} />
           </Routes>
+          <CartDrawer />
+          <RequestModal />
           <ToastContainer />
+          </CartProvider>
         </ToastProvider>
       </AuthProvider>
     </BrowserRouter>

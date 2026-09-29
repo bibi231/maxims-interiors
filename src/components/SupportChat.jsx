@@ -1,14 +1,13 @@
 // src/components/SupportChat.jsx
-// Loads the SupportAI chat widget on public pages only.
-// Deferred + fault-tolerant: if SupportAI is slow or down, the page is
-// completely unaffected — the widget simply doesn't appear. Configure via
-// VITE_SUPPORTAI_WIDGET_URL + VITE_SUPPORTAI_SITE_KEY.
+// Loads the Maxims SupportAI chat widget (bot 6a58aa0726d3a64c4c51611b) on
+// public pages. Exactly one loader on the site: this component. It injects
+//   <script src="https://api.supportai.com.ng/widget/6a58aa0726d3a64c4c51611b.js" defer>
+// once, after the page has loaded, so it never blocks rendering. If SupportAI
+// is slow or down, the widget simply does not appear.
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
-const URL = import.meta.env.VITE_SUPPORTAI_WIDGET_URL || 'https://supportai.com.ng/widget.js'
-const KEY = import.meta.env.VITE_SUPPORTAI_SITE_KEY || ''
-const BOT_ID = import.meta.env.VITE_SUPPORTAI_BOT_ID || '6a58aa0726d3a64c4c51611b'
+const WIDGET_SRC = 'https://api.supportai.com.ng/widget/6a58aa0726d3a64c4c51611b.js'
 const SCRIPT_ID = 'supportai-widget'
 
 export default function SupportChat() {
@@ -17,26 +16,15 @@ export default function SupportChat() {
 
   useEffect(() => {
     if (onAdmin) return
-    if (document.getElementById(SCRIPT_ID)) return
+    if (document.getElementById(SCRIPT_ID) || document.querySelector(`script[src="${WIDGET_SRC}"]`)) return
 
-    // Load only after the page is interactive so it never blocks rendering.
     const inject = () => {
+      if (document.getElementById(SCRIPT_ID)) return
       const s = document.createElement('script')
       s.id = SCRIPT_ID
-      s.src = URL
-      s.async = true
+      s.src = WIDGET_SRC
       s.defer = true
-      s.setAttribute('data-bot-id', BOT_ID)
-      if (KEY) {
-        s.setAttribute('data-site-key', KEY)
-        s.setAttribute('data-key', KEY)
-        s.setAttribute('data-business', KEY)
-      }
-      s.onload = () => {
-        // Fallback: if the widget exposes an init() instead of auto-starting.
-        try { window.SupportAIWidget?.init?.({ siteKey: KEY, key: KEY, botId: BOT_ID }) } catch { /* ignore */ }
-      }
-      s.onerror = () => { /* SupportAI unavailable — fail silently */ }
+      s.onerror = () => { /* SupportAI unavailable: fail silently */ }
       document.body.appendChild(s)
     }
 

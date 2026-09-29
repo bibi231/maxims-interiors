@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Heart, ShoppingBag, Filter, CreditCard, X } from 'lucide-react'
-import { useProducts, placeOrder } from '@/hooks/useData'
+import { Heart, ShoppingBag, Filter, Check } from 'lucide-react'
+import { useProducts } from '@/hooks/useData'
+import { useCart } from '@/context/CartContext'
 import { getStorageUrl, BUCKETS } from '@/lib/storage'
 import CollectionShowcase from '@/components/CollectionShowcase'
 
@@ -16,8 +17,7 @@ export default function Shop() {
     const [sort, setSort] = useState('featured')
     const [wished, setWished] = useState([])
     const [added, setAdded] = useState(null)
-    const [cart, setCart] = useState([])
-    const [checkoutState, setCheckoutState] = useState('idle')
+    const { add } = useCart()
 
     const uniqueCats = ['All', ...new Set((products || []).map(p => p.category).filter(Boolean))]
 
@@ -26,47 +26,9 @@ export default function Shop() {
         .sort((a, b) => sort === 'price-asc' ? a.price - b.price : sort === 'price-desc' ? b.price - a.price : sort === 'featured' ? (b.is_featured ? 1 : -1) : 0)
 
     const addCart = p => {
-        setCart([...cart, p]);
-        setAdded(p.id);
+        add(p)
+        setAdded(p.id)
         setTimeout(() => setAdded(null), 2000)
-    }
-
-    const handleCheckout = async () => {
-        if (cart.length === 0) return
-        setCheckoutState('processing')
-
-        // STUB: Simulate Paystack Modal Delay
-        await new Promise(r => setTimeout(r, 1500))
-        const subtotal = cart.reduce((sum, item) => sum + item.price, 0)
-
-        try {
-            await placeOrder({
-                customer_name: 'Guest User',
-                customer_email: 'guest@example.com',
-                customer_phone: '08000000000',
-                delivery_address: '123 Victoria Island',
-                city: 'Lagos',
-                state: 'Lagos',
-                subtotal: subtotal,
-                delivery_fee: 10000,
-                total: subtotal + 10000,
-                payment_status: 'paid', // stubbed as paid
-                status: 'pending',
-                notes: 'Order placed via stubbed checkout',
-                items: cart.map(item => ({
-                    id: item.id,
-                    name: item.name,
-                    price: item.price,
-                    qty: 1
-                }))
-            })
-            setCheckoutState('success')
-            setCart([])
-            setTimeout(() => setCheckoutState('idle'), 3000)
-        } catch (err) {
-            console.error(err)
-            setCheckoutState('error')
-        }
     }
 
     return (
@@ -135,7 +97,7 @@ export default function Shop() {
                                         {p.cover_image ? (
                                             <img src={getStorageUrl(BUCKETS.products, p.cover_image)} alt={p.name} loading="lazy" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                         ) : (
-                                            <span className="text-5xl group-hover:scale-110 transition-transform duration-400">🛋️</span>
+                                            <ShoppingBag size={40} strokeWidth={1} className="text-gold/50 group-hover:scale-110 transition-transform duration-400" />
                                         )}
                                         {p.badge && <div className={`absolute top-2.5 left-2.5 font-body font-black text-[0.5rem] tracking-[0.12em] uppercase px-2 py-0.5 ${badgeClass(p.badge)}`}>{p.badge}</div>}
                                         <button onClick={(e) => { e.stopPropagation(); setWished(w => w.includes(p.id) ? w.filter(x => x !== p.id) : [...w, p.id]) }}
@@ -144,7 +106,7 @@ export default function Shop() {
                                         </button>
                                         <div className="absolute inset-0 bg-purple-rich/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                             <button onClick={(e) => { e.stopPropagation(); addCart(p) }} className="btn-maxims btn-gold-solid text-[0.55rem] px-4 py-2">
-                                                {added === p.id ? '✓ Added!' : 'Add to Cart'}
+                                                {added === p.id ? <><Check size={12} /> Added</> : 'Add to Cart'}
                                             </button>
                                         </div>
                                     </div>
@@ -154,7 +116,7 @@ export default function Shop() {
                                         <div className="flex items-center justify-between">
                                             <span className="font-title text-[0.82rem] text-purple-rich dark:text-gold-light font-semibold">{fmt(p.price)}</span>
                                             <button onClick={(e) => { e.stopPropagation(); addCart(p) }} className="w-8 h-8 bg-purple-rich hover:bg-gold hover:text-purple-darkest dark:text-cream-soft text-gold-light flex items-center justify-center transition-colors">
-                                                <ShoppingBag size={13} />
+                                                {added === p.id ? <Check size={13} /> : <ShoppingBag size={13} />}
                                             </button>
                                         </div>
                                     </div>
@@ -168,31 +130,6 @@ export default function Shop() {
 
             <CollectionShowcase className="bg-charcoal-mid" />
 
-            {/* Floating Cart Stub */}
-            <AnimatePresence>
-                {cart.length > 0 && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }}
-                        className="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 bg-purple-rich border border-gold/20 p-5 shadow-2xl z-50 flex items-center gap-6"
-                    >
-                        <div className="text-white">
-                            <div className="font-title text-[0.6rem] tracking-widest uppercase text-gold mb-1">Your Cart</div>
-                            <div className="font-body text-sm font-semibold">{cart.length} item{cart.length !== 1 ? 's' : ''} <span className="text-white/50 mx-2">|</span> {fmt(cart.reduce((s, p) => s + p.price, 0))}</div>
-                        </div>
-                        <button
-                            onClick={handleCheckout}
-                            disabled={checkoutState === 'processing'}
-                            className="btn-maxims btn-gold-solid flex items-center gap-2 disabled:opacity-50"
-                        >
-                            <CreditCard size={14} />
-                            {checkoutState === 'processing' ? 'Processing...' : checkoutState === 'success' ? 'Order Placed!' : 'Paystack Checkout'}
-                        </button>
-                        <button onClick={() => setCart([])} className="absolute -top-3 -right-3 w-6 h-6 bg-charcoal rounded-full border border-gold/20 text-cream-soft flex items-center justify-center hover:text-gold hover:border-gold transition-colors">
-                            <X size={12} />
-                        </button>
-                    </motion.div>
-                )}
-            </AnimatePresence>
         </div>
     )
 }

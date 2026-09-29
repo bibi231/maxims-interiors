@@ -4,6 +4,7 @@ import { useGallery, useTestimonials, useProducts } from '@/hooks/useData'
 import { getStorageUrl, BUCKETS } from '@/lib/storage'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowRight, Star } from 'lucide-react'
+import { useCart } from '@/context/CartContext'
 import Hero3D from '@/components/sections/Hero3D'
 import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid'
 import { InfiniteMovingCards } from '@/components/ui/infinite-moving-cards'
@@ -49,6 +50,7 @@ export default function Home() {
     const { data: productsData } = useProducts({ status: 'active', featured: true })
 
     const navigate = useNavigate()
+    const { add: addToCart, openDrawer } = useCart()
     const works = worksData?.slice(0, 5) || []
     const testimonials = testimonialsData?.slice(0, 3) || []
     const products = productsData?.slice(0, 4) || []
@@ -357,8 +359,7 @@ export default function Home() {
                                     </div>
                                 )}
                                 <div className="absolute inset-0 bg-purple-rich/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    {/* TODO: Cart + Paystack checkout */}
-                                    <button className="btn-maxims btn-gold-solid text-[0.58rem] px-4 py-2">Add to Cart</button>
+                                    <button onClick={(e) => { e.stopPropagation(); addToCart(p); openDrawer() }} className="btn-maxims btn-gold-solid text-[0.58rem] px-4 py-2">Add to Cart</button>
                                 </div>
                             </div>
                             <div className="p-4">
