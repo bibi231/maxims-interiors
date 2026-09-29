@@ -1,7 +1,8 @@
 // src/pages/admin/Team.jsx
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Edit2, Trash2, X, Upload, ToggleLeft, ToggleRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Plus, Edit2, Trash2, X, Upload, ToggleLeft, ToggleRight, UserPlus } from 'lucide-react'
 import AdminLayout from '@/components/admin/AdminLayout'
 import { useTeamMembers, upsertTeamMember, deleteTeamMember, useProfiles, logActivity } from '@/hooks/useData'
 import { uploadFile, getStorageUrl, BUCKETS } from '@/lib/storage'
@@ -100,13 +101,19 @@ export default function Team() {
 
   return (
     <AdminLayout>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="font-title text-xl text-cream-soft tracking-wide">Team</h1>
           <p className="font-body text-[0.75rem] text-cream-soft/30 mt-0.5">{members.length} members</p>
         </div>
-        {canWrite('team') && <button onClick={() => setForm({})} className="flex items-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.62rem] tracking-[0.18em] uppercase px-5 py-2.5"><Plus size={13} /> Add Member</button>}
+        <div className="flex flex-wrap gap-2">
+          {isOwner && <Link to="/admin/settings?tab=team&invite=1" className="min-h-[44px] flex items-center gap-2 border border-gold/40 text-gold font-title text-[0.7rem] tracking-[0.14em] uppercase px-4 hover:bg-gold/10"><UserPlus size={14} /> Invite team member</Link>}
+          {canWrite('team') && <button onClick={() => setForm({})} className="min-h-[44px] flex items-center gap-2 bg-gradient-to-r from-gold-deep via-gold to-gold-bright text-purple-darkest font-title text-[0.7rem] font-bold tracking-[0.14em] uppercase px-5"><Plus size={14} /> Add profile</button>}
+        </div>
       </div>
+      <p className="font-body text-[0.88rem] text-cream-soft/75 -mt-3 mb-5">
+        These are the public profiles on the Our Team page. To give someone an admin login, use <strong className="text-gold">Invite team member</strong>.
+      </p>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {loading ? Array(4).fill(0).map((_, i) => <div key={i} className="skeleton aspect-[3/4]" />)

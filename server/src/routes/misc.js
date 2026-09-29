@@ -6,6 +6,7 @@ import { Activity, User, Order, BulkRequest, Appointment, Message, Product, Tran
 import { requireAuth, canAccess, requireOwner, ROLE_PERMISSIONS } from '../middleware/auth.js'
 import { upload, persistFile } from '../middleware/upload.js'
 import { logActivity } from '../utils/activity.js'
+import { sendSetupEmail } from '../utils/staffInvite.js'
 
 const router = Router()
 
@@ -22,14 +23,61 @@ router.get('/profiles', requireAuth, async (_req, res) => {
   res.json(rows)
 })
 router.patch('/profiles/:id/role', requireAuth, requireOwner, async (req, res) => {
+  if (req.params.id === req.user.id) return res.status(400).json({ error: 'You cannot change your own role.' })
+  if (!ROLE_PERMISSIONS[req.body.role]) return res.status(400).json({ error: 'Unknown role.' })
   const u = await User.findByIdAndUpdate(req.params.id, { role: req.body.role }, { new: true })
+  if (!u) return res.status(404).json({ error: 'Team member not found' })
+  await logActivity({ userId: req.user.id, action: 'updated', resourceType: 'profile', resourceId: u.id, description: `Changed ${u.full_name}'s role to ${u.role}` })
   res.json(u)
 })
 router.patch('/profiles/:id', requireAuth, requireOwner, async (req, res) => {
+  if (req.params.id === req.user.id && req.body.is_active === false) return res.status(400).json({ error: 'You cannot deactivate your own account.' })
   const updates = (({ full_name, title, phone, is_active }) => ({ full_name, title, phone, is_active }))(req.body)
-  if (req.body.password) { updates.password_hash = await bcrypt.hash(req.body.password, 12); updates.$inc = { password_version: 1 } }
+  if (req.body.password) {
+    if (String(req.body.password).length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters.' })
+    updates.password_hash = await bcrypt.hash(req.body.password, 12); updates.$inc = { password_version: 1 }; updates.invite_pending = false
+  }
   const u = await User.findByIdAndUpdate(req.params.id, updates, { new: true })
+  if (!u) return res.status(404).json({ error: 'Team member not found' })
+  if (req.body.is_active !== undefined) {
+    await logActivity({ userId: req.user.id, action: 'updated', resourceType: 'profile', resourceId: u.id, description: `${u.is_active ? 'Reactivated' : 'Deactivated'} ${u.full_name}` })
+  }
   res.json(u)
+})
+
+// Owner: send a fresh set-up link. Invalidates earlier links (password_version
+// bump) and returns the new link so it can be copied if the email fails.
+router.post('/profiles/:id/resend-invite', requireAuth, requireOwner, async (req, res) => {
+  const u = await User.findById(req.params.id)
+  if (!u) return res.status(404).json({ error: 'Team member not found' })
+  if (!u.is_active) return res.status(400).json({ error: 'Reactivate this account before sending a new link.' })
+  if (!u.invite_pending) return res.status(400).json({ error: 'This person has already set a password. They can use "Forgot your password?" on the sign-in page.' })
+  u.password_version = (u.password_version || 0) + 1
+  u.invited_at = new Date()
+  await u.save()
+  const mail = await sendSetupEmail(u, { invitedBy: req.user.full_name })
+  await logActivity({ userId: req.user.id, action: 'updated', resourceType: 'profile', resourceId: u.id, description: `Re-sent invite to ${u.full_name}${mail.ok ? '' : ' - email failed'}` })
+  res.json({ user: u, invite_sent: mail.ok, email_error: mail.ok ? undefined : mail.error, setup_url: mail.url })
+})
+
+// Owner: remove a team member. A pending invite (never used) is deleted
+// outright; an account that has been used is deactivated so its history
+// (activity log, assignments) stays intact. Deactivated users cannot sign in
+// and their existing sessions stop working.
+router.delete('/profiles/:id', requireAuth, requireOwner, async (req, res) => {
+  if (req.params.id === req.user.id) return res.status(400).json({ error: 'You cannot remove your own account.' })
+  const u = await User.findById(req.params.id)
+  if (!u) return res.status(404).json({ error: 'Team member not found' })
+  if (u.role === 'owner') return res.status(400).json({ error: "Change this person's role before removing them." })
+  if (u.invite_pending && !u.last_seen) {
+    await u.deleteOne()
+    await logActivity({ userId: req.user.id, action: 'deleted', resourceType: 'profile', resourceId: u.id, description: `Cancelled the invite for ${u.full_name}` })
+    return res.json({ ok: true, deleted: true })
+  }
+  u.is_active = false
+  await u.save()
+  await logActivity({ userId: req.user.id, action: 'updated', resourceType: 'profile', resourceId: u.id, description: `Deactivated ${u.full_name}` })
+  res.json({ ok: true, deleted: false, user: u })
 })
 
 // ── DASHBOARD STATS ──

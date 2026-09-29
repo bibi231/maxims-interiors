@@ -234,6 +234,39 @@ try {
     assert.equal((await call('POST', '/auth/forgot-password', { email }, null)).status, 200)
   })
 
+  await step('team invites: pending status, email failure surfaced with copyable link, resend, cancel', async () => {
+    const email = `invite.${tag}@example.com`
+    const r = await call('POST', '/auth/register', { email, full_name: 'Ivy Invite', role: 'content_editor' })
+    assert.equal(r.status, 201, JSON.stringify(r.body))
+    assert.equal(r.body.invite_sent, false) // SMTP is unreachable in the test
+    assert.ok(r.body.email_error)
+    assert.match(r.body.setup_url, /\/admin\/reset-password\?token=.+&welcome=1$/)
+    assert.equal(r.body.user.invite_pending, true); assert.ok(r.body.user.invited_at)
+    const id = r.body.user.id
+    const listed = (await call('GET', '/profiles')).body.find((p) => p.id === id)
+    assert.equal(listed.invite_pending, true)
+    // resend invalidates the first link
+    const re = await call('POST', `/profiles/${id}/resend-invite`)
+    assert.equal(re.status, 200, JSON.stringify(re.body)); assert.equal(re.body.invite_sent, false); assert.ok(re.body.setup_url)
+    const oldTok = new URL(r.body.setup_url).searchParams.get('token')
+    assert.equal((await call('POST', '/auth/reset-password', { token: oldTok, password: 'abcdefgh1' }, null)).status, 400)
+    // cancel a pending invite deletes it
+    const del = await call('DELETE', `/profiles/${id}`)
+    assert.equal(del.body.deleted, true)
+    assert.ok(!(await call('GET', '/profiles')).body.some((p) => p.id === id))
+    // accepted invite: set password clears pending; remove then deactivates
+    const r2 = await call('POST', '/auth/register', { email: 'b.' + email, full_name: 'Bea Invite', role: 'shop_manager' })
+    const tok = new URL(r2.body.setup_url).searchParams.get('token')
+    const set = await call('POST', '/auth/reset-password', { token: tok, password: 'abcdefgh1' }, null)
+    assert.equal(set.status, 200); assert.equal(set.body.user.invite_pending, false)
+    assert.equal((await call('POST', `/profiles/${r2.body.user.id}/resend-invite`)).status, 400)
+    const rm = await call('DELETE', `/profiles/${r2.body.user.id}`)
+    assert.equal(rm.body.deleted, false); assert.equal(rm.body.user.is_active, false)
+    const me = (await call('GET', '/auth/me')).body.user
+    assert.equal((await call('DELETE', `/profiles/${me.id}`)).status, 400)
+    assert.equal((await call('POST', '/settings/test-email')).status, 502)
+  })
+
   await step('rate limits: forgot-password is per IP+email, reset-password has its own budget', async () => {
     const email = `limit.${tag}@example.com`
     for (let i = 0; i < 5; i++) assert.equal((await call('POST', '/auth/forgot-password', { email }, null)).status, 200)

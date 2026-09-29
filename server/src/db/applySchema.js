@@ -1,5 +1,8 @@
 // server/src/db/applySchema.js
-// Applies every sql/*.sql file in name order (idempotent CREATE TABLE IF NOT EXISTS).
+// Applies every sql/*.sql file in name order. Every file must be safe to re-run:
+// CREATE TABLE IF NOT EXISTS, INSERT IGNORE, guarded UPDATEs. ALTER TABLE ... ADD
+// COLUMN / ADD INDEX is written plainly (MySQL 8 has no ADD COLUMN IF NOT EXISTS,
+// MariaDB does); "already exists" errors from those statements are skipped here.
 // Run: npm run db:schema
 import 'dotenv/config'
 import fs from 'node:fs'
@@ -15,7 +18,17 @@ async function run() {
     const sql = fs.readFileSync(path.join(dir, file), 'utf8')
       .split('\n').filter((l) => !l.trim().startsWith('--')).join('\n')
     const statements = sql.split(/;\s*(?:\n|$)/).map((s) => s.trim()).filter(Boolean)
-    for (const st of statements) await query(st)
+    let skipped = 0
+    for (const st of statements) {
+      try {
+        await query(st)
+      } catch (e) {
+        // 1060 duplicate column, 1061 duplicate key name, 1091 can't drop (already gone)
+        if (/^ALTER\s+TABLE/i.test(st) && [1060, 1061, 1091].includes(e.errno)) { skipped++; continue }
+        throw e
+      }
+    }
+    if (skipped) console.log(`  (${file}: ${skipped} ALTER statement(s) already applied)`)
     console.log(`✓ ${file} (${statements.length} statements)`)
   }
   const tables = await query('SHOW TABLES')

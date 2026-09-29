@@ -29,6 +29,9 @@ export const User = defineModel('User', 'users', {
   title:            S(),
   phone:            S(),
   is_active:        B(true),
+  // Created by the owner without a password; cleared once they set one.
+  invite_pending:   B(false),
+  invited_at:       D(),
   last_seen:        D(),
   // Bumped on every password change; reset links embed it so they are single-use.
   password_version: I({ default: 0 }),

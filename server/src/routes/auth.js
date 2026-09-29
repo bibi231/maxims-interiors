@@ -6,6 +6,7 @@ import rateLimit from 'express-rate-limit'
 import { User } from '../models.js'
 import { signToken, requireAuth, requireOwner, ROLE_PERMISSIONS } from '../middleware/auth.js'
 import { sendMail } from '../utils/mailer.js'
+import { sendSetupEmail } from '../utils/staffInvite.js'
 import { emailShell, esc } from '../utils/templates.js'
 import { appUrl } from '../utils/notify.js'
 import { logActivity } from '../utils/activity.js'
@@ -46,7 +47,7 @@ router.post('/login', loginLimiter, safe(async (req, res) => {
   if (user && !user.is_active) return res.status(403).json({ error: 'This account has been deactivated. Please contact the owner.' })
   const ok = user ? await bcrypt.compare(String(password), user.password_hash) : false
   if (!ok) return res.status(401).json({ error: 'Incorrect email or password. Check for typos, or use "Forgot your password?" below.' })
-  user.last_seen = new Date(); await user.save()
+  user.last_seen = new Date(); user.invite_pending = false; await user.save()
   res.json({ token: signToken(user), user: user.toJSON() })
 }))
 
@@ -103,43 +104,44 @@ router.post('/reset-password', resetPasswordLimiter, safe(async (req, res) => {
   user.password_hash = await bcrypt.hash(String(password), 12)
   user.password_version = (user.password_version || 0) + 1
   user.last_seen = new Date()
+  user.invite_pending = false
   await user.save()
   await logActivity({ userId: user.id, action: 'updated', resourceType: 'profile', resourceId: user.id, description: `${user.full_name} set a new password` })
   res.json({ token: signToken(user), user: user.toJSON() })
 }))
 
-// Owner creates a staff account. Password optional: if left blank the new
-// staff member chooses their own via an emailed link (valid 72h).
+// Owner invites a team member (name, email, role). The account is created
+// WITHOUT a usable password and the person gets an emailed set-up link (72h,
+// single use) through the site's own SMTP server. If the email fails the
+// account still exists and the response carries the link so the owner can
+// copy it and send it another way. An optional temporary password is still
+// accepted for owners who prefer to share one directly.
 router.post('/register', requireAuth, requireOwner, safe(async (req, res) => {
   const { password, full_name, role, title } = req.body || {}
   const email = String(req.body?.email || '').trim().toLowerCase()
-  if (!full_name || !String(full_name).trim()) return res.status(400).json({ error: "Please enter the staff member's full name." })
+  if (!full_name || !String(full_name).trim()) return res.status(400).json({ error: "Please enter the team member's full name." })
   if (!EMAIL_RE.test(email)) return res.status(400).json({ error: 'Please enter a valid email address.' })
   if (role && !ROLE_PERMISSIONS[role]) return res.status(400).json({ error: 'Unknown role.' })
   if (password && password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters, or leave it blank to email a set-up link.' })
   const exists = await User.findOne({ email })
   if (exists) {
-    return res.status(409).json({ error: exists.is_active ? 'A staff account with this email already exists.' : 'This email belongs to a deactivated account. Reactivate it instead of creating a new one.' })
+    return res.status(409).json({ error: exists.is_active ? 'A team member with this email already exists.' : 'This email belongs to a deactivated account. Reactivate it from the team list instead.' })
   }
   const password_hash = await bcrypt.hash(password || crypto.randomBytes(24).toString('hex'), 12)
-  const user = await User.create({ email, password_hash, full_name: String(full_name).trim(), role: role || 'content_editor', title })
-
-  const loginUrl = `${appUrl()}/admin/login`
-  const setupUrl = `${appUrl()}/admin/reset-password?token=${encodeURIComponent(passwordLinkToken(user, 72))}&welcome=1`
-  await sendMail({
-    to: user.email,
-    subject: 'Your Maxims admin account is ready',
-    html: emailShell({
-      heading: `Welcome to Maxims, ${esc(user.full_name.split(' ')[0])}`,
-      body: `<p>${esc(req.user.full_name)} has created a staff account for you on the Maxims Interiors admin.</p>
-        <p><strong>Sign-in email:</strong> ${esc(user.email)}<br><strong>Role:</strong> ${esc(String(user.role).replace(/_/g, ' '))}</p>
-        ${password ? '<p>Your temporary password will be shared with you directly. You can also choose your own now with the button below.</p>' : '<p>Use the button below to choose your password. The link is valid for 72 hours.</p>'}
-        <p style="font-size:13px;color:#6b6880;">Admin sign-in page: <a href="${loginUrl}" style="color:#1C0D35;">${loginUrl}</a></p>`,
-      ctaLabel: 'Set my password', ctaUrl: setupUrl,
-    }),
+  const user = await User.create({
+    email, password_hash, full_name: String(full_name).trim(), role: role || 'content_editor', title,
+    invite_pending: !password, invited_at: new Date(),
   })
-  await logActivity({ userId: req.user.id, action: 'created', resourceType: 'profile', resourceId: user.id, description: `Created staff account for ${user.full_name} (${user.role})` })
-  res.status(201).json({ user: user.toJSON(), invite_sent: true })
+
+  const mail = await sendSetupEmail(user, { invitedBy: req.user.full_name })
+  await logActivity({ userId: req.user.id, action: 'created', resourceType: 'profile', resourceId: user.id, description: `Invited ${user.full_name} (${user.role})${mail.ok ? '' : ' - invite email failed'}` })
+  res.status(201).json({
+    user: user.toJSON(),
+    invite_sent: mail.ok,
+    email_error: mail.ok ? undefined : mail.error,
+    // Owner-only endpoint: the owner can copy this and send it by WhatsApp etc.
+    setup_url: mail.url,
+  })
 }))
 
 export default router

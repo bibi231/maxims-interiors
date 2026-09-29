@@ -19,7 +19,7 @@ import bcrypt from 'bcryptjs'
 import crypto from 'node:crypto'
 import { closeDB } from './config/db.js'
 import { User } from './models.js'
-import { sendSetupEmail, setupLink } from './utils/staffInvite.js'
+import { sendSetupEmail } from './utils/staffInvite.js'
 
 const args = new Set(process.argv.slice(2))
 const PRINT = args.has('--print-links')
@@ -35,11 +35,11 @@ const ACCOUNTS = [
 ]
 
 async function invite(user) {
-  const sent = await sendSetupEmail(user)
-  console.log(sent
+  const r = await sendSetupEmail(user)
+  console.log(r.ok
     ? `  set-up link emailed to ${user.email}`
-    : `  EMAIL FAILED for ${user.email} (check SMTP_*; re-run with --resend --print-links)`)
-  if (PRINT) console.log(`  link: ${setupLink(user)}`)
+    : `  EMAIL FAILED for ${user.email}: ${r.error} (check SMTP_*; re-run with --resend --print-links)`)
+  if (PRINT) console.log(`  link: ${r.url}`)
 }
 
 async function run() {
@@ -70,7 +70,7 @@ async function run() {
     // Without --temp-passwords the hash is of random bytes nobody knows, so the
     // account is unusable until the mailbox owner sets a password via the link.
     const password_hash = await bcrypt.hash(temp || crypto.randomBytes(24).toString('hex'), 12)
-    const user = await User.create({ ...acc, password_hash, is_active: true })
+    const user = await User.create({ ...acc, password_hash, is_active: true, invite_pending: !TEMP })
     console.log(`✓ Created ${user.email} (${user.role})`)
     if (TEMP) temps.push([user.email, temp])
     else await invite(user)
