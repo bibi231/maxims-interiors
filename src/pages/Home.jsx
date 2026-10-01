@@ -231,7 +231,7 @@ export default function Home() {
             />
 
             {/* ===== ABOUT TEASER ===== */}
-            <section className="section-base bg-charcoal-mid">
+            <section className="section-base bg-charcoal-mid overflow-x-clip">
                 <div className="max-w-[1200px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-20">
                     {/* Visual */}
                     <motion.div
