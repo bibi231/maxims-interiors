@@ -6,7 +6,6 @@
 // Real catalogue photos: npm run seed:photos (scripts/attach-photos.mjs).
 // Run once: npm run seed
 import 'dotenv/config'
-import { closeDB } from './config/db.js'
 import { Setting, Product, Gallery, Testimonial } from './models.js'
 import { DEFAULT_CONTACT, DEFAULT_PRICING } from './utils/siteSettings.js'
 

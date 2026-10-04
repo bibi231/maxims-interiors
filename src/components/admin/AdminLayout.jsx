@@ -1,7 +1,7 @@
 // src/components/admin/AdminLayout.jsx
 import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { getTheme, applyTheme, setTheme } from '@/lib/theme'
+import { getTheme, applyTheme } from '@/lib/theme'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, Package, ShoppingBag, Users, Calendar,
@@ -97,7 +97,9 @@ export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) 
 
   useEffect(() => {
     applyTheme(adminTheme)
-    try { localStorage.setItem('maxims-admin-theme', adminTheme) } catch {}
+    try { localStorage.setItem('maxims-admin-theme', adminTheme) } catch {
+      // Keep the selected theme for this session when storage is unavailable.
+    }
     return () => applyTheme(getTheme())
   }, [adminTheme])
 
@@ -335,7 +337,7 @@ export default function AdminLayout({ children, badgeCounts: pageCounts = {} }) 
                       )}
                       {(badgeCounts.total ?? 0) === 0 && (
                         <div className="px-4 py-6 text-center">
-                          <p className="font-body text-[0.84rem] text-cream-soft/60">You're all caught up</p>
+                          <p className="font-body text-[0.84rem] text-cream-soft/60">You&apos;re all caught up</p>
                         </div>
                       )}
                     </div>

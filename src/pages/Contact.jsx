@@ -84,7 +84,7 @@ export default function Contact() {
                 <div className="page-hero-overlay" /><div className="page-hero-pattern" />
                 <motion.div className="relative z-10 px-5 py-20 sm:py-24 text-center" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.75 }}>
                     <p className="eyebrow mb-4">Get In Touch</p>
-                    <h1 className="text-display-lg text-cream-soft font-display mb-4">Let's Create<br /><em className="text-gold-light italic">Something Beautiful</em></h1>
+                    <h1 className="text-display-lg text-cream-soft font-display mb-4">Let&apos;s Create<br /><em className="text-gold-light italic">Something Beautiful</em></h1>
                     <div className="gold-divider" />
                 </motion.div>
             </section>

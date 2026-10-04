@@ -5,7 +5,6 @@ import { Plus, Edit2, Trash2, X, Star, ToggleLeft, ToggleRight } from 'lucide-re
 import AdminLayout from '@/components/admin/AdminLayout'
 import { useTestimonials, upsertTestimonial, deleteTestimonial, logActivity } from '@/hooks/useData'
 import { useAuth } from '@/context/AuthContext'
-import { cn } from '@/lib/utils'
 
 const BLANK = { client_name: '', client_role: '', quote: '', rating: 5, project_type: '', avatar_url: '', is_published: true, is_featured: false, sort_order: 0 }
 

@@ -1,7 +1,7 @@
 // src/pages/admin/Dashboard.jsx
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ShoppingBag, Package, Calendar, MessageSquare, Building2, TrendingUp, ArrowRight, Clock } from 'lucide-react'
+import { ShoppingBag, Package, Calendar, MessageSquare, Building2, ArrowRight, Clock } from 'lucide-react'
 import AdminLayout from '@/components/admin/AdminLayout'
 import { useAuth } from '@/context/AuthContext'
 import { useDashboardStats, useOrders, useAppointments, useContactMessages } from '@/hooks/useData'

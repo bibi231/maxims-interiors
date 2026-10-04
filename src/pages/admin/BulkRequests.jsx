@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Building2, Mail, Phone, User } from 'lucide-react'
 import AdminLayout from '@/components/admin/AdminLayout'
-import { useBulkRequests, updateBulkRequest, logActivity } from '@/hooks/useData'
+import { useBulkRequests, updateBulkRequest } from '@/hooks/useData'
 import { useAuth } from '@/context/AuthContext'
 import { cn, formatNaira, formatDate } from '@/lib/utils'
 
@@ -17,7 +17,7 @@ const STYLE = {
   completed: 'text-cream-soft/75 bg-cream-soft/5 border-cream-soft/10',
 }
 
-function DetailModal({ row, onClose, canWrite, profileId }) {
+function DetailModal({ row, onClose, canWrite }) {
   const [status, setStatus] = useState(row.status)
   const [notes, setNotes] = useState(row.internal_notes || '')
   const [quote, setQuote] = useState(row.quote_amount || '')
@@ -101,7 +101,7 @@ function DetailModal({ row, onClose, canWrite, profileId }) {
 export default function BulkRequests() {
   const [filter, setFilter] = useState('all')
   const [selected, setSelected] = useState(null)
-  const { canWrite, profile } = useAuth()
+  const { canWrite } = useAuth()
   const { data: rows, loading } = useBulkRequests({ status: filter !== 'all' ? filter : undefined })
   const newCount = rows.filter((r) => r.status === 'new').length
 
@@ -144,7 +144,7 @@ export default function BulkRequests() {
         </table>
       </div>
 
-      <AnimatePresence>{selected && <DetailModal row={selected} onClose={() => setSelected(null)} canWrite={canWrite('bulk_requests')} profileId={profile?.id} />}</AnimatePresence>
+      <AnimatePresence>{selected && <DetailModal row={selected} onClose={() => setSelected(null)} canWrite={canWrite('bulk_requests')} />}</AnimatePresence>
     </AdminLayout>
   )
 }

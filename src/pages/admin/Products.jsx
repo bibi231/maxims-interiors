@@ -18,7 +18,7 @@ function slugify(str) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 }
 
-function ProductForm({ initial = BLANK, onSave, onClose, uploading, setUploading }) {
+function ProductForm({ initial = BLANK, onSave, onClose }) {
   const [form, setForm] = useState({ ...BLANK, ...initial })
   const [saving, setSaving] = useState(false)
   const [imgLoading, setImgLoading] = useState(false)

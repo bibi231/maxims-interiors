@@ -67,7 +67,7 @@ export default function PaymentCallback() {
               <XCircle size={48} className="text-red-400 mx-auto" />
               <h1 className="text-display-md mt-6">Payment Not Confirmed</h1>
               <p className="mt-3 font-body text-cream-soft/85">
-                We couldn't confirm this payment. If you were charged, please contact us with your reference and we'll sort it out right away.
+                We couldn&apos;t confirm this payment. If you were charged, please contact us with your reference and we&apos;ll sort it out right away.
               </p>
               <div className="mt-8 flex gap-3 justify-center">
                 <Link to="/contact" className="btn-gold-solid">Contact Us</Link>

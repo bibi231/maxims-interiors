@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useGallery, useTestimonials, useProducts, usePricing } from '@/hooks/useData'
 import { formatNaira } from '@/lib/utils'
 import { getStorageUrl, BUCKETS } from '@/lib/storage'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { ArrowRight, Star } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ArrowRight } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 import Hero3D from '@/components/sections/Hero3D'
 import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid'
@@ -200,7 +199,7 @@ export default function Home() {
 
                 <div className="max-w-[1200px] mx-auto">
                     <BentoGrid>
-                        {works.map((w, i) => (
+                        {works.map((w) => (
                             <BentoGridItem
                                 key={w.id}
                                 title={w.title}
@@ -274,7 +273,7 @@ export default function Home() {
                             Maxims Interiors & Home Goods was born from a deep passion for transforming ordinary spaces into extraordinary living experiences. We blend timeless elegance with contemporary sensibility.
                         </p>
                         <blockquote className="border-l-2 border-gold pl-5 mb-8 font-editorial text-[1.05rem] italic text-gold-light leading-relaxed">
-                            "Every room tells a story. We help you tell yours with beauty, intention, and lasting quality."
+                            &quot;Every room tells a story. We help you tell yours with beauty, intention, and lasting quality.&quot;
                         </blockquote>
                         <Link to="/about" className="btn-maxims btn-gold-solid">
                             Discover Our Story <ArrowRight size={14} />

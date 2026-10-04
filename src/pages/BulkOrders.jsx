@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
-import { ArrowRight, Check, Package, Users, Truck, Database } from 'lucide-react'
+import { Package, Users, Truck, Database } from 'lucide-react'
 import { submitBulkRequest, usePricing } from '@/hooks/useData'
 import { formatNaira } from '@/lib/utils'
 
@@ -100,7 +99,7 @@ export default function BulkOrders() {
                         { n: '01', t: 'Submit Request', d: 'Fill out our trade form with project details and product interests.' },
                         { n: '02', t: 'Custom Quote', d: 'Your account manager will provide a tailored quote with volume discounts.' },
                         { n: '03', t: 'Receive & Install', d: 'Coordinated delivery and optional professional installation at your site.' },
-                    ].map((s, i) => (
+                    ].map((s) => (
                         <div key={s.n} className="flex-1 relative z-10">
                             <div className="w-16 h-16 rounded-full bg-gold/10 border border-gold text-gold font-title text-xl flex items-center justify-center mx-auto mb-6">{s.n}</div>
                             <h4 className="font-title text-[0.84rem] tracking-[0.2em] uppercase text-cream-soft mb-3">{s.t}</h4>
@@ -118,7 +117,7 @@ export default function BulkOrders() {
                     <div className="gold-divider" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-[1100px] mx-auto">
-                    {BENEFITS.map((b, i) => (
+                    {BENEFITS.map((b) => (
                         <div key={b.title} className="card-luxury p-10 text-center relative group overflow-hidden">
                             <div className="absolute inset-0 bg-gold/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                             <b.icon size={28} className="text-gold mx-auto mb-5 relative z-10" />

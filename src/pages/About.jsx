@@ -62,7 +62,7 @@ export default function About() {
                     </motion.div>
 
                     <motion.div initial={{ opacity: 0, x: 36 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
-                        <p className="eyebrow mb-4">Founder's Note</p>
+                        <p className="eyebrow mb-4">Founder&apos;s Note</p>
                         <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display mb-6">
                             A Letter From<br />
                             <em className="italic">
@@ -79,7 +79,7 @@ export default function About() {
                             We design for purposeful living: sophisticated spaces that combine aesthetics, functionality and comfort. Whatever the project, my promise is the same — beauty made with intention, integrity and care.
                         </p>
                         <blockquote className="border-l-2 border-gold pl-5 font-editorial text-[1rem] italic text-purple-mid leading-relaxed">
-                            "The more value you add to others and your work, the more valuable you become."
+                            &quot;The more value you add to others and your work, the more valuable you become.&quot;
                             <cite className="block mt-2 font-title text-[0.74rem] not-italic tracking-[0.2em] text-gold">— Christine J-K Gadzama, Founder & CEO</cite>
                         </blockquote>
                     </motion.div>
@@ -116,7 +116,7 @@ export default function About() {
             {/* Timeline */}
             <section className="section-base bg-charcoal-mid">
                 <div className="section-header-center">
-                    <p className="eyebrow mb-3 text-gold">The Founder's Journey</p>
+                    <p className="eyebrow mb-3 text-gold">The Founder&apos;s Journey</p>
                     <h2 className="text-display-md text-gold-light font-display">Three Decades of Vision</h2>
                     <div className="gold-divider" />
                 </div>

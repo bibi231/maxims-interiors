@@ -42,7 +42,13 @@ function useApi(path, { poll = 0 } = {}) {
   return { data, loading, error, refresh }
 }
 
-const stripId = ({ id, _id, ...rest }) => rest // never POST/PUT the id in the body
+// Never POST/PUT either database ID in the body; leave the caller's object intact.
+const stripId = (data) => {
+  const body = { ...data }
+  delete body.id
+  delete body._id
+  return body
+}
 
 // ============================================================
 // DASHBOARD STATS

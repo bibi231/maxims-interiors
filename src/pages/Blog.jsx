@@ -108,7 +108,7 @@ export function BlogPost() {
       <section className="min-h-[70vh] grid place-items-center bg-cream-soft px-5 pt-28 pb-16 text-center">
         <Meta title="Post not found — Maxims Interiors" noindex />
         <div>
-          <h1 className="font-display text-4xl font-semibold text-purple-rich dark:text-gold-light mb-4">This story isn't here</h1>
+          <h1 className="font-display text-4xl font-semibold text-purple-rich dark:text-gold-light mb-4">This story isn&apos;t here</h1>
           <Link to="/blog" className="btn-maxims btn-gold-solid">Back to the Journal</Link>
         </div>
       </section>
@@ -166,7 +166,7 @@ export function BlogPost() {
         )}
         <div className="max-w-[720px] mx-auto mt-12 bg-purple-darkest p-6 sm:p-10 text-center">
           <p className="eyebrow mb-3">Love this look?</p>
-          <h2 className="font-display text-3xl font-semibold text-cream-soft mb-5">Let's design your space</h2>
+          <h2 className="font-display text-3xl font-semibold text-cream-soft mb-5">Let&apos;s design your space</h2>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link to="/contact" className="btn-maxims btn-gold-solid justify-center">Book a Consultation</Link>
             <Link to="/shop" className="btn-maxims btn-outline-light justify-center">Shop Home Goods</Link>

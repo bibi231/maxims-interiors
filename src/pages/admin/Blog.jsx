@@ -2,7 +2,7 @@
 // Journal (blog) editor: list of posts + full editor with WYSIWYG content,
 // cover image upload (Cloudinary via /api/upload), excerpt, tags,
 // draft/published, publish date, SEO title/description.
-import { useEffect, useMemo, useState, lazy, Suspense } from 'react'
+import { useCallback, useEffect, useMemo, useState, lazy, Suspense } from 'react'
 import { Plus, ArrowLeft, Save, Eye, Trash2, Upload, X, Search, ExternalLink } from 'lucide-react'
 import AdminLayout from '@/components/admin/AdminLayout'
 import { api } from '@/lib/api'
@@ -178,11 +178,11 @@ export default function Blog() {
   const [q, setQ] = useState('')
   const [filter, setFilter] = useState('all')
 
-  async function load() {
+  const load = useCallback(async () => {
     try { setPosts(await api.get('/blog?all=1')) } catch (e) { addToast({ type: 'error', message: e.message }) }
     setLoading(false)
-  }
-  useEffect(() => { load() }, [])
+  }, [addToast])
+  useEffect(() => { load() }, [load])
 
   async function open(p) {
     try { setEditing(p ? await api.get(`/blog/id/${p.id}`) : { ...BLANK }) } catch (e) { addToast({ type: 'error', message: e.message }) }

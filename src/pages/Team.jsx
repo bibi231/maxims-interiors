@@ -71,7 +71,7 @@ export default function Team() {
                     initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}>
                     <h2 className="text-display-md text-purple-rich dark:text-gold-light font-display mb-6">Join Our Vision</h2>
                     <p className="font-body text-[0.88rem] text-charcoal-muted mb-10 leading-relaxed">
-                        We're always looking for talented designers, project managers, and creative spirits. Think you'd be a good fit for Maxims?
+                        We&apos;re always looking for talented designers, project managers, and creative spirits. Think you&apos;d be a good fit for Maxims?
                     </p>
                     <Link to="/contact" className="btn-maxims btn-outline-gold">View Careers <ArrowRight size={14} /></Link>
                 </motion.div>

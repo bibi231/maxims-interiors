@@ -42,7 +42,7 @@ export default function Testimonials() {
                                 </div>
                             </div>
                             <Quote className="text-gold opacity-10 mb-4" size={32} />
-                            <p className="font-editorial text-[0.95rem] italic text-charcoal leading-relaxed mb-8">"{r.quote}"</p>
+                            <p className="font-editorial text-[0.95rem] italic text-charcoal leading-relaxed mb-8">&quot;{r.quote}&quot;</p>
                             <div className="flex flex-col">
                                 <span className="font-title text-[0.76rem] tracking-[0.2em] uppercase text-purple-rich dark:text-gold-light">{r.client_name}</span>
                                 <span className="font-body text-[0.76rem] text-charcoal-muted mt-1">{r.client_role}</span>
@@ -56,7 +56,7 @@ export default function Testimonials() {
                 <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #C9A84C 0px, #C9A84C 1px, transparent 1px, transparent 15px)' }} />
                 <motion.div className="relative z-10" initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
                     <h2 className="text-display-md text-gold-light font-display mb-6">Want to Share Your Story?</h2>
-                    <p className="font-body text-cream-soft mb-10 max-w-md mx-auto">We love hearing from our clients. If we've worked together, please share your experience below.</p>
+                    <p className="font-body text-cream-soft mb-10 max-w-md mx-auto">We love hearing from our clients. If we&apos;ve worked together, please share your experience below.</p>
                     <Link to="/contact" className="btn-maxims btn-gold-solid">Submit a Review <ArrowRight size={14} /></Link>
                 </motion.div>
             </section>

@@ -5,7 +5,7 @@ import { BulkRequest } from '../models.js'
 import { requireAuth, canAccess, canWrite } from '../middleware/auth.js'
 import { logActivity } from '../utils/activity.js'
 import { sendMail } from '../utils/mailer.js'
-import { emailShell, naira, esc, detailsTable } from '../utils/templates.js'
+import { emailShell, naira, detailsTable } from '../utils/templates.js'
 import { notifyStaff } from '../utils/notify.js'
 import { forwardLead } from '../utils/supportai.js'
 
