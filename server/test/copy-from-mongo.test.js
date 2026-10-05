@@ -1,190 +1,316 @@
-// server/test/copy-from-mongo.test.js
-// Seeds a THROWAWAY MongoDB with Mongoose-shaped documents for every model,
-// runs scripts/copy-from-mongo.js into a THROWAWAY MariaDB/MySQL database, and
-// checks counts, ids, idempotency, logins with copied bcrypt hashes and order data.
-//
-//   TEST_MONGODB_URI=mongodb://127.0.0.1:27017/maxims_copy_test \
-//   TEST_DATABASE_URL=mysql://user:pass@127.0.0.1:3306/maxims_copy_test \
-//   npm run test:copy
-//
-// Both databases are wiped. Never point these at real data.
+// Offline fixtures only: no env, sockets, database credentials or destructive test setup.
 import assert from 'node:assert/strict'
-import { spawnSync } from 'node:child_process'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import bcrypt from 'bcryptjs'
-import { MongoClient, ObjectId } from 'mongodb'
+import fs from 'node:fs'
+import vm from 'node:vm'
+import test from 'node:test'
+import { ObjectId, Decimal128, Long } from 'mongodb'
+import * as models from '../src/models.js'
+import { createMappings, decimal, prepareDocument, planCopy, runCopy, CopyBlockedError } from '../scripts/copy-core.js'
+import { mariaDestination, mongoSource } from '../scripts/copy-adapters.js'
+import { parseArgs, persistReport } from '../scripts/copy-from-mongo.js'
 
-const { TEST_MONGODB_URI, TEST_DATABASE_URL } = process.env
-if (!TEST_MONGODB_URI || !TEST_DATABASE_URL) {
-  console.error('Set TEST_MONGODB_URI and TEST_DATABASE_URL to throwaway databases.')
-  process.exit(1)
-}
-Object.assign(process.env, {
-  DATABASE_URL: TEST_DATABASE_URL, JWT_SECRET: 'copy-test-secret',
-  EMAIL_PROVIDER: 'smtp', SMTP_HOST: '127.0.0.1', SMTP_PORT: '1', SMTP_SECURE: 'false',
-  SUPPORTAI_API_KEY: '', TRUEWEB_NEWSLETTER_URL: '', NOTIFICATION_EMAIL: '', NODE_ENV: 'test',
+const mappings = createMappings(models)
+const get = (name) => mappings.find((m) => m.collection === name)
+const id = (n) => n.toString(16).padStart(24, '0')
+const stamp = { created_at: new Date('2026-03-01T10:00:00.123Z'), updated_at: new Date('2026-03-02T11:30:00.456Z') }
+const doc = (n, data) => ({ _id: new ObjectId(id(n)), ...stamp, ...data })
+const fixtures = () => ({
+  users: [doc(1, { email: 'owner@example.invalid', password_hash: 'private-fixture-hash', full_name: 'Owner', role: 'owner', password_version: 2 })],
+  products: [doc(2, { name: 'Product', slug: 'product', price: Decimal128.fromString('68000.50'), category: 'Lighting' })],
+  orders: [doc(3, { customer_name: 'Customer', customer_email: 'customer@example.invalid', total: 69000, items: [{ product_id: new ObjectId(id(2)), price: 32000, qty: 2 }], staff_notes: [{ text: 'Called', created_at: stamp.updated_at }], status_history: [{ status: 'new', created_at: stamp.created_at }], assigned_to: new ObjectId(id(1)) })],
+  bulkrequests: [doc(4, { company_name: 'Company', contact_name: 'Contact', email: 'contact@example.invalid', quote_amount: '1500000.00' })],
+  appointments: [doc(5, { client_name: 'Client', client_email: 'client@example.invalid', preferred_date: '2026-04-01', preferred_time: '10:00' })],
+  messages: [doc(6, { full_name: 'Sender', email: 'sender@example.invalid', message: 'Hello — ₦ ✓', replied_by: new ObjectId(id(1)) })],
+  galleries: [doc(7, { title: 'Office', slug: 'office', category: 'Commercial', images: ['https://example.invalid/office.jpg'] })],
+  testimonials: [doc(8, { client_name: 'Client', quote: 'Wonderful', rating: 5 })],
+  teammembers: [doc(9, { full_name: 'Designer', title: 'Designer', profile_id: new ObjectId(id(1)) })],
+  settings: [doc(10, { key: 'contact_info', value: { address: 'Admin-edited address', hours: 'Mon–Sat' } })],
+  activities: [doc(11, { user_id: new ObjectId(id(1)), action: 'updated', resource_type: 'order', resource_id: id(3) })],
+  newsletters: [doc(12, { email: 'news@example.invalid', status: 'subscribed' })],
+  transactions: [doc(13, { reference: 'MX-FIXTURE', order_id: new ObjectId(id(3)), customer_email: 'customer@example.invalid', amount: '69000.00', status: 'success', metadata: { nested: { b: 2, a: 1 } } })],
+  blogposts: [doc(14, { title: 'Journal', slug: 'journal', content: '<p>Original HTML</p>', excerpt: 'Excerpt', tags: ['interiors'], cover_image: 'https://example.invalid/blog.jpg', status: 'published', published_at: stamp.created_at, seo_title: 'SEO', seo_description: 'Description', author_id: new ObjectId(id(1)), author_name: 'Owner', reading_minutes: 3 })],
 })
-const serverDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const { query, closeDB } = await import('../src/config/db.js')
-const { createApp } = await import('../src/app.js')
+const rowsFor = (source) => Object.fromEntries(mappings.map((m) => [m.table, (source[m.collection] || []).map((d) => prepareDocument(m, d).row)]))
 
-const runCopy = (...flags) => spawnSync(process.execPath, ['scripts/copy-from-mongo.js', ...flags], {
-  cwd: serverDir, encoding: 'utf8',
-  env: { ...process.env, MONGODB_URI: TEST_MONGODB_URI, DATABASE_URL: TEST_DATABASE_URL },
-})
-
-// ── Representative Mongoose-shaped documents ──
-const t0 = new Date('2026-03-01T10:00:00.000Z')
-const t1 = new Date('2026-03-02T11:30:00.000Z')
-const ts = { created_at: t0, updated_at: t1, __v: 0 }
-const ownerId = new ObjectId(), staffId = new ObjectId(), prodA = new ObjectId(), prodB = new ObjectId(), orderId = new ObjectId()
-const ownerPw = 'Owner-pass-123', staffPw = 'Staff-pass-456'
-const docs = {
-  users: [
-    { _id: ownerId, email: 'owner@example.com', password_hash: await bcrypt.hash(ownerPw, 10), full_name: 'Owner One', role: 'owner', is_active: true, password_version: 2, last_seen: t1, ...ts },
-    { _id: staffId, email: 'staff@example.com', password_hash: await bcrypt.hash(staffPw, 10), full_name: 'Staff Two', role: 'shop_manager', title: 'Shop', is_active: true, ...ts }, // no password_version: default 0
-  ],
-  products: [
-    { _id: prodA, name: 'Linen Cushion Quartet', slug: 'linen-cushion-quartet', price: 32000, category: 'Living Room', images: ['https://x/a.jpg', 'https://x/b.jpg'], cover_image: 'https://x/a.jpg', stock_qty: 40, status: 'active', is_featured: true, sort_order: 0, tags: ['soft'], ...ts },
-    { _id: prodB, name: 'Vela Pendant Light', slug: 'vela-pendant-light', price: 68000.5, compare_price: 70000, category: 'Lighting', images: [], stock_qty: 6, status: 'draft', is_featured: false, tags: [], ...ts },
-  ],
-  orders: [
-    { _id: orderId, order_number: 'MX-ABC12345', kind: 'order', source: 'cart', customer_name: 'Ada', customer_email: 'ada@example.com', customer_phone: '0801',
-      items: [{ product_id: String(prodA), name: 'Linen Cushion Quartet', slug: 'linen-cushion-quartet', price: 32000, qty: 2, image: 'https://x/a.jpg' }],
-      subtotal: 64000, delivery_fee: 5000, total: 69000, status: 'contacted', payment_status: 'unpaid', preferred_contact: 'whatsapp',
-      staff_notes: [{ _id: new ObjectId(), text: 'Called', author_name: 'Owner One', created_at: t1 }],
-      status_history: [{ _id: new ObjectId(), status: 'new', author_name: 'Customer', created_at: t0 }, { _id: new ObjectId(), status: 'contacted', author_name: 'Owner One', created_at: t1 }],
-      assigned_to: staffId, ...ts },
-    { _id: new ObjectId(), order_number: 'MX-OLD1', customer_name: 'Legacy', customer_email: 'old@example.com', items: [], subtotal: 0, total: 0, status: 'shipped', ...ts }, // legacy: no kind
-  ],
-  bulkrequests: [{ _id: new ObjectId(), company_name: 'Acme', contact_name: 'Ed', email: 'ed@acme.com', quantity: '20', status: 'quoted', quote_amount: 1500000, assigned_to: ownerId, ...ts }],
-  appointments: [{ _id: new ObjectId(), client_name: 'Di', client_email: 'di@example.com', preferred_date: '2026-04-01', preferred_time: '10:00', status: 'confirmed', confirmed_at: t1, duration_mins: 60, ...ts }],
-  messages: [{ _id: new ObjectId(), full_name: 'Cy', email: 'cy@example.com', message: 'Hello — ₦ naira ✓', status: 'replied', replied_by: ownerId, reply_text: 'Thanks', replied_at: t1, ...ts }],
-  galleries: [{ _id: new ObjectId(), title: 'Corporate Office', slug: 'corporate-office', category: 'Commercial', year: 2025, grid_size: 'large', images: ['https://x/o.jpg'], is_featured: true, is_published: true, ...ts }],
-  testimonials: [{ _id: new ObjectId(), client_name: 'Ms Christine Miner', quote: 'Wonderful', rating: 5, is_featured: true, is_published: true, sort_order: 0, ...ts }],
-  teammembers: [{ _id: new ObjectId(), full_name: 'Team A', title: 'Designer', profile_id: staffId, is_published: true, sort_order: 1, ...ts }],
-  settings: [
-    { _id: new ObjectId(), key: 'contact_info', value: { phone: '+234 1', email: 'info@example.com', hours: 'Mon–Sat' }, ...ts },
-    { _id: new ObjectId(), key: 'delivery_fee', value: 7500, ...ts },
-  ],
-  activities: [{ _id: new ObjectId(), user_id: ownerId, action: 'updated', resource_type: 'order', resource_id: String(orderId), description: 'x', ...ts }],
-  newsletters: [{ _id: new ObjectId(), email: 'news@example.com', source: 'footer', status: 'subscribed', welcomed_at: t1, ...ts }],
-  transactions: [{ _id: new ObjectId(), reference: 'MX-1-abcd', provider: 'squad', order_id: orderId, customer_email: 'ada@example.com', amount: 69000, status: 'success', metadata: { a: 1 }, paid_at: t1, ...ts }],
-}
-
-const mongo = new MongoClient(TEST_MONGODB_URI)
-let passed = 0
-const step = async (name, fn) => { await fn(); passed++; console.log('  ok', name) }
-let server
-
-try {
-  await mongo.connect()
-  const db = mongo.db()
-  await db.dropDatabase()
-  for (const [c, list] of Object.entries(docs)) await db.collection(c).insertMany(list)
-  const total = Object.values(docs).reduce((n, l) => n + l.length, 0)
-
-  await step('dry run validates everything and writes nothing', async () => {
-    await query('DELETE FROM `users`')
-    const r = runCopy('--dry-run', '--truncate')
-    assert.equal(r.status, 0, r.stdout + r.stderr)
-    assert.match(r.stdout, /DRY RUN/)
-    assert.equal(Number((await query('SELECT COUNT(*) n FROM users'))[0].n), 0)
-  })
-
-  await step('copy succeeds and every table matches', async () => {
-    const r = runCopy('--truncate')
-    assert.equal(r.status, 0, r.stdout + r.stderr)
-    assert.match(r.stdout, /Copy complete: every table matches/)
-    let n = 0
-    for (const t of ['users', 'products', 'orders', 'bulk_requests', 'appointments', 'messages', 'gallery', 'testimonials', 'team_members', 'settings', 'activity', 'newsletter', 'transactions']) {
-      n += Number((await query(`SELECT COUNT(*) n FROM \`${t}\``))[0].n)
-    }
-    assert.equal(n, total)
-  })
-
-  await step('re-run is idempotent (upsert by id)', async () => {
-    const r = runCopy()
-    assert.equal(r.status, 0, r.stdout + r.stderr)
-    assert.equal(Number((await query('SELECT COUNT(*) n FROM orders'))[0].n), docs.orders.length)
-  })
-
-  server = createApp().listen(0)
-  const base = `http://127.0.0.1:${server.address().port}/api`
-  const call = async (method, p, body, tk) => {
-    const res = await fetch(base + p, { method, headers: { 'Content-Type': 'application/json', ...(tk ? { Authorization: `Bearer ${tk}` } : {}) }, body: body ? JSON.stringify(body) : undefined })
-    return { status: res.status, body: await res.json() }
+class FakeDestination {
+  constructor(rows = {}, options = {}) { this.rows = structuredClone(rows); this.options = options; this.writes = 0; this.commits = 0; this.rollbacks = 0; this.reads = 0 }
+  async snapshot() { this.reads++; return { rows: structuredClone(this.rows), errors: this.options.schemaErrors || [] } }
+  async insert(mapping, row) {
+    this.writes++
+    if (this.options.failAt === this.writes) throw new Error('fake constraint failure')
+    const list = this.rows[mapping.table] ||= []
+    const unique = { users: 'email', products: 'slug', orders: 'order_number', settings: 'key', newsletter: 'email', transactions: 'reference', blog_posts: 'slug', gallery: 'slug' }[mapping.table]
+    if (list.some((r) => r.id === row.id || (unique && row[unique] != null && r[unique] === row[unique]))) throw new Error('fake duplicate key')
+    list.push(structuredClone(this.options.corrupt ? { ...row, full_name: 'changed' } : row))
   }
-
-  let token
-  await step('staff log in with their existing passwords (bcrypt hashes copied)', async () => {
-    const a = await call('POST', '/auth/login', { email: 'owner@example.com', password: ownerPw })
-    assert.equal(a.status, 200); token = a.body.token
-    assert.equal(a.body.user.id, String(ownerId)); assert.equal(a.body.user.role, 'owner')
-    const b = await call('POST', '/auth/login', { email: 'staff@example.com', password: staffPw })
-    assert.equal(b.status, 200); assert.equal(b.body.user.role, 'shop_manager')
-    assert.equal((await call('POST', '/auth/login', { email: 'staff@example.com', password: 'nope' })).status, 401)
-    const u = (await query('SELECT password_version FROM users WHERE id = ?', [String(ownerId)]))[0]
-    assert.equal(u.password_version, 2)
-  })
-
-  await step('orders: ids, reference, items, notes, history, timestamps, assignment intact', async () => {
-    const list = (await call('GET', '/orders', null, token)).body
-    const o = list.find((x) => x.id === String(orderId))
-    assert.ok(o)
-    assert.equal(o.order_number, 'MX-ABC12345'); assert.equal(o.total, 69000); assert.equal(o.delivery_fee, 5000)
-    assert.deepEqual(o.items, docs.orders[0].items)
-    assert.equal(o.staff_notes[0].text, 'Called'); assert.equal(o.status_history.length, 2)
-    assert.equal(o.status_history[1].created_at, t1.toISOString())
-    assert.equal(o.created_at, t0.toISOString()); assert.equal(o.updated_at, t1.toISOString())
-    assert.equal(o.assigned_to.full_name, 'Staff Two')
-    const legacy = list.find((x) => x.order_number === 'MX-OLD1')
-    assert.equal(legacy.status, 'shipped'); assert.equal(legacy.kind, 'order') // default applied like Mongoose
-    assert.ok((await call('GET', '/orders?kind=order', null, token)).body.some((x) => x.order_number === 'MX-OLD1'))
-  })
-
-  await step('products, settings, content, references read back correctly', async () => {
-    const all = (await call('GET', '/products', null, token)).body
-    const b = all.find((x) => x.id === String(prodB))
-    assert.equal(b.price, 68000.5); assert.equal(b.compare_price, 70000); assert.equal(b.status, 'draft')
-    const pub = (await call('GET', '/products')).body
-    assert.deepEqual(pub.map((x) => x.id), [String(prodA)])
-    assert.deepEqual(pub[0].images, docs.products[0].images)
-    const s = (await call('GET', '/settings')).body
-    assert.deepEqual(s.contact_info, docs.settings[0].value); assert.equal(s.delivery_fee, 7500)
-    const msg = (await call('GET', '/messages', null, token)).body[0]
-    assert.equal(msg.message, 'Hello — ₦ naira ✓'); assert.equal(msg.replied_by.full_name, 'Owner One')
-    const act = (await call('GET', '/activity', null, token)).body
-    assert.ok(act.some((x) => x.profile?.full_name === 'Owner One'))
-    const team = (await call('GET', '/team')).body
-    assert.equal(team[0].profile_id, String(staffId))
-    assert.equal((await call('GET', '/gallery?featured=true')).body.length, 1)
-    assert.equal((await call('GET', '/testimonials')).body[0].client_name, 'Ms Christine Miner')
-    const tx = (await call('GET', '/payments/transactions', null, token)).body[0]
-    assert.equal(tx.order_id, String(orderId)); assert.deepEqual(tx.metadata, { a: 1 })
-  })
-
-  await step('unknown collections and fields are reported, invalid docs fail loudly', async () => {
-    await db.collection('coupons').insertOne({ code: 'X' })
-    await db.collection('products').updateOne({ _id: prodA }, { $set: { legacy_field: 1 } })
-    await db.collection('orders').insertOne({ _id: new ObjectId(), customer_name: 'Bad', customer_email: 'b@x.co', status: 'teleported', ...ts })
-    const r = runCopy()
-    assert.equal(r.status, 1)
-    assert.match(r.stdout, /UNKNOWN collections[\s\S]*coupons: 1/)
-    assert.match(r.stdout, /products: UNKNOWN fields \(not copied\): legacy_field \(1\)/)
-    assert.match(r.stdout, /orders: 1 document\(s\) FAILED[\s\S]*teleported/)
-    const lenient = runCopy('--lenient')
-    assert.equal(lenient.status, 0, lenient.stdout + lenient.stderr)
-    assert.equal(Number((await query('SELECT COUNT(*) n FROM orders'))[0].n), docs.orders.length + 1)
-  })
-
-  console.log(`\n${passed} checks passed`)
-} catch (e) {
-  console.error('\nFAILED:', e.message)
-  process.exitCode = 1
-} finally {
-  server?.close()
-  await mongo.close()
-  await closeDB()
+  async transaction(work) {
+    const before = structuredClone(this.rows)
+    try { const result = await work(); this.commits++; return result }
+    catch (e) { this.rows = before; this.rollbacks++; throw e }
+  }
 }
+const execute = (documents, destination, extra = {}) => runCopy({ mappings, source: { snapshot: async () => documents }, destination, ...extra })
+const block = async (documents, destination, extra = {}) => {
+  await assert.rejects(execute(documents, destination, extra), CopyBlockedError)
+}
+
+test('mapping includes every current model and every blog column', () => {
+  assert.equal(mappings.length, 14)
+  const blog = get('blogposts')
+  assert.equal(blog.table, 'blog_posts')
+  assert.deepEqual(Object.keys(blog.model.fields), ['title', 'slug', 'excerpt', 'content', 'cover_image', 'tags', 'status', 'published_at', 'seo_title', 'seo_description', 'author_id', 'author_name', 'reading_minutes'])
+  assert.throws(() => createMappings({ ...models, NewModel: { table: 'new_table', toRow() {} } }), /unmapped_model/)
+})
+test('default plan performs no inserts or transactions across all fourteen fixtures', async () => {
+  const destination = new FakeDestination()
+  const result = await execute(fixtures(), destination)
+  assert.equal(result.canApply, true); assert.equal(result.equal, false)
+  assert.equal(destination.writes, 0); assert.equal(destination.commits, 0)
+  assert.equal(result.tables.reduce((n, t) => n + t.counts.missing, 0), 14)
+})
+test('apply inserts and canonically reconciles all fields, then reruns without writing', async () => {
+  const destination = new FakeDestination()
+  const result = await execute(fixtures(), destination, { apply: true })
+  assert.equal(result.equal, true); assert.equal(result.status, 'reconciled'); assert.equal(destination.commits, 1)
+  assert.equal(destination.writes, 14)
+  const blog = destination.rows.blog_posts[0]
+  assert.equal(blog.content, '<p>Original HTML</p>'); assert.equal(blog.author_id, id(1))
+  assert.equal(blog.published_at.toISOString(), stamp.created_at.toISOString())
+  assert.equal((await execute(fixtures(), destination, { apply: true })).equal, true)
+  assert.equal(destination.writes, 14)
+})
+test('one conflict prevents every insert, including otherwise missing tables', async () => {
+  const source = fixtures(), rows = rowsFor(source)
+  rows.users[0].full_name = 'Admin edit'
+  const destination = new FakeDestination({ users: rows.users })
+  await block(source, destination, { apply: true })
+  assert.equal(destination.writes, 0); assert.equal(destination.rollbacks, 1)
+  assert.equal(destination.rows.users[0].full_name, 'Admin edit')
+})
+test('destination-only rows block apply and remain intact', async () => {
+  const source = fixtures(), rows = rowsFor(source)
+  rows.users.push({ ...rows.users[0], id: id(100), email: 'other@example.invalid' })
+  const destination = new FakeDestination(rows)
+  await block(source, destination, { apply: true })
+  assert.equal(destination.rows.users.length, 2); assert.equal(destination.writes, 0)
+})
+test('unknown collections, including empty and system collections, halt all writes', async () => {
+  for (const name of ['coupons', 'system.views', 'blog_posts']) {
+    const destination = new FakeDestination()
+    await block({ ...fixtures(), [name]: [] }, destination, { apply: true })
+    assert.equal(destination.writes, 0)
+  }
+})
+test('unknown fields and Mongoose __v halt; no silent metadata stripping', async () => {
+  for (const field of ['legacy_field', '__v']) {
+    const source = fixtures(); source.products[0][field] = 'must not be lost'
+    const destination = new FakeDestination()
+    await block(source, destination, { apply: true }); assert.equal(destination.writes, 0)
+  }
+})
+test('reports include every field, nested differences and digests without source values', () => {
+  const source = fixtures(), rows = rowsFor(source)
+  const items = JSON.parse(rows.orders[0].items); items[0].qty = 3; rows.orders[0].items = JSON.stringify(items)
+  rows.users[0].password_hash = 'different-private-fixture-hash'
+  const report = planCopy(mappings, source, rows).report
+  const order = report.tables.find((t) => t.table === 'orders').rows[0]
+  assert.ok(order.differingPaths.includes('/items/0/qty'))
+  assert.equal(order.fields.length, Object.keys(models.Order.fields).length + 3)
+  assert.match(order.sourceDigest, /^[a-f0-9]{64}$/)
+  assert.ok(!JSON.stringify(report).includes('private-fixture-hash'))
+  assert.ok(!JSON.stringify(report).includes('Original HTML'))
+  assert.equal(report.canApply, false)
+})
+test('canonical comparison accepts decimal/boolean/UTC representations and object key order', () => {
+  const source = fixtures(), rows = rowsFor(source)
+  rows.products[0].price = '68000.5000'; rows.products[0].is_featured = false
+  rows.products[0].created_at = '2026-03-01 10:00:00.123'
+  rows.transactions[0].metadata = '{"nested":{"a":1,"b":2}}'
+  assert.equal(planCopy(mappings, source, rows).report.equal, true)
+})
+test('array order, timestamps, references and blog fields are reconciled, not just IDs', () => {
+  for (const [table, field, value] of [['blog_posts', 'content', 'Changed HTML'], ['blog_posts', 'author_id', id(999)], ['blog_posts', 'published_at', new Date('2026-01-01T00:00:00Z')], ['orders', 'staff_notes', '[]']]) {
+    const source = fixtures(), rows = rowsFor(source); rows[table][0][field] = value
+    const report = planCopy(mappings, source, rows).report
+    assert.equal(report.canApply, false)
+    assert.ok(report.tables.find((t) => t.table === table).rows[0].differingPaths.some((p) => p === '/' + field || p.startsWith('/' + field + '/')))
+  }
+  const source = fixtures(); source.blogposts[0].tags = ['a', 'b']; const rows = rowsFor(source); rows.blog_posts[0].tags = '["b","a"]'
+  assert.equal(planCopy(mappings, source, rows).report.canApply, false)
+})
+test('precision loss, unsafe BSON, invalid coercions and undefined JSON are blocked', () => {
+  for (const [collection, field, value] of [
+    ['products', 'price', '1.001'], ['products', 'price', '1000000000000.00'],
+    ['products', 'stock_qty', 1.5], ['products', 'is_featured', 'yes'],
+    ['products', 'tags', [undefined]], ['products', 'tags', [Decimal128.fromString('1.5')]],
+    ['products', 'stock_qty', Long.fromString('9007199254740993')],
+    ['users', 'email', 'OWNER@example.invalid'], ['orders', 'assigned_to', { id: id(1), full_name: 'must not be lost' }],
+  ]) {
+    const source = fixtures(); source[collection][0][field] = value
+    assert.equal(planCopy(mappings, source, {}).report.canApply, false, collection + '.' + field)
+  }
+  assert.equal(decimal('-0.00'), '0.00'); assert.equal(decimal('1.2300'), '1.23')
+})
+test('unknown destination fields, missing columns and schema errors block apply', async () => {
+  const source = fixtures()
+  for (const mutate of [(rows) => { rows.users[0].future_field = 'existing' }, (rows) => { delete rows.users[0].password_hash }]) {
+    const rows = rowsFor(source); mutate(rows)
+    const destination = new FakeDestination(rows); await block(source, destination, { apply: true }); assert.equal(destination.writes, 0)
+  }
+  const destination = new FakeDestination({}, { schemaErrors: [{ code: 'requires_innodb', table: 'users' }] })
+  await block(source, destination, { apply: true }); assert.equal(destination.writes, 0)
+})
+test('duplicate source IDs and conflicting identity/timestamp aliases halt', () => {
+  const source = fixtures(); source.users.push(source.users[0])
+  assert.equal(planCopy(mappings, source, {}).report.canApply, false)
+  source.users = [source.users[0]]; source.users[0].id = id(999)
+  assert.equal(planCopy(mappings, source, {}).report.canApply, false)
+  delete source.users[0].id; source.users[0].createdAt = new Date('2020-01-01T00:00:00Z')
+  assert.equal(planCopy(mappings, source, {}).report.canApply, false)
+})
+test('natural-key collision with another ID fails and rolls back earlier inserts', async () => {
+  const source = fixtures(); source.users.push(doc(15, { ...source.users[0], _id: new ObjectId(id(15)) }))
+  const destination = new FakeDestination()
+  await assert.rejects(execute(source, destination, { apply: true }), /duplicate key/)
+  assert.deepEqual(destination.rows, {}); assert.equal(destination.rollbacks, 1); assert.equal(destination.commits, 0)
+})
+test('constraint failures and post-insert field drift roll back the complete copy', async () => {
+  for (const options of [{ failAt: 5 }, { corrupt: true }]) {
+    const destination = new FakeDestination({}, options)
+    await assert.rejects(execute(fixtures(), destination, { apply: true }))
+    assert.deepEqual(destination.rows, {}); assert.equal(destination.commits, 0); assert.equal(destination.rollbacks, 1)
+  }
+})
+test('failure to persist the plan prevents any inserts', async () => {
+  const destination = new FakeDestination()
+  await assert.rejects(execute(fixtures(), destination, { apply: true, onPlan: async () => { throw new Error('report unavailable') } }), /report unavailable/)
+  assert.equal(destination.writes, 0); assert.equal(destination.rollbacks, 1)
+})
+test('source changes observed before commit roll back the complete copy', async () => {
+  const source = fixtures(), destination = new FakeDestination()
+  let reads = 0
+  await assert.rejects(runCopy({ mappings, source: { snapshot: async () => {
+    reads++
+    if (reads === 2) return { ...source, blogposts: [{ ...source.blogposts[0], title: 'Changed during copy' }] }
+    return source
+  } }, destination, apply: true }), CopyBlockedError)
+  assert.equal(destination.commits, 0); assert.equal(destination.rollbacks, 1); assert.deepEqual(destination.rows, {})
+})
+test('failure to persist verified field reconciliation prevents commit', async () => {
+  const destination = new FakeDestination()
+  await assert.rejects(execute(fixtures(), destination, { apply: true, onVerified: async () => { throw new Error('verification report unavailable') } }), /verification report unavailable/)
+  assert.equal(destination.commits, 0); assert.equal(destination.rollbacks, 1); assert.deepEqual(destination.rows, {})
+})
+test('CLI is plan-only by default and rejects every destructive/partial bypass flag', () => {
+  assert.deepEqual(parseArgs(['--report=fixture.json']), { mode: 'plan', report: 'fixture.json' })
+  for (const args of [[], ['--truncate', '--report=x'], ['--lenient', '--report=x'], ['--only=users', '--report=x'], ['--apply', '--dry-run', '--report=x'], ['--overwrite', '--report=x']]) assert.throws(() => parseArgs(args))
+})
+
+test('report persistence completes partial UTF-8 writes before syncing, and rejects stalled writes', async () => {
+  const chunks = [], calls = [], report = { status: 'planned', fixture: 'Unicode — ₦ ✓' }
+  const file = {
+    truncate: async (size) => calls.push(['truncate', size]),
+    write: async (bytes, offset, length, position) => {
+      assert.equal(position, offset)
+      const bytesWritten = Math.min(length, 7)
+      chunks.push(bytes.subarray(offset, offset + bytesWritten))
+      return { bytesWritten }
+    },
+    sync: async () => calls.push(['sync']),
+  }
+  await persistReport(file, report)
+  assert.deepEqual(JSON.parse(Buffer.concat(chunks).toString('utf8')), report)
+  assert.deepEqual(calls, [['truncate', 0], ['sync']])
+  calls.length = 0; file.write = async () => ({ bytesWritten: 0 })
+  await assert.rejects(persistReport(file, report), (e) => e.code === 'report_write_incomplete')
+  assert.deepEqual(calls, [['truncate', 0]])
+})
+
+test('Mongo adapter uses read APIs only, recognises unknown names and caps reads', async () => {
+  const calls = []
+  const db = { listCollections: () => ({ toArray: async () => [{ name: 'blogposts' }, { name: 'unknown' }] }), collection: (name) => ({ find: () => ({ limit: (limit) => ({ toArray: async () => { calls.push({ name, limit }); return fixtures().blogposts } }) }) }) }
+  const source = await mongoSource(db, mappings).snapshot()
+  assert.equal(source.blogposts.length, 1); assert.deepEqual(source.unknown, []); assert.deepEqual(calls, [{ name: 'blogposts', limit: 10001 }])
+  await assert.rejects(mongoSource(db, mappings, 0).snapshot(), /source_row_limit/)
+})
+test('Maria adapter is insert-only and transactions commit or roll back explicitly', async () => {
+  const calls = []
+  const connection = { query: async (sql, params) => { calls.push({ sql, params }); return [[]] }, beginTransaction: async () => calls.push('begin'), commit: async () => calls.push('commit'), rollback: async () => calls.push('rollback') }
+  const adapter = mariaDestination(connection)
+  await adapter.transaction(async () => adapter.insert(get('users'), prepareDocument(get('users'), fixtures().users[0]).row))
+  assert.equal(calls[0].sql, 'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE'); assert.equal(calls.at(-1), 'commit')
+  const insert = calls.find((c) => c.sql?.startsWith('INSERT'))
+  assert.ok(!/UPDATE|IGNORE|REPLACE|DELETE|TRUNCATE/.test(insert.sql)); assert.ok(insert.params.includes('private-fixture-hash'))
+  await assert.rejects(adapter.transaction(async () => { throw new Error('fixture failure') }))
+  assert.equal(calls.at(-1), 'rollback')
+})
+test('Maria metadata/read adapter catches engine, column drift and row limits', async () => {
+  const mapping = get('users'), row = prepareDocument(mapping, fixtures().users[0]).row, calls = []
+  let engine = 'InnoDB', extra = false, count = 1, triggers = []
+  const connection = { query: async (q) => {
+    calls.push(q)
+    if (q.sql.startsWith('SHOW TABLE')) return [[{ Engine: engine }]]
+    if (q.sql.startsWith('SHOW TRIGGERS')) return [triggers]
+    if (q.sql.startsWith('SHOW COLUMNS')) return [[...Object.keys(row).map((Field) => ({ Field })), ...(extra ? [{ Field: 'future_column' }] : [])]]
+    return [Array(count).fill(row)]
+  } }
+  const adapter = mariaDestination(connection, 1)
+  assert.equal((await adapter.snapshot([mapping], { lock: true })).errors.length, 0)
+  assert.ok(calls.some((q) => q.sql.endsWith('FOR UPDATE')))
+  const typeCast = calls[0].typeCast; assert.equal(typeCast({ type: 'NEWDECIMAL', string: () => '1.23' }, () => 'bad'), '1.23')
+  engine = 'MyISAM'; assert.equal((await adapter.snapshot([mapping])).errors[0].code, 'requires_innodb')
+  engine = 'InnoDB'; extra = true; assert.equal((await adapter.snapshot([mapping])).errors[0].code, 'schema_column_mismatch')
+  extra = false; count = 2; await assert.rejects(adapter.snapshot([mapping]), /destination_row_limit/)
+  count = 1; triggers = [{ Trigger: 'fixture trigger' }]; assert.equal((await adapter.snapshot([mapping])).errors[0].code, 'unreviewed_triggers')
+})
+test('lost commit acknowledgement and failed rollback are reported as unknown outcomes', async () => {
+  const connection = { query: async () => [[]], beginTransaction: async () => {}, commit: async () => { throw new Error('lost acknowledgement') }, rollback: async () => {} }
+  await assert.rejects(mariaDestination(connection).transaction(async () => ({})), (e) => e.code === 'commit_outcome_unknown')
+  connection.rollback = async () => { throw new Error('rollback unavailable') }
+  await assert.rejects(mariaDestination(connection).transaction(async () => { throw new Error('fixture failure') }), (e) => e.code === 'rollback_outcome_unknown')
+})
+test('invalid dates, fractional timestamps and explicit null source identity are refused', () => {
+  for (const value of ['2026-02-30T00:00:00Z', '2026-03-01T00:00:00.1234Z', '2026-03-01']) {
+    const source = fixtures(); source.users[0].created_at = value
+    assert.equal(planCopy(mappings, source, {}).report.canApply, false)
+  }
+  const source = fixtures(); source.users[0]._id = null; source.users[0].id = id(1)
+  assert.equal(planCopy(mappings, source, {}).report.canApply, false)
+})
+test('offline suite never initialises a database pool', () => {
+  assert.equal(globalThis.__maximsPool, undefined)
+})
+
+// This evaluates the actual SQL guard over fake JSON fixtures. It is not a SQL engine.
+const sql = fs.readFileSync(new URL('../sql/004-site-address.sql', import.meta.url), 'utf8')
+const statements = sql.split('\n').filter((l) => !l.trim().startsWith('--')).join('\n').split(/;\s*(?:\n|$)/).map((s) => s.trim()).filter(Boolean)
+const update = statements.find((s) => s.startsWith('UPDATE'))
+const insert = statements.find((s) => s.startsWith('INSERT INTO `settings`'))
+const SQL_NULL = Symbol('SQL NULL')
+function actualGuard(value) {
+  const predicate = update.slice(update.indexOf('AND (') + 4, update.indexOf('AND NOT EXISTS')).trim()
+  const object = value !== SQL_NULL && value !== null && typeof value === 'object' && !Array.isArray(value)
+  const expression = predicate.replace(/`value` IS NULL/g, String(value === SQL_NULL))
+    .replace(/JSON_TYPE\(`value`\) = 'OBJECT'/g, String(object))
+    .replace(/JSON_CONTAINS_PATH\(`value`, 'one', '\$\.address'\) = 0/g, String(object && !Object.hasOwn(value, 'address')))
+    .replace(/\bAND\b/g, '&&').replace(/\bOR\b/g, '||')
+  assert.ok(/^[truefals()\s&|]+$/.test(expression), 'only the reviewed missing-address predicate may be evaluated')
+  return vm.runInNewContext(expression)
+}
+test('migration 004 preserves every existing address, including blank/null/admin edits', () => {
+  for (const value of [{ address: 'Admin edit' }, { address: '' }, { address: null }, { address: '   ' }, { address: 'No. 8 Oke Agbe Street, Garki 2, Abuja, FCT' }, null, [], 'invalid root']) assert.equal(actualGuard(value), false)
+})
+test('migration 004 fills only SQL NULL or an object with no address property', () => {
+  assert.equal(actualGuard(SQL_NULL), true); assert.equal(actualGuard({ phone: 'fixture phone' }), true)
+  const contact = { phone: 'fixture phone', hours: 'fixture hours' }
+  const result = actualGuard(contact) ? { ...contact, address: 'No. 8 Oke Agbe Street, Garki 2, Abuja, FCT' } : contact
+  assert.equal(result.phone, contact.phone); assert.equal(result.hours, contact.hours)
+})
+test('migration 004 retains ledger guard, guards fresh insert and avoids silent duplicate success', () => {
+  assert.match(update, /NOT EXISTS.*schema_migrations[\s\S]*004-site-address/)
+  assert.match(insert, /NOT EXISTS.*schema_migrations[\s\S]*NOT EXISTS.*settings[\s\S]*contact_info/)
+  assert.ok(!insert.includes('INSERT IGNORE'))
+  assert.equal(statements.length, 4)
+  const contact = { address: 'Admin edit' }, applied = true
+  assert.equal(!applied && actualGuard(contact), false)
+})
