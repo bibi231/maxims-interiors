@@ -166,3 +166,31 @@ delivery. See [official stream transport documentation](https://nodemailer.com/t
    and keep the deployment within the user's authorised release scope.
    Local tests, a successful SMTP `verify`, SMTP acceptance and mailbox delivery
    are distinct evidence stages.
+
+## Parent read-only production identity — 5 October 2026
+
+A bounded authorised SSH inspection established the current host metadata:
+
+- Running Node: `v20.12.2`, executable
+  `/opt/alt/alt-nodejs20/root/usr/bin/node`.
+- Backend process working directory: `/home/gadzamac/maxims-deploy/server`.
+- Parent runner: PM2 `7.0.3`; package-declared entrypoint `src/index.js`.
+  Actual startup arguments were not inspected.
+- Root/server locks and installed package metadata still resolve Nodemailer
+  `6.10.1`.
+- Live server metadata declares Mongoose `^8.6.3`, resolved `8.24.0`, and MongoDB
+  driver `6.20.0`. This candidate declares mysql2/MariaDB tooling, with MongoDB
+  optional. This is a verified package-generation mismatch, not a database query
+  or proof of the actual live schema/data state.
+
+Consequently, **do not replace the complete live server with this candidate as
+if it were a mail-only upgrade**. The exact Node 20.12.2 runtime differs from the
+tested 20.20.2 and is in the EOL Node 20 line. Supported-runtime validation and
+data/media-preserving migration rehearsal are still required. A separate
+mail-only release against the actual legacy code would need its own review and
+compatibility evidence; it is not supplied by these MariaDB candidate tests.
+
+The inspection made no writes/restarts, read no environment/credential values,
+opened no DB/SMTP connections and sent no messages. The parent independently
+reran all 53 offline cases and all 45 JavaScript syntax checks, verified bounded
+lock changes and pushed the source upgrade as `aa7b8e6`; production is unchanged.
