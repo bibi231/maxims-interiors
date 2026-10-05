@@ -1,45 +1,107 @@
-# Mailer security preflight — offline baseline
+# Mailer security preflight — patched offline candidate
 
-Checked 5 October 2026 on `codex/maxims-mailer-security-2026-10-05`, base
-`ed0525abcba32b4746afca5ed02b7e87181104c1`. **Compatibility baseline only;
-dependency remediation and SMTP/mailbox acceptance remain separate gates.**
+Checked 5 October 2026 on `codex/maxims-mailer-security-2026-10-05`, implementation
+base `e7e0ddd4aa6433aa0ae0a874bb5a86c9233a28fc`. **Dependency candidate checked
+offline; actual host/runtime and SMTP/mailbox acceptance remain release gates.**
 
-## Baseline and outstanding advisories
+## Selected release and bounded changes
 
-Both root/server lockfiles and the installed server package resolve **Nodemailer
-6.10.1**. Root manifest: `^6.9.15`; server manifest: `^6.10.1`. No manifest,
-lockfile, installed dependency, production module or configuration was changed.
+Both manifests now pin **Nodemailer `10.0.15` exactly**, replacing root `^6.9.15`
+and server `^6.10.1`; both prior locks resolved `6.10.1`. Both lockfiles and clean
+installed packages now resolve `10.0.15`. The
+[official release](https://github.com/nodemailer/nodemailer/releases/tag/v10.0.15)
+and registry `latest` were checked; the
+[versioned package](https://github.com/nodemailer/nodemailer/blob/v10.0.15/package.json)
+requires **Node `>=20.0.0`** and adds no runtime dependencies.
 
-Official GitHub advisories confirm the baseline is affected:
+Registry verification:
+
+```powershell
+npm view nodemailer version engines dist.integrity --registry=https://registry.npmjs.org --json
+npm view nodemailer@10.0.15 version engines dependencies dist.tarball dist.integrity gitHead --registry=https://registry.npmjs.org --json
+```
+
+Both locks use the official registry tarball and verified registry integrity:
+`sha512-EUqp5PhtcsYXs9Fq/lS7s/8zlTrnBqmzZWzFFROrNikMiz+om/YRKMwqN907t+0A1KKyT8jd39CBUbFZmaZmcA==`.
+All resolved lock diffs were reviewed and compared programmatically with the
+base: only the root dependency pin and `node_modules/nodemailer` entry changed
+in each lock (587 root / 155 server package entries). No other package versions,
+lock metadata, production modules, fixtures or mail configuration changed.
+
+Lock generation and clean installs succeeded in **each** root/server directory:
+
+```powershell
+npm install --package-lock-only --ignore-scripts --audit=false --fund=false --registry=https://registry.npmjs.org
+npm ci --ignore-scripts --audit=false --fund=false --registry=https://registry.npmjs.org
+```
+
+No lifecycle scripts, forced audit fixes or unrelated upgrades were used.
+
+## Advisory and audit delta
+
+The [maintainer advisory index](https://github.com/nodemailer/nodemailer/security/advisories)
+was refreshed alongside registry audits. Reviewed fix floors include:
 
 | Advisory | Severity / affected range | Individual fix floor |
 | --- | --- | --- |
 | [GHSA-rcmh-qjqh-p98v / CVE-2025-14874](https://github.com/advisories/GHSA-rcmh-qjqh-p98v): recursive address-parser denial of service | High / `>=3.0.0, <=7.0.10` | `7.0.11` |
 | [GHSA-2x7j-588g-ccc2](https://github.com/advisories/GHSA-2x7j-588g-ccc2): quadratic address-list parsing | High / `<9.1.0` | `9.1.0` |
 | [GHSA-v53p-9fqp-m79j](https://github.com/advisories/GHSA-v53p-9fqp-m79j): quadratic free-text fallback | High / `<=10.0.5` | `10.0.6` |
+| [GHSA-39m8-27wv-hr27](https://github.com/nodemailer/nodemailer/security/advisories/GHSA-39m8-27wv-hr27): DKIM folded-header parsing | Moderate / `>=3.0.0, <=10.0.9` | `10.0.10` |
+| [GHSA-4g23-2xm8-66gc](https://github.com/nodemailer/nodemailer/security/advisories/GHSA-4g23-2xm8-66gc): SMTP multiline-reply parsing | Moderate / `>=3.0.0, <=10.0.9` | `10.0.10` |
+| [GHSA-4ffr-jq9g-5ffx](https://github.com/nodemailer/nodemailer/security/advisories/GHSA-4ffr-jq9g-5ffx): SMTP AUTH regex | Moderate / `>=3.0.0, <=10.0.12` | `10.0.13` |
+| [GHSA-g73g-hqqh-jr95](https://github.com/nodemailer/nodemailer/security/advisories/GHSA-g73g-hqqh-jr95): malformed recipient/comment parsing | Moderate / `>=3.0.0, <=10.0.12` | `10.0.13` |
 
-These are verified examples, **not a complete current advisory inventory**.
-`7.0.11` fixes the historical High advisory, not every subsequent issue. No
-upgrade target is approved here; do not use `npm audit fix --force`. Parser work
-can occur before SMTP timeouts, so those timeouts do not establish mitigation.
-Production exposure and deployment versions have not been certified.
+`10.0.15` is above these floors. This table is a selected advisory record, not a
+claim of permanent safety; registry and maintainer disclosure timing can differ.
+Parser work may precede SMTP timeouts, so timeouts alone are not mitigation.
+
+`npm audit --json --ignore-scripts --registry=https://registry.npmjs.org` in each
+directory reported the following full dependency-tree counts in this pass:
+
+| Tree | Before (`6.10.1`) | After (`10.0.15`) |
+| --- | --- | --- |
+| Root | 39: 8 High, 31 Moderate | 38: 7 High, 31 Moderate |
+| Server | 1 High (Nodemailer) | 0 |
+
+Nodemailer is absent from both final audit reports. Root audit still exits 1;
+server audit exits 0. The remaining root findings concern Tiptap, Vite/esbuild,
+React Router and Tailwind/glob dependencies; they are unchanged and outside this
+pass. Neither the audit nor these tests certify production exposure or deployment.
 
 ## Offline contract evidence
 
 From the repository root:
 
 ```powershell
-node --experimental-vm-modules --test server/test/mailer.offline.test.js
-node --experimental-vm-modules --test server/test/mailer.offline.test.js server/test/dependencies.offline.test.js
-node --check server/test/mailer.offline.test.js
+node --experimental-vm-modules --test --test-reporter=spec server/test/mailer.offline.test.js server/test/dependencies.offline.test.js server/test/copy-from-mongo.test.js
+npm run lint
+node --input-type=module -e "import { build } from 'vite'; await build({ envFile: false });"
 ```
 
-Result on Node **22.19.0**: **15 passed, 0 failed**; syntax check passed. Node emits
-the expected experimental VM-module warning. The combined run with the existing
-9 dependency fixtures passed **24/24**. The original 13 test scenarios
-were retained. Its initial run was 12/13: the fixture's MIME decoder incorrectly
-counted whitespace between adjacent encoded words. The repair follows RFC 2047
-folding semantics without collapsing ordinary subject whitespace.
+Results with `10.0.15`: **53/53 passed** (15 mail, 9 dependency, 29 copy), with no
+skips, on both **Node 22.19.0** and disposable **Node 20.20.2** Windows x64. The
+same test command was run with the Node 20 executable explicitly; no system or
+host runtime was changed. Its archive was downloaded from the
+[official version directory](https://nodejs.org/dist/v20.20.2/) and its SHA-256
+matched the official `SHASUMS256.txt` before use. The expected experimental
+VM-module warning remains. No fixture or production-source repair was needed.
+
+Syntax checks passed for all **45 JavaScript files** under `server/src`,
+`server/test`, `server/scripts`, plus `vite.config.js`. Root/server installed
+CommonJS and ESM default Nodemailer APIs were also checked. **Lint passed**;
+**Vite 5.4.21 production build passed** (2,107 modules, 47.16s). The build used
+`envFile: false`, whose installed Vite implementation bypasses `loadEnv`; no
+public/secret environment file was read or injected. This is an offline compile,
+not a release-configured artefact. This JavaScript project declares no separate
+typecheck or server-build script.
+
+**Node 20 compatibility is not runtime support certification.** The package's
+engine allows Node 20 and the suites passed on 20.20.2, but
+[Node's release status](https://nodejs.org/en/about/previous-releases) now lists
+Node 20 as **EOL**. The actual host's exact patch version, operating system,
+application runner and deployment dependency tree were not inspected. A supported
+host runtime and final release compatibility remain separate release gates.
 
 The test evaluates unchanged `mailer`, `templates`, `notify`, `staffInvite` and
 the auth route inside an allowlisted VM, with synthetic configuration/model
@@ -47,7 +109,9 @@ imports. Real Nodemailer compiles MIME to an in-memory Buffer; the real SMTP
 constructor is checked for API shape but **never sent through or verified**.
 TCP/TLS/DNS/HTTP(S)/HTTP2/UDP/fetch entry points are blocked; env-file reads and
 file-content streams are guarded. Recorded blocked-I/O attempts: **zero**.
-No app/bootstrap, dotenv, database client, real account or SMTP session is used.
+No app/bootstrap, dotenv, database pool, real account or SMTP session is used.
+Dependency metadata/downloads used only the official registry/vendor sources;
+the fixtures used no network or live database. No real mail was sent.
 
 Covered contracts:
 
@@ -69,12 +133,11 @@ delivery. See [official stream transport documentation](https://nodemailer.com/t
 
 ## Exact compatibility and owner gates
 
-1. **Prepare a separate dependency change.** Select and pin a candidate after
-   refreshing the complete official advisory/registry audit. Review Node engine
-   requirements against the actual host runtime; reconcile both manifests and
-   lockfiles, perform reproducible clean installs, then rerun this baseline and
-   the existing dependency fixtures. No candidate/major upgrade is certified by
-   the Nodemailer 6 run.
+1. **Confirm the release runtime.** The authorised source/dependency change is
+   complete offline. Before release, verify the actual host's exact Node version
+   against `>=20.0.0`, and address Node 20's EOL status separately. Reproduce the
+   clean server install and checks in the release runtime; Windows Node 20/22
+   fixture results do not certify a different host/runner or enable deployment.
 2. **Preserve API and failure behaviour.** Compare `createTransport`, promise
    `sendMail`/`verify`, MIME/recipient output, sender defaults, helper links and
    failure handling. Keep ordinary whitespace and UTF-8 intact; do not bypass
