@@ -70,9 +70,12 @@ explicitly reviewed mapping or separate lossless archival design first. Missing
 known collections are reported as absent, not proof of a complete source inventory.
 
 Only `_id`/`id`, `created_at`/`createdAt`, `updated_at`/`updatedAt` are recognised
-source metadata. Conflicting aliases halt. IDs/references must be 24-character
-lower-case hexadecimal IDs. Missing creation timestamps use the ObjectId timestamp;
-missing update timestamps use creation time. Missing model fields use existing
+source metadata. Conflicting aliases halt. Any explicitly null creation/update
+alias halts with `null_timestamp`, even if its snake/camel partner is populated;
+null is never treated as missing. Defaults apply only when both aliases are absent;
+explicit undefined or invalid timestamp values halt too. IDs/references must be
+24-character lower-case hexadecimal IDs. Missing creation timestamps use the
+ObjectId timestamp; missing update timestamps use creation time. Missing model fields use existing
 model defaults, all listed under `defaultedFields`; review those transformations.
 Existing explicit fields cannot silently change under model normalisation, including
 trimming/lowercasing or replacement by defaults.
@@ -97,7 +100,12 @@ or certified by this tooling.
 
 Apply uses one SERIALIZABLE transaction with locked destination reads. After all
 inserts, it reads destination and source again, requires field-level canonical
-equality and persists that verification before COMMIT. Observed source drift,
+equality and persists that verification before COMMIT. Presence of every known
+source collection is captured from the first snapshot and compared with the second.
+Addition or disappearance, including an empty collection with no row differences,
+blocks verification with `source_collection_presence_drift` and rolls back when
+rollback is acknowledged. Unchanged absent collections remain reported as absent,
+not certified as a complete inventory. Observed source drift,
 verification/report failure or insert errors roll back when rollback is acknowledged.
 There is a 10,000-row cap **per collection/table**; snapshots/reports are in memory,
 not streaming or byte-bounded. Larger datasets need a separately reviewed design.

@@ -139,9 +139,11 @@ export function prepareDocument(mapping, document) {
   if (document.id !== undefined && bson(document.id) !== id) throw new GuardError('conflicting_id_alias', 'id')
   const source = { id }, defaulted = []
   for (const name of ['created_at', 'updated_at']) {
-    const alias = name === 'created_at' ? 'createdAt' : 'updatedAt', value = document[name] ?? document[alias]
-    if (document[name] != null && document[alias] != null && timestamp(document[name]) !== timestamp(document[alias])) throw new GuardError('conflicting_timestamp_alias', name)
-    if (value != null) source[name] = new Date(timestamp(value))
+    const alias = name === 'created_at' ? 'createdAt' : 'updatedAt'
+    const present = Object.hasOwn(document, name), aliasPresent = Object.hasOwn(document, alias)
+    for (const key of [name, alias]) if (Object.hasOwn(document, key) && document[key] === null) throw new GuardError('null_timestamp', key)
+    if (present && aliasPresent && timestamp(document[name]) !== timestamp(document[alias])) throw new GuardError('conflicting_timestamp_alias', name)
+    if (present || aliasPresent) source[name] = new Date(timestamp(present ? document[name] : document[alias]))
     else {
       source[name] = name === 'created_at' ? new Date(parseInt(id.slice(0, 8), 16) * 1000) : source.created_at
       defaulted.push(name)
@@ -217,6 +219,7 @@ export function planCopy(mappings, source, target, schemaErrors = []) {
 
 export async function runCopy({ mappings, source, destination, apply = false, onPlan = async () => {}, onVerified = async () => {} }) {
   const documents = await source.snapshot()
+  const sourcePresence = new Map(mappings.map(({ collection }) => [collection, Object.hasOwn(documents, collection)]))
   const work = async () => {
     const before = await destination.snapshot(mappings, { lock: apply })
     const plan = planCopy(mappings, documents, before.rows, before.errors)
@@ -228,7 +231,9 @@ export async function runCopy({ mappings, source, destination, apply = false, on
     // Re-read source before commit. An immutable source/write freeze is still required
     // for an atomic cross-database cutover, but observed drift must never be ignored.
     const latestDocuments = await source.snapshot()
-    const reconciled = planCopy(mappings, latestDocuments, after.rows, after.errors).report
+    const presenceErrors = mappings.filter(({ collection }) => Object.hasOwn(latestDocuments, collection) !== sourcePresence.get(collection))
+      .map(({ collection }) => ({ code: 'source_collection_presence_drift', collection }))
+    const reconciled = planCopy(mappings, latestDocuments, after.rows, [...(after.errors || []), ...presenceErrors]).report
     if (!reconciled.equal) throw new CopyBlockedError(reconciled)
     await onVerified(reconciled)
     return { ...reconciled, status: 'reconciled' }

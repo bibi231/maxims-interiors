@@ -196,6 +196,61 @@ test('source changes observed before commit roll back the complete copy', async 
   } }, destination, apply: true }), CopyBlockedError)
   assert.equal(destination.commits, 0); assert.equal(destination.rollbacks, 1); assert.deepEqual(destination.rows, {})
 })
+
+for (const change of ['disappearance', 'addition']) {
+  test(`known empty collection ${change} blocks verification and rolls back every insert`, async () => {
+    for (const mapping of mappings) {
+      const initial = fixtures(), latest = fixtures()
+      initial[mapping.collection] = []; latest[mapping.collection] = []
+      if (change === 'disappearance') delete latest[mapping.collection]
+      else delete initial[mapping.collection]
+      // Keep an identical existing row too: rollback must preserve it, not clear everything.
+      const retained = get(mapping.collection === 'users' ? 'products' : 'users')
+      const original = { [retained.table]: rowsFor(initial)[retained.table] }
+      const destination = new FakeDestination(original)
+      let reads = 0, verified = 0
+      await assert.rejects(runCopy({ mappings, source: { snapshot: async () => ++reads === 1 ? initial : latest }, destination, apply: true,
+        onVerified: async () => { verified++ },
+      }), (e) => {
+        assert.ok(e instanceof CopyBlockedError)
+        assert.equal(e.report.status, 'blocked'); assert.equal(e.report.canApply, false); assert.equal(e.report.equal, false)
+        assert.ok(e.report.errors.some((error) => error.code === 'source_collection_presence_drift' && error.collection === mapping.collection))
+        assert.ok(!JSON.stringify(e.report).includes('private-fixture-hash'))
+        return true
+      })
+      assert.equal(reads, 2); assert.equal(verified, 0)
+      assert.ok(destination.writes > 0); assert.equal(destination.commits, 0); assert.equal(destination.rollbacks, 1)
+      assert.deepEqual(destination.rows, original)
+    }
+  })
+}
+
+test('collection presence is captured before a source adapter mutates its original snapshot object', async () => {
+  const source = fixtures(), destination = new FakeDestination()
+  source.blogposts = []
+  let reads = 0
+  await assert.rejects(runCopy({ mappings, source: { snapshot: async () => {
+    if (++reads === 2) delete source.blogposts
+    return source
+  } }, destination, apply: true }), (e) => e instanceof CopyBlockedError && e.report.errors.some((error) => error.code === 'source_collection_presence_drift' && error.collection === 'blogposts'))
+  assert.ok(destination.writes > 0); assert.equal(destination.commits, 0); assert.equal(destination.rollbacks, 1)
+  assert.deepEqual(destination.rows, {})
+})
+
+for (const present of [true, false]) {
+  test(`unchanged ${present ? 'present empty' : 'absent'} known collection permits verified apply`, async () => {
+    const source = fixtures(), destination = new FakeDestination()
+    if (present) source.blogposts = []
+    else delete source.blogposts
+    let reads = 0, verified = 0
+    const result = await runCopy({ mappings, source: { snapshot: async () => { reads++; return { ...source } } }, destination, apply: true,
+      onVerified: async (report) => { verified++; assert.equal(report.equal, true) },
+    })
+    assert.equal(result.equal, true); assert.equal(reads, 2); assert.equal(verified, 1)
+    assert.equal(result.tables.find((t) => t.collection === 'blogposts').sourcePresent, present)
+    assert.equal(destination.writes, 13); assert.equal(destination.commits, 1); assert.equal(destination.rollbacks, 0)
+  })
+}
 test('failure to persist verified field reconciliation prevents commit', async () => {
   const destination = new FakeDestination()
   await assert.rejects(execute(fixtures(), destination, { apply: true, onVerified: async () => { throw new Error('verification report unavailable') } }), /verification report unavailable/)
@@ -276,6 +331,63 @@ test('invalid dates, fractional timestamps and explicit null source identity are
   }
   const source = fixtures(); source.users[0]._id = null; source.users[0].id = id(1)
   assert.equal(planCopy(mappings, source, {}).report.canApply, false)
+})
+
+for (const [field, other] of [['created_at', 'createdAt'], ['createdAt', 'created_at'], ['updated_at', 'updatedAt'], ['updatedAt', 'updated_at']]) {
+  test(`explicit null ${field} blocks all inserts, even alongside a populated alias`, async () => {
+    for (const partner of ['absent', 'valid', 'null']) {
+      const source = fixtures(), document = source.users[0], destination = new FakeDestination()
+      delete document[field]; delete document[other]
+      document[field] = null
+      if (partner === 'valid') document[other] = stamp[field.startsWith('created') ? 'created_at' : 'updated_at']
+      if (partner === 'null') document[other] = null
+      await assert.rejects(execute(source, destination, { apply: true }), (e) => {
+        assert.ok(e instanceof CopyBlockedError)
+        assert.ok(e.report.errors.some((error) => error.collection === 'users' && error.code === 'null_timestamp'))
+        return true
+      })
+      assert.equal(destination.writes, 0); assert.equal(destination.commits, 0); assert.equal(destination.rollbacks, 1)
+      assert.deepEqual(destination.rows, {})
+    }
+  })
+}
+
+for (const [field, alias] of [['created_at', 'createdAt'], ['updated_at', 'updatedAt']]) {
+  test(`conflicting non-null ${field}/${alias} aliases halt`, () => {
+    const source = fixtures(); source.users[0][alias] = new Date('2020-01-01T00:00:00Z')
+    const report = planCopy(mappings, source, {}).report
+    assert.equal(report.canApply, false)
+    assert.ok(report.errors.some((error) => error.code === 'conflicting_timestamp_alias' && error.field === field))
+  })
+  test(`equal or single populated ${field}/${alias} aliases preserve UTC timestamps`, () => {
+    const document = fixtures().users[0], expected = stamp[field].toISOString()
+    document[alias] = expected
+    let prepared = prepareDocument(get('users'), document)
+    assert.equal(prepared.row[field].toISOString(), expected); assert.ok(!prepared.defaulted.includes(field))
+    delete document[field]
+    prepared = prepareDocument(get('users'), document)
+    assert.equal(prepared.row[field].toISOString(), expected); assert.ok(!prepared.defaulted.includes(field))
+  })
+}
+
+test('truly absent timestamp aliases retain ObjectId/creation fallbacks and default reporting', () => {
+  const document = fixtures().users[0]
+  for (const field of ['created_at', 'createdAt', 'updated_at', 'updatedAt']) delete document[field]
+  const prepared = prepareDocument(get('users'), document)
+  assert.equal(prepared.row.created_at.toISOString(), document._id.getTimestamp().toISOString())
+  assert.equal(prepared.row.updated_at.toISOString(), prepared.row.created_at.toISOString())
+  assert.ok(prepared.defaulted.includes('created_at')); assert.ok(prepared.defaulted.includes('updated_at'))
+})
+
+test('null timestamp appearing in the second source snapshot blocks verification and rolls back', async () => {
+  const source = fixtures(), destination = new FakeDestination()
+  let reads = 0, verified = 0
+  await assert.rejects(runCopy({ mappings, source: { snapshot: async () => {
+    if (++reads === 1) return source
+    return { ...source, users: [{ ...source.users[0], updatedAt: null }] }
+  } }, destination, apply: true, onVerified: async () => { verified++ } }), (e) => e instanceof CopyBlockedError && e.report.errors.some((error) => error.code === 'null_timestamp'))
+  assert.equal(reads, 2); assert.equal(verified, 0); assert.equal(destination.writes, 14)
+  assert.equal(destination.commits, 0); assert.equal(destination.rollbacks, 1); assert.deepEqual(destination.rows, {})
 })
 test('offline suite never initialises a database pool', () => {
   assert.equal(globalThis.__maximsPool, undefined)
